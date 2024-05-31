@@ -19,6 +19,8 @@ let authMiddleware = {
                         }
 
                         req.context = token;
+                        req.context.user_id = tokenValidity.user_id;
+                        req.context.email_id = tokenValidity.email_id
 
                         next()
                     }
