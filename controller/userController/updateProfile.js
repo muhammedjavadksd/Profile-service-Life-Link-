@@ -84,7 +84,9 @@ let updateProfileController = {
                 msg: "Internal Server Error"
             })
         }
-    }
+    },
+
+
 }
 
 module.exports = updateProfileController;

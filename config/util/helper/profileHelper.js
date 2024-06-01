@@ -104,6 +104,93 @@ let profileHelper = {
                 msg: "Something went wrong"
             }
         }
+    },
+
+
+    validateUpdateProfileOTP: async (otp_number, type, user_id) => {
+
+        try {
+
+            let userData = await UserProfileModel.findOne({ user_id });
+            if (userData) {
+
+                if (type == "EMAIL") {
+                    let userOTPNumber = userData.contact_update.email.otp;
+                    let expireTime = userData.contact_update.email.otp_expire_time;
+                    let newEmailID = userData.contact_update.email.new_email_id;
+
+                    //OTP correction checking
+                    if (otp_number == userOTPNumber) {
+                        //expire checking
+                        if (expireTime < new Date().getUTCMilliseconds()) {
+                            userData.email = newEmailID;
+                            userData.contact_update.email = {};
+                            await userData.save()
+                            return {
+                                statusCode: 200,
+                                status: true,
+                                msg: "Email id has been updated"
+                            }
+                        } else {
+                            return {
+                                statusCode: 410,
+                                status: false,
+                                msg: "OTP time has been expired"
+                            }
+                        }
+                    } else {
+                        return {
+                            statusCode: 401,
+                            status: false,
+                            msg: "Incorrect OTP Number"
+                        }
+                    }
+                } else {
+                    let userOTPNumber = userData.contact_update.phone_number.otp;
+                    let expireTime = userData.contact_update.phone_number.otp_expire_time;
+                    let newPhoneNumber = userData.contact_update.phone_number.new_phone_number;
+
+                    //OTP correction checking
+                    if (otp_number == userOTPNumber) {
+                        //expire checking
+                        if (expireTime < new Date().getUTCMilliseconds()) {
+                            userData.phone_number = newPhoneNumber;
+                            userData.contact_update.phone_number = {};
+                            await userData.save()
+                            return {
+                                statusCode: 200,
+                                status: true,
+                                msg: "Phone number has been updated"
+                            }
+                        } else {
+                            return {
+                                statusCode: 410,
+                                status: false,
+                                msg: "OTP time has been expired"
+                            }
+                        }
+                    } else {
+                        return {
+                            statusCode: 401,
+                            status: false,
+                            msg: "Incorrect OTP Number"
+                        }
+                    }
+                }
+            } else {
+                return {
+                    statusCode: 401,
+                    status: false,
+                    msg: "Authentication failed"
+                }
+            }
+        } catch (e) {
+            return {
+                statusCode: 500,
+                status: false,
+                msg: "Internal Server Error"
+            }
+        }
     }
 }
 
