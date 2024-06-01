@@ -1,7 +1,7 @@
 const profileHelper = require("../../config/util/helper/profileHelper");
 
 
-let userProfileController = {
+let updateProfileController = {
 
     updateProfile: (req, res) => {
 
@@ -55,9 +55,36 @@ let userProfileController = {
                 msg: "Internal Server Error"
             })
         }
+    },
 
+    updateEmailID: async (req, res, next) => {
 
+        try {
+
+            let new_email_id = req.body.new_email_id;
+            let user_id = req.context.user_id;
+
+            if (new_email_id && user_id) {
+                let updateEmailID = await profileHelper.updateEmailAddress(new_email_id, user_id);
+                res.status(updateEmailID.statusCode).json({
+                    status: updatePhoneNumber.status,
+                    msg: updatePhoneNumber.msg
+                })
+            } else {
+                res.status(400).json({
+                    status: false,
+                    msg: "Please provide a phone number"
+                })
+            }
+
+        } catch (e) {
+            console.log(e);
+            res.status(500).json({
+                status: false,
+                msg: "Internal Server Error"
+            })
+        }
     }
 }
 
-module.exports = userProfileController;
+module.exports = updateProfileController;

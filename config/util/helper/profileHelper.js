@@ -64,6 +64,46 @@ let profileHelper = {
                 msg: "Something went wrong"
             }
         }
+    },
+
+    updateEmailAddress: async (newEmailAddress, user_id) => {
+        try {
+
+            let findUser = await UserProfileModel.findOne({ user_id: user_id });
+
+            let otpNumber = utilHelper.createOtpNumber(6);
+            let otpTimer = constant_data.MINIMUM_OTP_TIMER;
+
+            if (findUser) {
+
+                findUser.contact_update.email = {
+                    new_email_id: newEmailAddress,
+                    otp: otpNumber,
+                    otp_expire_time: otpTimer
+                }
+
+                findUser.save().then(() => {
+                    return {
+                        statusCode: 200,
+                        status: true,
+                        msg: "OTP has been sent to mail"
+                    }
+                })
+            } else {
+                return {
+                    statusCode: 401,
+                    status: false,
+                    msg: "Authentication failed"
+                }
+            }
+        } catch (e) {
+            console.log(e);
+            return {
+                statusCode: 500,
+                status: false,
+                msg: "Something went wrong"
+            }
+        }
     }
 }
 
