@@ -11,6 +11,18 @@ let profileHelper = {
             console.log("Profile insertion error");
             console.log(err);
         })
+    },
+
+    updateProfile: async (data, user_id) => {
+
+        try {
+            await UserProfileModel.updateOne({ user_id }, data);
+            return true
+        } catch (e) {
+            console.log(e);
+            return false
+        }
+
     }
 }
 

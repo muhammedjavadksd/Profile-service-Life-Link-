@@ -3,20 +3,23 @@
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
+const bulkConsumer = require("./communication/bulkConsumer");
 
 //middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+dotenv.config("./.env");
+bulkConsumer()
+
 
 const profileDatabseConnection = require("./config/db/connection");
 const userRouter = require("./router/userRouter/index")
 const adminRouter = require("./router/adminRouter/index")
-const logger = require("morgan")
+const logger = require("morgan");
 // const bcrypt = require("bcrypt")
 
 //Config
-dotenv.config("./.env");
 app.use(logger("common"))
 profileDatabseConnection()
 
