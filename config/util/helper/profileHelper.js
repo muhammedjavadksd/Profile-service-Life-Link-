@@ -1,4 +1,7 @@
-const UserProfileModel = require("../../db/models/UserProfile")
+const UserProfileModel = require("../../db/models/UserProfile");
+const utilHelper = require("./utilHelper");
+let path = require("path")
+
 
 let profileHelper = {
 
@@ -189,6 +192,47 @@ let profileHelper = {
                 statusCode: 500,
                 status: false,
                 msg: "Internal Server Error"
+            }
+        }
+    },
+
+    updateProfilePicture: async (user_id, newProfilePicture) => {
+        try {
+
+            let findUser = await UserProfileModel.findOne({ user_id });
+            if (findUser) {
+                let randomText = utilHelper.createRandomText(4)
+                let profilePictureName = findUser.last_name + randomText + newProfilePicture.name;
+
+                utilHelper.moveFile(newProfilePicture, path.join(__dirname, "images/user_profile", profilePictureName), async () => {
+                    findUser.profile_picture = profilePictureName
+                    await findUser.save()
+                    return {
+                        status: true,
+                        statusCode: 200,
+                        msg: "Profile picture has been updated"
+                    }
+                }, (err) => {
+                    console.log(err);
+                    return {
+                        status: false,
+                        statusCode: 500,
+                        msg: "Internal Server Error"
+                    }
+                })
+            } else {
+                return {
+                    status: false,
+                    statusCode: 400,
+                    msg: "Authentication failed"
+                }
+            }
+        } catch (e) {
+            console.log(e);
+            return {
+                status: false,
+                statusCode: 500,
+                msg: "Internal Servor Error"
             }
         }
     }

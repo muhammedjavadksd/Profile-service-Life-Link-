@@ -86,6 +86,33 @@ let updateProfileController = {
         }
     },
 
+    profilePictureUpdation: async (req, res, next) => {
+
+        try {
+
+            let user_id = req.context.user_id;
+            let profilePicture = req.files.profile_picture;
+
+            if (user_id && profilePicture) {
+                let updateProfilePicture = await profileHelper.updateProfilePicture(user_id, profilePicture);
+                res.status(updateProfilePicture.statusCode).json({
+                    status: updateProfilePicture.statusCode,
+                    msg: updateProfilePicture.msg
+                })
+            } else {
+                res.status(400).json({
+                    status: false,
+                    msg: "Please provide valid image"
+                })
+            }
+        } catch (e) {
+            res.status(500).json({
+                status: 500,
+                msg: "Internal Server Error"
+            })
+        }
+    }
+
 
 }
 

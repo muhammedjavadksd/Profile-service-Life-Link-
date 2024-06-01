@@ -18,6 +18,10 @@ let userProfileScheme = {
         type: String,
         required: true
     },
+    profile_picture: {
+        type: String,
+        required: false
+    },
     location: {
         type: {
             latitude: {
