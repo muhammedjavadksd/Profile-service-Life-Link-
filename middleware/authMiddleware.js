@@ -10,19 +10,25 @@ let authMiddleware = {
         try {
             if (authorization) {
                 let auth_data = authorization.split(" ");
+
                 if (auth_data[0] == "Bearer") {
+                    console.log("Have valid bearer");
                     let token = auth_data[1];
+
                     let tokenValidity = await tokenHelper.decodeJWTToken(token);
+                    console.log("Token decode");
+                    console.log(tokenValidity);
                     if (tokenValidity) {
                         if (!req.context) {
                             req.context = {}
                         }
 
-                        req.context = token;
-                        req.context.user_id = tokenValidity.user_id;
-                        req.context.email_id = tokenValidity.email_id
+                        req.context.token = token;
+                        req.context.user_id = tokenValidity.id;
+                        req.context.email_id = tokenValidity.email
 
                         next()
+                        return;
                     }
                 }
             }
