@@ -1,3 +1,4 @@
+const ProfileDataProvider = require("../../../communication/Provider/ProfileProvider");
 const UserProfileModel = require("../../db/models/UserProfile");
 const utilHelper = require("./utilHelper");
 let path = require("path")
@@ -45,6 +46,9 @@ let profileHelper = {
                     otp_expire_time: otpTimer
                 }
 
+                ProfileDataProvider.profileUpdateNotification(findUser.email, "PHONE", otpNumber, (findUser.first_name + "  " + findUser.last_name))
+
+
                 findUser.save().then(() => {
                     return {
                         statusCode: 200,
@@ -84,6 +88,8 @@ let profileHelper = {
                     otp: otpNumber,
                     otp_expire_time: otpTimer
                 }
+
+                ProfileDataProvider.profileUpdateNotification(findUser.email, "EMAIL", otpNumber, (findUser.first_name + "  " + findUser.last_name))
 
                 findUser.save().then(() => {
                     return {
@@ -129,6 +135,10 @@ let profileHelper = {
                             userData.email = newEmailID;
                             userData.contact_update.email = {};
                             await userData.save()
+                            ProfileDataProvider.updateAuthData({
+                                email: newEmailID,
+                                profile_id: userData.id
+                            })
                             return {
                                 statusCode: 200,
                                 status: true,
@@ -160,6 +170,10 @@ let profileHelper = {
                             userData.phone_number = newPhoneNumber;
                             userData.contact_update.phone_number = {};
                             await userData.save()
+                            ProfileDataProvider.updateAuthData({
+                                phone_number: newPhoneNumber,
+                                profile_id: userData.id
+                            })
                             return {
                                 statusCode: 200,
                                 status: true,

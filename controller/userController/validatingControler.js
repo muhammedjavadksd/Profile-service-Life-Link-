@@ -13,6 +13,7 @@ let validatingControler = {
             if (user_id && otp && otp_type) {
                 if (allowedOtpTypes.includes(otp_type)) {
                     profileHelper.validateUpdateProfileOTP(otp, otp_type, user_id).then((data) => {
+
                         res.status(data.statusCode).json({
                             status: data.status,
                             msg: data.msg

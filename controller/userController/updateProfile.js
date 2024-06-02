@@ -1,3 +1,4 @@
+const ProfileDataProvider = require("../../communication/Provider/ProfileProvider");
 const profileHelper = require("../../config/util/helper/profileHelper");
 
 
@@ -13,6 +14,10 @@ let updateProfileController = {
         console.log("User profile is :");
         console.log(userProfile);
         profileHelper.updateProfile(userProfile, user_id).then((data) => {
+            ProfileDataProvider.updateAuthData({
+                ...user_profile,
+                profile_id: user_id
+            })
             res.status(200).json({
                 status: true,
                 msg: "Profile has been updated"
