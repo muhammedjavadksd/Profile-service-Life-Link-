@@ -18,6 +18,10 @@ let userProfileScheme = {
         type: String,
         required: true
     },
+    profile_picture: {
+        type: String,
+        required: false
+    },
     location: {
         type: {
             latitude: {
@@ -30,6 +34,44 @@ let userProfileScheme = {
             }
         },
         required: false
+    },
+    contact_update: {
+        email: {
+            new_email_id: {
+                type: String,
+                required: true
+            },
+            otp: {
+                type: Number,
+                required: function () {
+                    return this.email && this.new_email_id
+                }
+            },
+            otp_expire_time: {
+                type: Number,
+                required: function () {
+                    return this.email && this.new_email_id
+                }
+            }
+        },
+        phone_number: {
+            new_phone_number: {
+                type: String,
+                required: true
+            },
+            otp: {
+                type: Number,
+                required: function () {
+                    return this.phone_number && this.new_phone_number
+                }
+            },
+            otp_expire_time: {
+                type: Number,
+                required: function () {
+                    return this.phone_number && this.new_phone_number
+                }
+            }
+        }
     },
     phone_number: {
         type: String,
