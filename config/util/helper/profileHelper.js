@@ -40,6 +40,23 @@ let profileHelper = {
 
             if (findUser) {
 
+                let checkPhoneNumberUniques = await UserProfileModel.findOne({ phone_number: newPhoneNumber });
+                if (checkPhoneNumberUniques) {
+                    return {
+                        statusCode: 409,
+                        status: true,
+                        msg: "Phone number already exist"
+                    }
+                }
+
+                if (findUser.phone_number == newPhoneNumber) {
+                    return {
+                        statusCode: 400,
+                        status: true,
+                        msg: "The new number you provided is the same as your current number."
+                    }
+                }
+
                 findUser.contact_update.phone_number = {
                     new_phone_number: newPhoneNumber,
                     otp: otpNumber,
