@@ -100,6 +100,25 @@ let profileHelper = {
 
             if (findUser) {
 
+
+                let checkEmailUniquness = await UserProfileModel.findOne({ email: newEmailAddress });
+
+                if (checkEmailUniquness) {
+                    return {
+                        statusCode: 409,
+                        status: true,
+                        msg: "Email id already exist"
+                    }
+                }
+
+                if (findUser.email == newEmailAddress) {
+                    return {
+                        statusCode: 400,
+                        status: true,
+                        msg: "The new email address you provided is the same as your current email address."
+                    }
+                }
+
                 findUser.contact_update.email = {
                     new_email_id: newEmailAddress,
                     otp: otpNumber,
