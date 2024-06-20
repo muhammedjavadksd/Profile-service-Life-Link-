@@ -42,7 +42,7 @@ let updateProfileController = {
                 console.log("User id for the user :  " + user_id);
 
                 let updatePhoneNumber = await profileHelper.updatePhoneNumber(new_phone_number, user_id);
-
+                console.log(updatePhoneNumber);
                 res.status(updatePhoneNumber.statusCode).json({
                     status: updatePhoneNumber.status,
                     msg: updatePhoneNumber.msg
@@ -71,9 +71,10 @@ let updateProfileController = {
 
             if (new_email_id && user_id) {
                 let updateEmailID = await profileHelper.updateEmailAddress(new_email_id, user_id);
+                console.log(updateEmailID);
                 res.status(updateEmailID.statusCode).json({
-                    status: updatePhoneNumber.status,
-                    msg: updatePhoneNumber.msg
+                    status: updateEmailID.status,
+                    msg: updateEmailID.msg
                 })
             } else {
                 res.status(400).json({

@@ -39,7 +39,7 @@ let userProfileScheme = {
         email: {
             new_email_id: {
                 type: String,
-                required: true
+                required: false
             },
             otp: {
                 type: Number,
@@ -57,7 +57,7 @@ let userProfileScheme = {
         phone_number: {
             new_phone_number: {
                 type: String,
-                required: true
+                required: false
             },
             otp: {
                 type: Number,

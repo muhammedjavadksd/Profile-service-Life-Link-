@@ -34,7 +34,7 @@ let ProfileDataProvider = {
     },
 
 
-    profileUpdateNotification: async (email_id, type, otp, full_name) => {
+    profileUpdateNotification: async function (email_id, type, otp, full_name) {
 
         let queueName = process.env.EMAIL_PROFILE_UPDATE_OTP;
         try {
