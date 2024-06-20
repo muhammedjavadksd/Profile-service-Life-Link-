@@ -1,4 +1,5 @@
 const ProfileDataProvider = require("../../../communication/Provider/ProfileProvider");
+const constant_data = require("../../const/const");
 const UserProfileModel = require("../../db/models/UserProfile");
 const utilHelper = require("./utilHelper");
 let path = require("path")
@@ -36,18 +37,12 @@ let profileHelper = {
             let findUser = await UserProfileModel.findOne({ user_id: user_id });
 
             let otpNumber = utilHelper.createOtpNumber(6);
-            let otpTimer = constant_data.MINIMUM_OTP_TIMER;
+            let otpTimer = constant_data.MINIMUM_OTP_TIMER();
 
             if (findUser) {
 
+
                 let checkPhoneNumberUniques = await UserProfileModel.findOne({ phone_number: newPhoneNumber });
-                if (checkPhoneNumberUniques) {
-                    return {
-                        statusCode: 409,
-                        status: true,
-                        msg: "Phone number already exist"
-                    }
-                }
 
                 if (findUser.phone_number == newPhoneNumber) {
                     return {
@@ -57,6 +52,13 @@ let profileHelper = {
                     }
                 }
 
+                if (checkPhoneNumberUniques) {
+                    return {
+                        statusCode: 409,
+                        status: true,
+                        msg: "Phone number already exist"
+                    }
+                }
                 findUser.contact_update.phone_number = {
                     new_phone_number: newPhoneNumber,
                     otp: otpNumber,
@@ -66,13 +68,14 @@ let profileHelper = {
                 ProfileDataProvider.profileUpdateNotification(findUser.email, "PHONE", otpNumber, (findUser.first_name + "  " + findUser.last_name))
 
 
-                findUser.save().then(() => {
-                    return {
-                        statusCode: 200,
-                        status: true,
-                        msg: "OTP has been sent to mail"
-                    }
-                })
+                await findUser.save();
+                console.log("All done");
+                return {
+                    statusCode: 200,
+                    status: true,
+                    msg: "OTP has been sent to mail"
+                }
+
             } else {
                 return {
                     statusCode: 401,
@@ -96,11 +99,18 @@ let profileHelper = {
             let findUser = await UserProfileModel.findOne({ user_id: user_id });
 
             let otpNumber = utilHelper.createOtpNumber(6);
-            let otpTimer = constant_data.MINIMUM_OTP_TIMER;
+            let otpTimer = constant_data.MINIMUM_OTP_TIMER();
 
             if (findUser) {
 
 
+                if (findUser.email == newEmailAddress) {
+                    return {
+                        statusCode: 400,
+                        status: true,
+                        msg: "The new email address you provided is the same as your current email address."
+                    }
+                }
                 let checkEmailUniquness = await UserProfileModel.findOne({ email: newEmailAddress });
 
                 if (checkEmailUniquness) {
@@ -111,13 +121,6 @@ let profileHelper = {
                     }
                 }
 
-                if (findUser.email == newEmailAddress) {
-                    return {
-                        statusCode: 400,
-                        status: true,
-                        msg: "The new email address you provided is the same as your current email address."
-                    }
-                }
 
                 findUser.contact_update.email = {
                     new_email_id: newEmailAddress,
@@ -125,15 +128,15 @@ let profileHelper = {
                     otp_expire_time: otpTimer
                 }
 
-                ProfileDataProvider.profileUpdateNotification(findUser.email, "EMAIL", otpNumber, (findUser.first_name + "  " + findUser.last_name))
+                ProfileDataProvider.profileUpdateNotification(newEmailAddress, "EMAIL", otpNumber, (findUser.first_name + "  " + findUser.last_name))
 
-                findUser.save().then(() => {
-                    return {
-                        statusCode: 200,
-                        status: true,
-                        msg: "OTP has been sent to mail"
-                    }
-                })
+                await findUser.save()
+                return {
+                    statusCode: 200,
+                    status: true,
+                    msg: "OTP has been sent to mail"
+                }
+
             } else {
                 return {
                     statusCode: 401,
@@ -167,13 +170,15 @@ let profileHelper = {
                     //OTP correction checking
                     if (otp_number == userOTPNumber) {
                         //expire checking
-                        if (expireTime < new Date().getUTCMilliseconds()) {
+
+
+                        if (expireTime > Date.now()) {
                             userData.email = newEmailID;
                             userData.contact_update.email = {};
                             await userData.save()
                             ProfileDataProvider.updateAuthData({
-                                email: newEmailID,
-                                profile_id: userData.id
+                                edit_details: { email: newEmailID },
+                                profile_id: userData.user_id
                             })
                             return {
                                 statusCode: 200,
@@ -200,15 +205,23 @@ let profileHelper = {
                     let newPhoneNumber = userData.contact_update.phone_number.new_phone_number;
 
                     //OTP correction checking
+
+                    console.log("Original OTP is :");
                     if (otp_number == userOTPNumber) {
+                        console.log("Current time is : " + Date.now());
+                        console.log("Expire time is- : " + expireTime);
+
+
                         //expire checking
-                        if (expireTime < new Date().getUTCMilliseconds()) {
-                            userData.phone_number = newPhoneNumber;
+                        if (expireTime > Date.now()) {
+                            userData.phone_number = Number(newPhoneNumber);
                             userData.contact_update.phone_number = {};
                             await userData.save()
                             ProfileDataProvider.updateAuthData({
-                                phone_number: newPhoneNumber,
-                                profile_id: userData.id
+                                edit_details: {
+                                    phone_number: Number(newPhoneNumber),
+                                },
+                                profile_id: userData.user_id
                             })
                             return {
                                 statusCode: 200,

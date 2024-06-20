@@ -23,12 +23,16 @@ let authMiddleware = {
                             req.context = {}
                         }
 
+                        console.log("The user");
+                        console.log(tokenValidity);
+
                         req.context.token = token;
                         req.context.user_id = tokenValidity.id;
                         req.context.email_id = tokenValidity.email
 
                         next()
                         return;
+                        
                     }
                 }
             }
