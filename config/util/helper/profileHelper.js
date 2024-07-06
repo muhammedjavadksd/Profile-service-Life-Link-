@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const ProfileDataProvider = require("../../../communication/Provider/ProfileProvider");
 const constant_data = require("../../const/const");
 const UserProfileModel = require("../../db/models/UserProfile");
@@ -297,6 +298,34 @@ let profileHelper = {
                 statusCode: 500,
                 msg: "Internal Servor Error"
             }
+        }
+    },
+
+
+    getProfileByIds: async (ids) => {
+
+        console.log(ids);
+        console.log("JSON data");
+        let profileIds = JSON.parse(ids)
+        console.log(profileIds);
+
+
+        try {
+
+            const objectIds = profileIds.map(id => new mongoose.Types.ObjectId(id));
+            console.log(objectIds);
+
+            let allUsers = await UserProfileModel.find({
+                user_id: {
+                    $in: objectIds
+                }
+            });
+
+            console.log(allUsers);
+            return allUsers;
+        } catch (e) {
+            console.log(e);
+            return null;
         }
     }
 }
