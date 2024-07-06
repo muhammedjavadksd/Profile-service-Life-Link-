@@ -4,10 +4,12 @@ const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
 const bulkConsumer = require("./communication/bulkConsumer");
+const cors = require("cors")
 
 //middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+
 
 dotenv.config("./.env");
 bulkConsumer()
