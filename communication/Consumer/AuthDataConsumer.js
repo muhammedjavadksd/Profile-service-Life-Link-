@@ -26,7 +26,8 @@ async function authDataConsumer() {
                     last_name,
                     location,
                     phone_number,
-                    user_id
+                    user_id,
+                    profile_id
                 } = data;
 
                 profileHelper.insertUser(data)

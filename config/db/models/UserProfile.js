@@ -4,7 +4,8 @@ const { default: mongoose } = require("mongoose");
 let userProfileScheme = {
     user_id: {
         type: mongoose.Types.ObjectId,
-        required: true
+        required: true,
+        unique: true
     },
     email: {
         type: String,
@@ -77,7 +78,7 @@ let userProfileScheme = {
         type: String,
         required: true
     },
-    user_id: {
+    profile_id: {
         type: String,
         required: true
     },
