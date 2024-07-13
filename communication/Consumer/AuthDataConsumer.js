@@ -20,17 +20,17 @@ async function authDataConsumer() {
                 console.log("Auth transfer data");
                 console.log(data);
 
-                let {
-                    email,
-                    first_name,
-                    last_name,
-                    location,
-                    phone_number,
-                    user_id,
-                    profile_id
-                } = data;
+                const insertData = {
+                    email: data.email,
+                    first_name: data.first_name,
+                    last_name: data.last_name,
+                    location: data.location,
+                    user_id: data.user_id,
+                    phone_number: data.phone_number,
+                    profile_id: data.profile_id
+                }
 
-                profileHelper.insertUser(data)
+                profileHelper.insertUser(insertData)
 
             }
         }, { noAck: true })

@@ -7,6 +7,8 @@ let authMiddleware = {
         let headers = req.headers;
         let authorization = headers?.authorization;
 
+        console.log(authorization);
+
         try {
             if (authorization) {
                 let auth_data = authorization.split(" ");
@@ -14,6 +16,7 @@ let authMiddleware = {
                 if (auth_data[0] == "Bearer") {
                     console.log("Have valid bearer");
                     let token = auth_data[1];
+                    console.log(token);
 
                     let tokenValidity = await tokenHelper.decodeJWTToken(token);
                     console.log("Token decode");
@@ -27,7 +30,7 @@ let authMiddleware = {
                         console.log(tokenValidity);
 
                         req.context.token = token;
-                        req.context.user_id = tokenValidity.id;
+                        req.context.user_id = tokenValidity.user_id;
                         req.context.email_id = tokenValidity.email
 
                         next()
