@@ -44,12 +44,7 @@ let updateProfileController = {
                 console.log("User id for the user :  " + user_id);
 
                 let updatePhoneNumber = await profileHelper.updatePhoneNumber(new_phone_number, user_id);
-                ProfileDataProvider.updateAuthData({
-                    edit_details: {
-                        phone_number: new_phone_number
-                    },
-                    profile_id: user_id
-                })
+                
                 res.status(updatePhoneNumber.statusCode).json({
                     status: updatePhoneNumber.status,
                     msg: updatePhoneNumber.msg
