@@ -6,9 +6,9 @@ async function authDataConsumer() {
 
 
     try {
-        let queueName = process.env.AUTH_TRANSFER;
+        const queueName = process.env.AUTH_TRANSFER;
         console.log("Queue name is : " + queueName);
-        let channel = await createConnection();
+        const channel = await createConnection();
 
         channel.assertQueue(queueName, { durable: true });
         channel.consume(queueName, (msg) => {
@@ -16,7 +16,7 @@ async function authDataConsumer() {
             if (msg) {
                 console.log("The message is");
                 console.log(JSON.parse(msg.content.toString()));
-                let data = JSON.parse(msg.content.toString())
+                const data = JSON.parse(msg.content.toString())
                 console.log("Auth transfer data");
                 console.log(data);
 

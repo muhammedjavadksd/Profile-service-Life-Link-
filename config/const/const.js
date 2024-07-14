@@ -1,5 +1,5 @@
 
-let constant_data = {
+const constant_data = {
 
     MINIMUM_OTP_TIMER: () => Date.now() + 1800000,
 }

@@ -2,14 +2,14 @@ const ProfileDataProvider = require("../../communication/Provider/ProfileProvide
 const profileHelper = require("../../config/util/helper/profileHelper");
 
 
-let updateProfileController = {
+const updateProfileController = {
 
     updateProfile: (req, res) => {
 
         console.log(req.context);
 
-        let userProfile = req.body.user_profile;
-        let user_id = req.context.user_id;
+        const userProfile = req.body.user_profile;
+        const user_id = req.context.user_id;
         console.log("User ID", user_id);
         console.log("User profile is :");
         console.log(userProfile);
@@ -35,15 +35,15 @@ let updateProfileController = {
 
     updatePhoneNumber: async (req, res, next) => {
 
-        let new_phone_number = req.body.new_phone_number;
-        let user_id = req.context.user_id;
+        const new_phone_number = req.body.new_phone_number;
+        const user_id = req.context.user_id;
 
         try {
             if (new_phone_number && user_id) {
                 console.log("New phone number is : " + new_phone_number);
                 console.log("User id for the user :  " + user_id);
 
-                let updatePhoneNumber = await profileHelper.updatePhoneNumber(new_phone_number, user_id);
+                const updatePhoneNumber = await profileHelper.updatePhoneNumber(new_phone_number, user_id);
                 
                 res.status(updatePhoneNumber.statusCode).json({
                     status: updatePhoneNumber.status,
@@ -68,11 +68,11 @@ let updateProfileController = {
 
         try {
 
-            let new_email_id = req.body.new_email_id;
-            let user_id = req.context.user_id;
+            const new_email_id = req.body.new_email_id;
+            const user_id = req.context.user_id;
 
             if (new_email_id && user_id) {
-                let updateEmailID = await profileHelper.updateEmailAddress(new_email_id, user_id);
+                const updateEmailID = await profileHelper.updateEmailAddress(new_email_id, user_id);
                 console.log(updateEmailID);
                 res.status(updateEmailID.statusCode).json({
                     status: updateEmailID.status,
@@ -98,11 +98,11 @@ let updateProfileController = {
 
         try {
 
-            let user_id = req.context.user_id;
-            let profilePicture = req.files.profile_picture;
+            const user_id = req.context.user_id;
+            const profilePicture = req.files.profile_picture;
 
             if (user_id && profilePicture) {
-                let updateProfilePicture = await profileHelper.updateProfilePicture(user_id, profilePicture);
+                const updateProfilePicture = await profileHelper.updateProfilePicture(user_id, profilePicture);
                 res.status(updateProfilePicture.statusCode).json({
                     status: updateProfilePicture.statusCode,
                     msg: updateProfilePicture.msg

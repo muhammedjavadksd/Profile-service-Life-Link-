@@ -1,7 +1,7 @@
 const { default: mongoose } = require("mongoose");
 
 
-let userProfileScheme = {
+const userProfileScheme = {
     user_id: {
         type: mongoose.Types.ObjectId,
         required: true,
@@ -85,6 +85,6 @@ let userProfileScheme = {
     },
 }
 
-let schemeModel = new mongoose.Schema(userProfileScheme);
-let UserProfileModel = mongoose.model("user_profile", schemeModel, "user_profile");
+const schemeModel = new mongoose.Schema(userProfileScheme);
+const UserProfileModel = mongoose.model("user_profile", schemeModel, "user_profile");
 module.exports = UserProfileModel;

@@ -1,7 +1,7 @@
 
 const jwt = require("jsonwebtoken");
 
-let tokenHelper = {
+const tokenHelper = {
 
 
     decodeJWTToken: async (token) => {
@@ -9,7 +9,7 @@ let tokenHelper = {
         console.log(process.env.JWT_SECRET);
 
         try {
-            let tokenValidity = await jwt.verify(token, process.env.JWT_SECRET);
+            const tokenValidity = await jwt.verify(token, process.env.JWT_SECRET);
             return tokenValidity
         } catch (e) {
             console.log(e);
@@ -19,7 +19,7 @@ let tokenHelper = {
 
     checkTokenValidity: async (token) => {
         try {
-            let checkValidity = await jwt.verify(token, process.env.JWT_SECRET);
+            const checkValidity = await jwt.verify(token, process.env.JWT_SECRET);
             console.log("Token validity is : ");
             console.log(checkValidity);
             return checkValidity

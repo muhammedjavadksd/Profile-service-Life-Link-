@@ -2,12 +2,12 @@
 const profileHelper = require("../../config/util/helper/profileHelper");
 
 
-let profileController = {
+const profileController = {
 
     getUserByIdsController: async (req, res, next) => {
 
         try {
-            let user_ids = req.body.user_ids;
+            const user_ids = req.body.user_ids;
 
             console.log(req.body);
 
@@ -16,7 +16,7 @@ let profileController = {
 
             if (user_ids?.length) {
 
-                let findProfiles = await profileHelper.getProfileByIds(user_ids)
+                const findProfiles = await profileHelper.getProfileByIds(user_ids)
                 console.log(findProfiles);
                 if (findProfiles?.length) {
                     res.status(200).json({ status: true, profile: findProfiles })

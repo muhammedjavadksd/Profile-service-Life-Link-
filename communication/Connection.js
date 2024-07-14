@@ -1,4 +1,4 @@
-let amqplib = require("amqplib");
+const amqplib = require("amqplib");
 
 async function createConnection() {
     const connection = await amqplib.connect("amqp://localhost");

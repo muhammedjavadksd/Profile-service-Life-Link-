@@ -1,14 +1,14 @@
 const profileHelper = require("../../config/util/helper/profileHelper");
 
 
-let validatingControler = {
+const validatingControler = {
     profileUpdateOTPSubmission: (req, res, next) => {
         try {
 
-            let otp = req.body.otp_number;
-            let allowedOtpTypes = ['EMAIL', 'PHONE'];
-            let otp_type = req.body.otp_type;
-            let user_id = req.context.user_id;
+            const otp = req.body.otp_number;
+            const allowedOtpTypes = ['EMAIL', 'PHONE'];
+            const otp_type = req.body.otp_type;
+            const user_id = req.context.user_id;
 
             if (user_id && otp && otp_type) {
                 if (allowedOtpTypes.includes(otp_type)) {

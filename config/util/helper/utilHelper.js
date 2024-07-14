@@ -1,5 +1,5 @@
 
-let utilHelper = {
+const utilHelper = {
 
 
     createOtpNumber: (length) => {

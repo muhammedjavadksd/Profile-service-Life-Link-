@@ -1,12 +1,12 @@
-let amqplib = require("amqplib")
+const amqplib = require("amqplib")
 
-let ProfileDataProvider = {
+const ProfileDataProvider = {
 
     _getChannel: async (queueName) => {
 
         try {
-            let connection = await amqplib.connect("amqp://localhost");
-            let channel = await connection.createChannel();
+            const connection = await amqplib.connect("amqp://localhost");
+            const channel = await connection.createChannel();
             channel.assertQueue(queueName)
             return channel
         } catch (e) {
@@ -17,9 +17,9 @@ let ProfileDataProvider = {
 
     updateAuthData: async function (data) {
 
-        let queueName = process.env.AUTH_DATA_UPDATE_QUEUE;
+        const queueName = process.env.AUTH_DATA_UPDATE_QUEUE;
         try {
-            let channel = await this._getChannel(queueName);
+            const channel = await this._getChannel(queueName);
             if (channel) {
                 channel.sendToQueue(queueName, Buffer.from(JSON.stringify(data)));
                 console.log("Auth data has been transfered");
@@ -36,10 +36,10 @@ let ProfileDataProvider = {
 
     profileUpdateNotification: async function (email_id, type, otp, full_name) {
 
-        let queueName = process.env.EMAIL_PROFILE_UPDATE_OTP;
+        const queueName = process.env.EMAIL_PROFILE_UPDATE_OTP;
         try {
 
-            let channel = await this._getChannel(queueName);
+            const channel = await this._getChannel(queueName);
             if (channel) {
                 channel.sendToQueue(queueName, Buffer.from(JSON.stringify({
                     email_id,

@@ -3,14 +3,14 @@ const ProfileDataProvider = require("../../../communication/Provider/ProfileProv
 const constant_data = require("../../const/const");
 const UserProfileModel = require("../../db/models/UserProfile");
 const utilHelper = require("./utilHelper");
-let path = require("path")
+const path = require("path")
 
 
-let profileHelper = {
+const profileHelper = {
 
     insertUser: (profile) => {
 
-        let model = new UserProfileModel(profile)
+        const model = new UserProfileModel(profile)
         model.save().then((data) => {
             console.log("Profile created success");
         }).catch((err) => {
@@ -35,15 +35,15 @@ let profileHelper = {
 
         try {
 
-            let findUser = await UserProfileModel.findOne({ user_id: user_id });
+            const findUser = await UserProfileModel.findOne({ user_id: user_id });
 
-            let otpNumber = utilHelper.createOtpNumber(6);
-            let otpTimer = constant_data.MINIMUM_OTP_TIMER();
+            const otpNumber = utilHelper.createOtpNumber(6);
+            const otpTimer = constant_data.MINIMUM_OTP_TIMER();
 
             if (findUser) {
 
 
-                let checkPhoneNumberUniques = await UserProfileModel.findOne({ phone_number: newPhoneNumber });
+                const checkPhoneNumberUniques = await UserProfileModel.findOne({ phone_number: newPhoneNumber });
 
                 if (findUser.phone_number == newPhoneNumber) {
                     return {
@@ -97,10 +97,10 @@ let profileHelper = {
     updateEmailAddress: async (newEmailAddress, user_id) => {
         try {
 
-            let findUser = await UserProfileModel.findOne({ user_id: user_id });
+            const findUser = await UserProfileModel.findOne({ user_id: user_id });
 
-            let otpNumber = utilHelper.createOtpNumber(6);
-            let otpTimer = constant_data.MINIMUM_OTP_TIMER();
+            const otpNumber = utilHelper.createOtpNumber(6);
+            const otpTimer = constant_data.MINIMUM_OTP_TIMER();
 
             if (findUser) {
 
@@ -112,7 +112,7 @@ let profileHelper = {
                         msg: "The new email address you provided is the same as your current email address."
                     }
                 }
-                let checkEmailUniquness = await UserProfileModel.findOne({ email: newEmailAddress });
+                const checkEmailUniquness = await UserProfileModel.findOne({ email: newEmailAddress });
 
                 if (checkEmailUniquness) {
                     return {
@@ -160,13 +160,13 @@ let profileHelper = {
 
         try {
 
-            let userData = await UserProfileModel.findOne({ user_id });
+            const userData = await UserProfileModel.findOne({ user_id });
             if (userData) {
 
                 if (type == "EMAIL") {
-                    let userOTPNumber = userData.contact_update.email.otp;
-                    let expireTime = userData.contact_update.email.otp_expire_time;
-                    let newEmailID = userData.contact_update.email.new_email_id;
+                    const userOTPNumber = userData.contact_update.email.otp;
+                    const expireTime = userData.contact_update.email.otp_expire_time;
+                    const newEmailID = userData.contact_update.email.new_email_id;
 
                     //OTP correction checking
                     if (otp_number == userOTPNumber) {
@@ -201,9 +201,9 @@ let profileHelper = {
                         }
                     }
                 } else {
-                    let userOTPNumber = userData.contact_update.phone_number.otp;
-                    let expireTime = userData.contact_update.phone_number.otp_expire_time;
-                    let newPhoneNumber = userData.contact_update.phone_number.new_phone_number;
+                    const userOTPNumber = userData.contact_update.phone_number.otp;
+                    const expireTime = userData.contact_update.phone_number.otp_expire_time;
+                    const newPhoneNumber = userData.contact_update.phone_number.new_phone_number;
 
                     //OTP correction checking
 
@@ -263,10 +263,10 @@ let profileHelper = {
     updateProfilePicture: async (user_id, newProfilePicture) => {
         try {
 
-            let findUser = await UserProfileModel.findOne({ user_id });
+            const findUser = await UserProfileModel.findOne({ user_id });
             if (findUser) {
-                let randomText = utilHelper.createRandomText(4)
-                let profilePictureName = findUser.last_name + randomText + newProfilePicture.name;
+                const randomText = utilHelper.createRandomText(4)
+                const profilePictureName = findUser.last_name + randomText + newProfilePicture.name;
 
                 utilHelper.moveFile(newProfilePicture, path.join(__dirname, "images/user_profile", profilePictureName), async () => {
                     findUser.profile_picture = profilePictureName
@@ -306,7 +306,7 @@ let profileHelper = {
 
         console.log(ids);
         console.log("JSON data");
-        let profileIds = JSON.parse(ids)
+        const profileIds = JSON.parse(ids)
         console.log(profileIds);
 
 
@@ -315,7 +315,7 @@ let profileHelper = {
             const objectIds = profileIds.map(id => new mongoose.Types.ObjectId(id));
             console.log(objectIds);
 
-            let allUsers = await UserProfileModel.find({
+            const allUsers = await UserProfileModel.find({
                 user_id: {
                     $in: objectIds
                 }

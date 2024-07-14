@@ -22,5 +22,5 @@ function createUser() {
     })
 }
 
-let userOutput = createUser();
+const userOutput = createUser();
 console.log(userOutput.statusCode)

@@ -1,24 +1,24 @@
 const tokenHelper = require("../config/util/helper/tokenHelper");
 
 
-let authMiddleware = {
+const authMiddleware = {
 
     isValidUser: async (req, res, next) => {
-        let headers = req.headers;
-        let authorization = headers?.authorization;
+        const headers = req.headers;
+        const authorization = headers?.authorization;
 
         console.log(authorization);
 
         try {
             if (authorization) {
-                let auth_data = authorization.split(" ");
+                const auth_data = authorization.split(" ");
 
                 if (auth_data[0] == "Bearer") {
                     console.log("Have valid bearer");
-                    let token = auth_data[1];
+                    const token = auth_data[1];
                     console.log(token);
 
-                    let tokenValidity = await tokenHelper.decodeJWTToken(token);
+                    const tokenValidity = await tokenHelper.decodeJWTToken(token);
                     console.log("Token decode");
                     console.log(tokenValidity);
                     if (tokenValidity) {
@@ -54,7 +54,7 @@ let authMiddleware = {
 
 
     isValidAdmin: async (req, res, next) => {
-        let headers = req.headers;
+        const headers = req.headers;
         console.log("Admin headers");
         console.log(headers);
 
@@ -62,9 +62,9 @@ let authMiddleware = {
             if (!req.context) {
                 req.context = {}
             }
-            let token = req.headers.authorization.split(' ')[1]
+            const token = req.headers.authorization.split(' ')[1]
             req.context.auth_token = token;
-            let checkValidity = await tokenHelper.checkTokenValidity(token)
+            const checkValidity = await tokenHelper.checkTokenValidity(token)
             console.log(checkValidity);
             console.log(token);
             if (checkValidity) {
