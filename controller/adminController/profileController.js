@@ -4,6 +4,10 @@ const profileHelper = require("../../config/util/helper/profileHelper");
 
 const profileController = {
 
+    getSingleUserByProfileId: (req, res) => {
+
+    },
+
     getUserByIdsController: async (req, res, next) => {
 
         try {

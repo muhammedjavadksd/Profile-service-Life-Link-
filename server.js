@@ -21,7 +21,7 @@ const adminRouter = require("./router/adminRouter/index")
 const logger = require("morgan");
 // const bcrypt = require("bcrypt")
 //Config
-app.use(logger("common"))
+app.use(logger("combined"))
 profileDatabseConnection()
 
 

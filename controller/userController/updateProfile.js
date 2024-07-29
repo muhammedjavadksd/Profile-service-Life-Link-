@@ -1,8 +1,22 @@
+const { log } = require("forever");
 const ProfileDataProvider = require("../../communication/Provider/ProfileProvider");
 const profileHelper = require("../../config/util/helper/profileHelper");
 
 
 const updateProfileController = {
+
+
+    getProfile: async (req, res) => {
+        console.log("Email ID");
+        const email_id = req.context?.email_id;
+        console.log(email_id);
+        const findProfile = await profileHelper.getSingleProfile(email_id);
+        if (findProfile) {
+            res.status(200).json({ status: true, msg: "Profile fetched success", data: { profile: findProfile } })
+        } else {
+            res.status(404).json({ status: false, msg: "No profile found" })
+        }
+    },
 
     updateProfile: (req, res) => {
 
@@ -44,7 +58,7 @@ const updateProfileController = {
                 console.log("User id for the user :  " + user_id);
 
                 const updatePhoneNumber = await profileHelper.updatePhoneNumber(new_phone_number, user_id);
-                
+
                 res.status(updatePhoneNumber.statusCode).json({
                     status: updatePhoneNumber.status,
                     msg: updatePhoneNumber.msg

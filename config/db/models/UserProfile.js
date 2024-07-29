@@ -83,6 +83,9 @@ const userProfileScheme = {
         required: true,
         unique: true
     },
+    blood_donor_id: {
+        type: String,
+    }
 }
 
 const schemeModel = new mongoose.Schema(userProfileScheme);

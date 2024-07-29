@@ -327,6 +327,16 @@ const profileHelper = {
             console.log(e);
             return null;
         }
+    },
+
+
+    getSingleProfile: async (email_id) => {
+        try {
+            const singleProfile = await UserProfileModel.findOne({ email: email_id })
+            return singleProfile;
+        } catch (e) {
+            return null;
+        }
     }
 }
 

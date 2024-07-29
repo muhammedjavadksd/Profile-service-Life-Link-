@@ -7,6 +7,9 @@ const authMiddleware = {
         const headers = req.headers;
         const authorization = headers?.authorization;
 
+        console.log("headers");
+        console.log(headers);
+
         console.log(authorization);
 
         try {
@@ -28,6 +31,9 @@ const authMiddleware = {
 
                         console.log("The user");
                         console.log(tokenValidity);
+
+                        console.log("The token");
+                        console.log(token);
 
                         req.context.token = token;
                         req.context.user_id = tokenValidity.user_id;
