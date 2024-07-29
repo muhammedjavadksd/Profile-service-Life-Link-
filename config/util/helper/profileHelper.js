@@ -337,6 +337,11 @@ const profileHelper = {
         } catch (e) {
             return null;
         }
+    },
+
+    getSingleProfileByProfileId: async (profile_id) => {
+        const singleProfile = await UserProfileModel.findOne({ profile_id });
+        return singleProfile;
     }
 }
 

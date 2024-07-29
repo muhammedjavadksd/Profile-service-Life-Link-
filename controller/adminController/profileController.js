@@ -4,8 +4,19 @@ const profileHelper = require("../../config/util/helper/profileHelper");
 
 const profileController = {
 
-    getSingleUserByProfileId: (req, res) => {
+    getSingleUserByProfileId: async (req, res) => {
 
+        const profile_id = req.params.profile_id;
+        if (profile_id) {
+            const findProfile = await profileHelper.getSingleProfileByProfileId(profile_id);
+            if (findProfile) {
+                res.status(200).json({ status: true, msg: "Data fetched success", data: { profile: findProfile } })
+            } else {
+                res.status(404).json({ status: false, msg: "No profile found" })
+            }
+        } else {
+            res.status(400).json({ status: false, msg: "Please provide valid profile id" })
+        }
     },
 
     getUserByIdsController: async (req, res, next) => {
