@@ -1,5 +1,6 @@
-const { default: mongoose } = require("mongoose");
-
+// const { default: mongoose } = require("mongoose");
+import mongoose, { Schema } from "mongoose"
+import { IUserCollection, IUserProfile } from "../../util/types/Interface/CollectionInterface";
 
 const userProfileScheme = {
     user_id: {
@@ -40,19 +41,12 @@ const userProfileScheme = {
         email: {
             new_email_id: {
                 type: String,
-                required: false
             },
             otp: {
                 type: Number,
-                required: function () {
-                    return this.email && this.new_email_id
-                }
             },
             otp_expire_time: {
                 type: Number,
-                required: function () {
-                    return this.email && this.new_email_id
-                }
             }
         },
         phone_number: {
@@ -62,15 +56,9 @@ const userProfileScheme = {
             },
             otp: {
                 type: Number,
-                required: function () {
-                    return this.phone_number && this.new_phone_number
-                }
             },
             otp_expire_time: {
                 type: Number,
-                required: function () {
-                    return this.phone_number && this.new_phone_number
-                }
             }
         }
     },
@@ -88,6 +76,6 @@ const userProfileScheme = {
     }
 }
 
-const schemeModel = new mongoose.Schema(userProfileScheme);
-const UserProfileModel = mongoose.model("user_profile", schemeModel, "user_profile");
-module.exports = UserProfileModel;
+const schemeModel = new Schema<IUserCollection>(userProfileScheme);
+const UserProfileModel = mongoose.model<IUserCollection>("user_profile", schemeModel, "user_profile");
+export default UserProfileModel

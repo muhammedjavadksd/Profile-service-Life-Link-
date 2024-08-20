@@ -1,14 +1,18 @@
 
 // const express = require("express");
 import express from 'express';
+import UserProfileController from '../controller/userController';
+import AuthMiddleware from '../middleware/authMiddleware';
 
-const authMiddleware = require("../../middleware/authMiddleware");
+// const authMiddleware = require("../../middleware/authMiddleware");
 const updateProfileController = require("../../controller/userController/updateProfile");
 const validatingControler = require("../../controller/userController/validatingControler");
 const userRouter = express.Router();
 
+const userProfileController = new UserProfileController();
+const authMiddleware = new AuthMiddleware();
 
-userRouter.get("/get_profile", authMiddleware.isValidUser, updateProfileController.getProfile)
+userRouter.get("/get_profile", authMiddleware.isValidUser, userProfileController.getProfile)
 
 
 
