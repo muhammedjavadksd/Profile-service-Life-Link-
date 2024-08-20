@@ -67,4 +67,4 @@ interface ITicketTemplate {
 interface IUserCollection extends Document, IUserProfile { };
 interface ITicketCollection extends Document, ITicketTemplate { };
 
-export { IProfileEdit, IUserEditProfile, IUserCollection, IUserProfile, ITicketTemplate, ITicketCollection }
+export { IProfileEdit, IUserEditProfile, IUserCollection, IUserProfile, ITicketTemplate, ITicketCollection, ITicketChat }
