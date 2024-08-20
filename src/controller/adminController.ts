@@ -15,6 +15,13 @@ class AdminController {
     }
 
 
+    async getSingleTicket(req: Request, res: Response): Promise<void> {
+        const ticket_id: string = req.params.ticket_id
+
+        const findSingleTicket = await this.ticketServcie.getSingleTicketByTicketId(ticket_id, true);
+        res.status(findSingleTicket.statusCode).json({ status: findSingleTicket.status, msg: findSingleTicket.msg, data: findSingleTicket.data })
+    }
+
     async getTickets(req: Request, res: Response): Promise<void> {
         const limit: number = +req.params.limit;
         const page: number = +req.params.page;

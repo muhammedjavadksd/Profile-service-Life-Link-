@@ -148,9 +148,18 @@ class TicketService {
         }
     }
 
-    async getSingleTicketByTicketId(ticket_id: string): Promise<HelperFunctionResponse> {
+    async getSingleTicketByTicketId(ticket_id: string, from_admin: boolean, profile_id?: string): Promise<HelperFunctionResponse> {
         const singleTicket = await this.ticketRepo.findTicketById(ticket_id);
         if (singleTicket) {
+            if (!from_admin) {
+                if (singleTicket.profile_id != profile_id) {
+                    return {
+                        msg: "Ticket not found",
+                        status: false,
+                        statusCode: StatusCode.NOT_FOUND
+                    };
+                }
+            }
             return {
                 msg: "Ticket found",
                 status: true,

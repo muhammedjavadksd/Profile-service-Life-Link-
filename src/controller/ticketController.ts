@@ -33,11 +33,12 @@ class TicketController {
         }
     }
 
-    async getSingleTicketById(req: Request, res: Response): Promise<void> {
+    async getSingleTicketById(req: CustomRequest, res: Response): Promise<void> {
         const ticket_id: string | undefined = req.params.ticket_id;
+        const profile_id: string | undefined = req.context?.profile_id;
 
-        if (ticket_id) {
-            const getResponse: HelperFunctionResponse = await this.ticketService.getSingleTicketByTicketId(ticket_id);
+        if (ticket_id && profile_id) {
+            const getResponse: HelperFunctionResponse = await this.ticketService.getSingleTicketByTicketId(ticket_id, false, profile_id);
             res.status(getResponse.statusCode).json({ status: getResponse.status, msg: getResponse.msg, data: getResponse.data });
         } else {
             res.status(StatusCode.BAD_REQUEST).json({ status: false, msg: "Please provide a valid ticket ID" });
