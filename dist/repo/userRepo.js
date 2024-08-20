@@ -24,9 +24,21 @@ class UserRepo {
             return saveProfile === null || saveProfile === void 0 ? void 0 : saveProfile.id;
         });
     }
+    findUserByProfileId(profile_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const singleProfile = yield this.profileCollection.findOne({ profile_id });
+            return singleProfile;
+        });
+    }
     findUserByUserId(user_id) {
         return __awaiter(this, void 0, void 0, function* () {
             const singleProfile = yield this.profileCollection.findOne({ user_id });
+            return singleProfile;
+        });
+    }
+    findUserProfileByIds(user_ids) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const singleProfile = yield this.profileCollection.find({ user_id: { $in: user_ids } });
             return singleProfile;
         });
     }

@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongoose';
+import mongoose, { ObjectId } from 'mongoose';
 import ProfileCollection from '../database/models/UserProfile';
 import { IProfileEdit, IUserCollection, IUserEditProfile, IUserProfile } from '../util/types/Interface/CollectionInterface';
 
@@ -17,8 +17,18 @@ class UserRepo {
         return saveProfile?.id
     }
 
+    async findUserByProfileId(profile_id: string): Promise<IUserCollection | null> {
+        const singleProfile = await this.profileCollection.findOne({ profile_id })
+        return singleProfile
+    }
+
     async findUserByUserId(user_id: string): Promise<IUserCollection | null> {
         const singleProfile = await this.profileCollection.findOne({ user_id })
+        return singleProfile
+    }
+
+    async findUserProfileByIds(user_ids: mongoose.Types.ObjectId[]): Promise<IUserCollection[] | []> {
+        const singleProfile: IUserCollection[] = await this.profileCollection.find({ user_id: { $in: user_ids } })
         return singleProfile
     }
 
