@@ -53,13 +53,17 @@ class TicketController {
         }
     }
 
-    // List all tickets
-    async listTickets(req: Request, res: Response): Promise<void> {
-        try {
-            // Implement the list functionality if needed
-            res.status(StatusCode.NOT_IMPLEMENTED).json({ status: false, msg: "List tickets functionality is not implemented yet" });
-        } catch (error) {
-            res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ status: false, msg: "Server error", error });
+
+    async listTickets(req: CustomRequest, res: Response): Promise<void> {
+        const page: number = +req.params.page;
+        const limit: number = +req.params.limit;
+        const profile_id = req.context?.profile_id;
+
+        if (profile_id) {
+            const listTickets = await this.ticketService.listTickets(page, limit, profile_id);
+            res.status(listTickets.statusCode).json({ status: listTickets.status, msg: listTickets.msg, data: listTickets.data })
+        } else {
+            res.status(StatusCode.UNAUTHORIZED).json({ status: false, msg: "Unauthorized access" })
         }
     }
 }

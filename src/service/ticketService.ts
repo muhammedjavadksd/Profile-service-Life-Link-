@@ -95,6 +95,31 @@ class TicketService {
             };
         }
     }
+
+
+    async listTickets(page: number, limit: number, profile_id: string): Promise<HelperFunctionResponse> {
+        const skip: number = (page - 1) * limit;
+        const findTickets = await this.ticketRepo.findUserPaginedTicket(profile_id, skip, limit);
+        const countDocuments = await this.ticketRepo.countUserTicket(profile_id);
+        if (findTickets.length) {
+            return {
+                status: true,
+                msg: "Ticket found",
+                statusCode: StatusCode.OK,
+                data: {
+                    tickets: findTickets,
+                    total_records: countDocuments,
+                    total_pages: countDocuments / limit
+                }
+            }
+        } else {
+            return {
+                status: false,
+                msg: "No ticket found",
+                statusCode: StatusCode.NOT_FOUND,
+            }
+        }
+    }
 }
 
 export default TicketService;

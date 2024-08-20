@@ -26,6 +26,26 @@ class TicketRepo {
         return tickets;
     }
 
+    async countUserTicket(profile_id: string): Promise<number> {
+        const coundUserTickets: number = await this.ticketCollection.find({ profile_id }).countDocuments();
+        return coundUserTickets
+    }
+
+    async countTickets(): Promise<number> {
+        const coundTickets: number = await this.ticketCollection.find({}).countDocuments();
+        return coundTickets
+    }
+
+    async findUserPaginedTicket(profile_id: string, skip: number, limit: number): Promise<ITicketCollection[] | []> {
+        const tickets = await this.ticketCollection.find({ profile_id }).skip(skip).limit(limit);
+        return tickets;
+    }
+
+    async findPaginedTicket(skip: number, limit: number): Promise<ITicketCollection[] | []> {
+        const tickets = await this.ticketCollection.find({}).skip(skip).limit(limit);
+        return tickets;
+    }
+
     async updateTicketStatus(ticket_id: string, status: TicketStatus): Promise<boolean> {
         const updateTicket = await this.ticketCollection.updateOne({ ticket_id }, { $set: { status, updated_at: new Date() } });
         return updateTicket.modifiedCount > 0;
