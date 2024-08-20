@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { CustomRequest } from "../util/types/CustomeType";
 import UserProfileService from "../service/userService";
+import { HelperFunctionResponse } from "../util/types/Interface/UtilInterface";
 
 const { log } = require("forever");
 const ProfileDataProvider = require("../../communication/Provider/ProfileProvider");
@@ -20,6 +21,28 @@ class UserProfileController {
         const findProfile = await this.userProfileService.getSingleProfileByEmail(email_id); //profileHelper.getSingleProfile(email_id);
         res.status(findProfile.statusCode).json({ status: findProfile.status, msg: findProfile.msg, data: findProfile.data })
     }
+
+    async updateProfile(req: CustomRequest, res: Response) {
+
+        const userProfile = req.body.user_profile;
+        const user_id = req.context.user_id;
+
+        const updateProfile: HelperFunctionResponse = await this.userProfileService.updateProfile(userProfile, user_id);
+        res.status(updateProfile.statusCode).json({ status: updateProfile.status, msg: updateProfile.msg, data: updateProfile.data })
+        // profileHelper.updateProfile(userProfile, user_id).then((data) => {
+
+        //     res.status(200).json({
+        //         status: true,
+        //         msg: "Profile has been updated"
+        //     })
+        // }).catch((err) => {
+        //     console.log(err);
+        //     res.status(500).json({
+        //         status: false,
+        //         msg: "Internal Server Error"
+        //     })
+        // })
+    },
 }
 
 export default UserProfileController
@@ -29,34 +52,7 @@ const updateProfileController = {
 
 
 
-    updateProfile: (req, res) => {
 
-        console.log(req.context);
-
-        const userProfile = req.body.user_profile;
-        const user_id = req.context.user_id;
-        console.log("User ID", user_id);
-        console.log("User profile is :");
-        console.log(userProfile);
-        profileHelper.updateProfile(userProfile, user_id).then((data) => {
-            ProfileDataProvider.updateAuthData({
-                edit_details: {
-                    ...userProfile,
-                },
-                profile_id: user_id
-            })
-            res.status(200).json({
-                status: true,
-                msg: "Profile has been updated"
-            })
-        }).catch((err) => {
-            console.log(err);
-            res.status(500).json({
-                status: false,
-                msg: "Internal Server Error"
-            })
-        })
-    },
 
     updatePhoneNumber: async (req, res, next) => {
 

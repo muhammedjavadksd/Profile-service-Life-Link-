@@ -1,5 +1,5 @@
 const { log } = require("forever");
-const ProfileDataProvider = require("../../communication/Provider/ProfileProvider");
+const ProfileDataProvider = require("../../communication/ProfileProvider");
 const profileHelper = require("../../config/util/helper/profileHelper");
 
 

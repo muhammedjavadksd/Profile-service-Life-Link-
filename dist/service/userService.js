@@ -69,6 +69,34 @@ class UserProfileService {
             }
         });
     }
+    updateProfile(data, user_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const edit_data = {
+                first_name: data.first_name,
+                last_name: data.last_name,
+                profile_picture: data.profile_picture,
+            };
+            const updateProfile = yield this.userRepo.updateProfile(edit_data, user_id);
+            if (updateProfile) {
+                ProfileDataProvider.updateAuthData({
+                    edit_details: Object.assign({}, userProfile),
+                    profile_id: user_id
+                });
+                return {
+                    msg: "Profile update success",
+                    status: true,
+                    statusCode: UtilEnum_1.StatusCode.OK
+                };
+            }
+            else {
+                return {
+                    msg: "Profile update failed",
+                    status: false,
+                    statusCode: UtilEnum_1.StatusCode.BAD_REQUEST
+                };
+            }
+        });
+    }
 }
 exports.default = UserProfileService;
 const profileHelper = {

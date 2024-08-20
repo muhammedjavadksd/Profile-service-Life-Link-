@@ -14,8 +14,6 @@ const authMiddleware = new AuthMiddleware();
 
 userRouter.get("/get_profile", authMiddleware.isValidUser, userProfileController.getProfile)
 
-
-
 userRouter.patch("/update_profile", authMiddleware.isValidUser, updateProfileController.updateProfile)
 userRouter.patch("/update_phone_number", authMiddleware.isValidUser, updateProfileController.updatePhoneNumber)
 userRouter.patch("/update_email_id", authMiddleware.isValidUser, updateProfileController.updateEmailID)

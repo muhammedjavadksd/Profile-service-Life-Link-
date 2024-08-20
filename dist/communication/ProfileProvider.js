@@ -12,29 +12,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const UserProfile_1 = __importDefault(require("../database/models/UserProfile"));
-class UserRepo {
-    constructor() {
-        this.profileCollection = UserProfile_1.default;
+const amqplib_1 = __importDefault(require("amqplib"));
+// const queueName = process.env.AUTH_DATA_UPDATE_QUEUE!;
+class ProfileDataProvider {
+    constructor(queueName) {
+        this.queue = queueName;
     }
-    insertProfile(profile) {
+    _init__(queueName) {
         return __awaiter(this, void 0, void 0, function* () {
-            const profileInstance = new this.profileCollection(profile);
-            const saveProfile = yield profileInstance.save();
-            return saveProfile === null || saveProfile === void 0 ? void 0 : saveProfile.id;
+            const connection = yield amqplib_1.default.connect("amqp://localhost");
+            const channel = yield connection.createChannel();
+            yield channel.assertQueue(queueName);
+            this.channel = channel;
         });
     }
-    findProfileByEmailId(email_id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const singleProfile = yield this.profileCollection.findOne({ email: email_id });
-            return singleProfile;
-        });
-    }
-    updateProfile(data, user_id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const updateProfile = yield this.profileCollection.updateOne({ user_id }, { $set: data });
-            return updateProfile.modifiedCount > 0;
-        });
+    transferData(data) {
+        if (this.channel) {
+            this.channel.sendToQueue(this.queue, Buffer.from(JSON.stringify(data)));
+            return true;
+        }
+        else {
+            console.log("Connection not found");
+            return false;
+        }
     }
 }
-exports.default = UserRepo;
+exports.default = ProfileDataProvider;

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import UserRepo from "../repo/userRepo";
 import { StatusCode } from "../util/types/Enum/UtilEnum";
-import { IUserProfile } from "../util/types/Interface/CollectionInterface";
+import { IUserEditProfile, IUserProfile } from "../util/types/Interface/CollectionInterface";
 import { HelperFunctionResponse } from "../util/types/Interface/UtilInterface";
 
 // const { default: mongoose } = require("mongoose");
@@ -58,6 +58,36 @@ class UserProfileService {
                 msg: "Profile not found",
                 status: false,
                 statusCode: StatusCode.NOT_FOUND
+            }
+        }
+    }
+
+
+    async updateProfile(data: IUserEditProfile, user_id: string): Promise<HelperFunctionResponse> {
+        const edit_data: IUserEditProfile = {
+            first_name: data.first_name,
+            last_name: data.last_name,
+            profile_picture: data.profile_picture,
+        }
+
+        const updateProfile = await this.userRepo.updateProfile(edit_data, user_id);
+        if (updateProfile) {
+            ProfileDataProvider.updateAuthData({
+                edit_details: {
+                    ...userProfile,
+                },
+                profile_id: user_id
+            })
+            return {
+                msg: "Profile update success",
+                status: true,
+                statusCode: StatusCode.OK
+            }
+        } else {
+            return {
+                msg: "Profile update failed",
+                status: false,
+                statusCode: StatusCode.BAD_REQUEST
             }
         }
     }

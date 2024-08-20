@@ -13,6 +13,12 @@ interface IContactUpdate {
     }
 }
 
+interface IUserEditProfile {
+    first_name?: String,
+    last_name?: String,
+    profile_picture?: String,
+}
+
 interface IUserProfile {
     user_id: ObjectId
     email: String,
@@ -27,4 +33,4 @@ interface IUserProfile {
 
 interface IUserCollection extends Document, IUserProfile { };
 
-export { IUserCollection, IUserProfile }
+export { IUserEditProfile, IUserCollection, IUserProfile }
