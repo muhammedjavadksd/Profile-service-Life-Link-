@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { CustomRequest } from "../util/types/CustomeType";
 import UserProfileService from "../service/userService";
 import { HelperFunctionResponse } from "../util/types/Interface/UtilInterface";
-import { StatusCode } from "../util/types/Enum/UtilEnum";
+import { AuthUpdateType, StatusCode } from "../util/types/Enum/UtilEnum";
 const ProfileDataProvider = require("../../communication/Provider/ProfileProvider");
 
 
@@ -72,8 +72,60 @@ class UserProfileController {
                 msg: "Please provide a phone number"
             })
         }
+    }
+
+    async profilePictureUpdation(req: CustomRequest, res: Response) {
+
+        //     const user_id = req.context?.user_id;
+        //     const profilePicture = req.fil.profile_picture;
+
+        //     if (user_id && profilePicture) {
+        //         const updateProfilePicture = await profileHelper.updateProfilePicture(user_id, profilePicture);
+        //         res.status(updateProfilePicture.statusCode).json({
+        //             status: updateProfilePicture.statusCode,
+        //             msg: updateProfilePicture.msg
+        //         })
+        //     } else {
+        //         res.status(400).json({
+        //             status: false,
+        //             msg: "Please provide valid image"
+        //         })
+        //     }
+        // } catch(e) {
+        //     res.status(500).json({
+        //         status: 500,
+        //         msg: "Internal Server Error"
+        //     })
+        // }
+    }
 
 
+    async profileUpdateOTPSubmission(req: CustomRequest, res: Response) {
+
+        const otp: number = req.body.otp_number;
+        const allowedOtpTypes: string[] = ['EMAIL', 'PHONE'];
+        const otp_type: AuthUpdateType = req.body.otp_type;
+        const user_id = req.context?.user_id;
+
+        if (user_id && otp && otp_type) {
+            if (allowedOtpTypes.includes(otp_type)) {
+                const validateOtp = await this.userProfileService.validateUpdateProfileOTP(otp, otp_type, user_id);
+                res.status(validateOtp.statusCode).json({
+                    status: validateOtp.status,
+                    msg: validateOtp.msg
+                })
+            } else {
+                res.status(StatusCode.BAD_REQUEST).json({
+                    status: false,
+                    msg: "OTP type is not allowed!"
+                })
+            }
+        } else {
+            res.status(StatusCode.UNAUTHORIZED).json({
+                status: false,
+                msg: "Authentication failed"
+            })
+        }
     }
 }
 
@@ -90,32 +142,7 @@ const updateProfileController = {
 
 
 
-    profilePictureUpdation: async (req, res, next) => {
 
-        try {
-
-            const user_id = req.context.user_id;
-            const profilePicture = req.files.profile_picture;
-
-            if (user_id && profilePicture) {
-                const updateProfilePicture = await profileHelper.updateProfilePicture(user_id, profilePicture);
-                res.status(updateProfilePicture.statusCode).json({
-                    status: updateProfilePicture.statusCode,
-                    msg: updateProfilePicture.msg
-                })
-            } else {
-                res.status(400).json({
-                    status: false,
-                    msg: "Please provide valid image"
-                })
-            }
-        } catch (e) {
-            res.status(500).json({
-                status: 500,
-                msg: "Internal Server Error"
-            })
-        }
-    }
 
 
 }
@@ -127,49 +154,7 @@ const profileHelper = require("../../config/util/helper/profileHelper");
 
 
 const validatingControler = {
-    profileUpdateOTPSubmission: (req, res, next) => {
-        try {
 
-            const otp = req.body.otp_number;
-            const allowedOtpTypes = ['EMAIL', 'PHONE'];
-            const otp_type = req.body.otp_type;
-            const user_id = req.context.user_id;
-
-            if (user_id && otp && otp_type) {
-                if (allowedOtpTypes.includes(otp_type)) {
-                    profileHelper.validateUpdateProfileOTP(otp, otp_type, user_id).then((data) => {
-
-                        res.status(data.statusCode).json({
-                            status: data.status,
-                            msg: data.msg
-                        })
-                    }).catch((err) => {
-                        console.log(err);
-                        res.status(500).json({
-                            status: false,
-                            msg: "Something went wrong"
-                        })
-                    })
-                } else {
-                    res.status(400).json({
-                        status: false,
-                        msg: "OTP type is not allowed!"
-                    })
-                }
-            } else {
-                res.status(401).json({
-                    status: false,
-                    msg: "Authentication failed"
-                })
-            }
-        } catch (e) {
-            res.status(500).json({
-                status: false,
-                msg: "Internal Server Error"
-            })
-        }
-
-    }
 }
 
 module.exports = validatingControler;

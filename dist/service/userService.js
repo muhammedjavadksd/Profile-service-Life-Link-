@@ -189,6 +189,109 @@ class UserProfileService {
             }
         });
     }
+    validateUpdateProfileOTP(otp_number, type, user_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c, _d, _e, _f;
+            const userData = yield UserProfileModel.findOne({ user_id });
+            if (userData) {
+                if (type == UtilEnum_1.AuthUpdateType.Email) {
+                    const userOTPNumber = (_a = userData.contact_update.email) === null || _a === void 0 ? void 0 : _a.otp; // userData.contact_update.email.otp;
+                    const expireTime = +(((_b = userData.contact_update.email) === null || _b === void 0 ? void 0 : _b.otp_expire_time) || 0);
+                    const newEmailID = (_c = userData.contact_update.email) === null || _c === void 0 ? void 0 : _c.new_email_id;
+                    if (!userOTPNumber || !expireTime || !newEmailID) {
+                        return {
+                            statusCode: UtilEnum_1.StatusCode.BAD_REQUEST,
+                            msg: "OTP not found",
+                            status: false
+                        };
+                    }
+                    //OTP correction checking
+                    if (otp_number == userOTPNumber) {
+                        //expire checking
+                        if (expireTime > Date.now()) {
+                            yield this.userRepo.updateProfile({ email: newEmailID, contact_update: {} }, user_id);
+                            // await userData.save()
+                            const provider = new ProfileProvider_1.default(process.env.AUTH_DATA_UPDATE_QUEUEs || "");
+                            provider.transferData({
+                                edit_details: { email: newEmailID },
+                                profile_id: userData.user_id
+                            });
+                            return {
+                                statusCode: UtilEnum_1.StatusCode.OK,
+                                status: true,
+                                msg: "Email id has been updated"
+                            };
+                        }
+                        else {
+                            return {
+                                statusCode: UtilEnum_1.StatusCode.BAD_REQUEST,
+                                status: false,
+                                msg: "OTP time has been expired"
+                            };
+                        }
+                    }
+                    else {
+                        return {
+                            statusCode: UtilEnum_1.StatusCode.BAD_REQUEST,
+                            status: false,
+                            msg: "Incorrect OTP Number"
+                        };
+                    }
+                }
+                else {
+                    const userOTPNumber = (_d = userData.contact_update.phone_number) === null || _d === void 0 ? void 0 : _d.otp;
+                    const expireTime = +(((_e = userData.contact_update.phone_number) === null || _e === void 0 ? void 0 : _e.otp_expire_time) || 0);
+                    const newPhoneNumber = (_f = userData.contact_update.phone_number) === null || _f === void 0 ? void 0 : _f.new_phone_number;
+                    if (!userOTPNumber || !expireTime || !newPhoneNumber) {
+                        return {
+                            statusCode: UtilEnum_1.StatusCode.BAD_REQUEST,
+                            msg: "OTP not found",
+                            status: false
+                        };
+                    }
+                    //OTP correction checking 
+                    if (otp_number == userOTPNumber) {
+                        if (expireTime > Date.now()) {
+                            yield this.userRepo.updateProfile({ phone_number: newPhoneNumber, contact_update: {} }, user_id);
+                            const provider = new ProfileProvider_1.default(process.env.AUTH_DATA_UPDATE_QUEUEs || "");
+                            provider.transferData({
+                                edit_details: {
+                                    phone_number: Number(newPhoneNumber),
+                                },
+                                profile_id: userData.user_id
+                            });
+                            return {
+                                statusCode: UtilEnum_1.StatusCode.OK,
+                                status: true,
+                                msg: "Phone number has been updated"
+                            };
+                        }
+                        else {
+                            return {
+                                statusCode: UtilEnum_1.StatusCode.BAD_REQUEST,
+                                status: false,
+                                msg: "OTP time has been expired"
+                            };
+                        }
+                    }
+                    else {
+                        return {
+                            statusCode: UtilEnum_1.StatusCode.BAD_REQUEST,
+                            status: false,
+                            msg: "Incorrect OTP Number"
+                        };
+                    }
+                }
+            }
+            else {
+                return {
+                    statusCode: UtilEnum_1.StatusCode.UNAUTHORIZED,
+                    status: false,
+                    msg: "Authentication failed"
+                };
+            }
+        });
+    }
 }
 exports.default = UserProfileService;
 // const profileHelper = {

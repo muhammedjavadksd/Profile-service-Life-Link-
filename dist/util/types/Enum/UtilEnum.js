@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.StatusCode = void 0;
+exports.AuthUpdateType = exports.StatusCode = void 0;
 var StatusCode;
 (function (StatusCode) {
     StatusCode[StatusCode["OK"] = 200] = "OK";
@@ -12,3 +12,8 @@ var StatusCode;
     StatusCode[StatusCode["FORBIDDEN"] = 403] = "FORBIDDEN";
     StatusCode[StatusCode["CONFLICT"] = 409] = "CONFLICT";
 })(StatusCode || (exports.StatusCode = StatusCode = {}));
+var AuthUpdateType;
+(function (AuthUpdateType) {
+    AuthUpdateType["Email"] = "EMAIL";
+    AuthUpdateType["Phone"] = "PHONE";
+})(AuthUpdateType || (exports.AuthUpdateType = AuthUpdateType = {}));

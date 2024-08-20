@@ -80,79 +80,64 @@ class UserProfileController {
             }
         });
     }
-}
-exports.default = UserProfileController;
-const updateProfileController = {
-    profilePictureUpdation: (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            const user_id = req.context.user_id;
-            const profilePicture = req.files.profile_picture;
-            if (user_id && profilePicture) {
-                const updateProfilePicture = yield profileHelper.updateProfilePicture(user_id, profilePicture);
-                res.status(updateProfilePicture.statusCode).json({
-                    status: updateProfilePicture.statusCode,
-                    msg: updateProfilePicture.msg
-                });
-            }
-            else {
-                res.status(400).json({
-                    status: false,
-                    msg: "Please provide valid image"
-                });
-            }
-        }
-        catch (e) {
-            res.status(500).json({
-                status: 500,
-                msg: "Internal Server Error"
-            });
-        }
-    })
-};
-module.exports = updateProfileController;
-const profileHelper = require("../../config/util/helper/profileHelper");
-const validatingControler = {
-    profileUpdateOTPSubmission: (req, res, next) => {
-        try {
+    profilePictureUpdation(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            //     const user_id = req.context?.user_id;
+            //     const profilePicture = req.fil.profile_picture;
+            //     if (user_id && profilePicture) {
+            //         const updateProfilePicture = await profileHelper.updateProfilePicture(user_id, profilePicture);
+            //         res.status(updateProfilePicture.statusCode).json({
+            //             status: updateProfilePicture.statusCode,
+            //             msg: updateProfilePicture.msg
+            //         })
+            //     } else {
+            //         res.status(400).json({
+            //             status: false,
+            //             msg: "Please provide valid image"
+            //         })
+            //     }
+            // } catch(e) {
+            //     res.status(500).json({
+            //         status: 500,
+            //         msg: "Internal Server Error"
+            //     })
+            // }
+        });
+    }
+    profileUpdateOTPSubmission(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const otp = req.body.otp_number;
             const allowedOtpTypes = ['EMAIL', 'PHONE'];
             const otp_type = req.body.otp_type;
-            const user_id = req.context.user_id;
+            const user_id = (_a = req.context) === null || _a === void 0 ? void 0 : _a.user_id;
             if (user_id && otp && otp_type) {
                 if (allowedOtpTypes.includes(otp_type)) {
-                    profileHelper.validateUpdateProfileOTP(otp, otp_type, user_id).then((data) => {
-                        res.status(data.statusCode).json({
-                            status: data.status,
-                            msg: data.msg
-                        });
-                    }).catch((err) => {
-                        console.log(err);
-                        res.status(500).json({
-                            status: false,
-                            msg: "Something went wrong"
-                        });
+                    const validateOtp = yield this.userProfileService.validateUpdateProfileOTP(otp, otp_type, user_id);
+                    res.status(validateOtp.statusCode).json({
+                        status: validateOtp.status,
+                        msg: validateOtp.msg
                     });
                 }
                 else {
-                    res.status(400).json({
+                    res.status(UtilEnum_1.StatusCode.BAD_REQUEST).json({
                         status: false,
                         msg: "OTP type is not allowed!"
                     });
                 }
             }
             else {
-                res.status(401).json({
+                res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({
                     status: false,
                     msg: "Authentication failed"
                 });
             }
-        }
-        catch (e) {
-            res.status(500).json({
-                status: false,
-                msg: "Internal Server Error"
-            });
-        }
+        });
     }
-};
+}
+exports.default = UserProfileController;
+const updateProfileController = {};
+module.exports = updateProfileController;
+const profileHelper = require("../../config/util/helper/profileHelper");
+const validatingControler = {};
 module.exports = validatingControler;

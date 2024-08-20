@@ -9,4 +9,10 @@ enum StatusCode {
     CONFLICT = 409,
 }
 
-export { StatusCode }
+
+enum AuthUpdateType {
+    Email = "EMAIL",
+    Phone = "PHONE"
+}
+
+export { StatusCode, AuthUpdateType }
