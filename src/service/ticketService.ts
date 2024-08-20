@@ -4,12 +4,40 @@ import { HelperFunctionResponse } from "../util/types/Interface/UtilInterface";
 import TicketRepo from "../repo/ticketRepo";
 import { ITicketChat, ITicketTemplate } from "../util/types/Interface/CollectionInterface";
 import UtilHelper from "../helper/utilHelper";
+import S3BucketHelper from "../helper/S3BucketHelper";
 
 class TicketService {
     ticketRepo;
 
     constructor() {
         this.ticketRepo = new TicketRepo();
+    }
+
+
+
+    async generatePresignedUrl(): Promise<HelperFunctionResponse> {
+        const s3Bucket = new S3BucketHelper(process.env.TICKET_ATTACHMENT_BUCKET || "");
+        const utilHelper = new UtilHelper();
+        const randomNumber: number = utilHelper.createOtpNumber(4)
+        const randomText: string = utilHelper.createRandomText(4)
+        const key: string = `ticket-attachment-${randomNumber}-${randomText}`
+        const presignedUrl = await s3Bucket.generatePresignedUrl(key)
+        if (presignedUrl) {
+            return {
+                msg: "Presigned url created",
+                status: true,
+                statusCode: StatusCode.CREATED,
+                data: {
+                    url: presignedUrl
+                }
+            }
+        } else {
+            return {
+                msg: "Failed to create presigned url",
+                status: false,
+                statusCode: StatusCode.BAD_REQUEST,
+            }
+        }
     }
 
     async createUnqiueTicketId() {

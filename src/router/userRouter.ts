@@ -15,6 +15,7 @@ userRouter.get("/get_tickets/:page/:limit", authMiddleware.isValidUser, ticketCo
 userRouter.get("/get_tickets/:ticket_id", authMiddleware.isValidUser, ticketController.listTickets)
 
 userRouter.post("/raise_ticket", authMiddleware.isValidUser, ticketController.createTicket)
+userRouter.post("/ticket-attachment-url", authMiddleware.isValidUser, ticketController.createTicket)
 
 userRouter.patch("/ticket_replay", authMiddleware.isValidUser, userProfileController.updateProfile)
 userRouter.patch("/update_profile", authMiddleware.isValidUser, userProfileController.updateProfile)
