@@ -11,6 +11,8 @@ const adminController = new AdminController();
 //GET methods
 adminRouter.get("/:profile_id", authMiddleware.isValidAdmin, adminController.getSingleUserByProfileId)
 
+adminRouter.get("/get_tickets/:page/:limit", authMiddleware.isValidAdmin)
+
 //POST methods
 // adminRouter.post("/fund_raiser_profile/:profile_id", authMiddleware.isValidAdmin, profileController.getUserByIdsController)
 

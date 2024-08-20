@@ -2,13 +2,25 @@ import { Request, Response, NextFunction } from "express";
 import AdminService from "../service/adminService";
 import { HelperFunctionResponse } from "../util/types/Interface/UtilInterface";
 import { StatusCode } from "../util/types/Enum/UtilEnum";
+import TicketService from "../service/ticketService";
 
 class AdminController {
 
 
     adminService;
+    ticketServcie;
     constructor() {
         this.adminService = new AdminService();
+        this.ticketServcie = new TicketService();
+    }
+
+
+    async getTickets(req: Request, res: Response): Promise<void> {
+        const limit: number = +req.params.limit;
+        const page: number = +req.params.page;
+
+        const findTicket: HelperFunctionResponse = await this.ticketServcie.listAdminTickets(page, limit);
+        res.status(findTicket.statusCode).json({ status: findTicket.status, msg: findTicket.msg, data: findTicket.data })
     }
 
     async getSingleUserByProfileId(req: Request, res: Response): Promise<void> {
