@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import AdminService from "../service/adminService";
 import { HelperFunctionResponse } from "../util/types/Interface/UtilInterface";
-import { StatusCode } from "../util/types/Enum/UtilEnum";
+import { StatusCode, TicketChatFrom } from "../util/types/Enum/UtilEnum";
 import TicketService from "../service/ticketService";
 
 class AdminController {
@@ -14,6 +14,15 @@ class AdminController {
         this.ticketServcie = new TicketService();
     }
 
+
+    async addReplayToChat(req: Request, res: Response): Promise<void> {
+        const ticket_id: string = req.params.ticket_id;
+        const msg: string = req.body.msg;
+        const attachment: string = req.body.attachment;
+
+        const addReplay: HelperFunctionResponse = await this.ticketServcie.replayToTicket(TicketChatFrom.Admin, msg, attachment, ticket_id);
+        res.status(addReplay.statusCode).json({ status: addReplay.status, msg: addReplay.msg, data: addReplay.data });
+    }
 
     async getSingleTicket(req: Request, res: Response): Promise<void> {
         const ticket_id: string = req.params.ticket_id
