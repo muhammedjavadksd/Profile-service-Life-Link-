@@ -1,5 +1,7 @@
 
-const express = require("express");
+// const express = require("express");
+import express from 'express';
+
 const authMiddleware = require("../../middleware/authMiddleware");
 const updateProfileController = require("../../controller/userController/updateProfile");
 const validatingControler = require("../../controller/userController/validatingControler");
