@@ -65,7 +65,7 @@ class UserProfileController {
             const new_email_id = req.body.new_email_id;
             const user_id = (_a = req.context) === null || _a === void 0 ? void 0 : _a.user_id;
             if (new_email_id && user_id) {
-                const updateEmailID = yield profileHelper.updateEmailAddress(new_email_id, user_id);
+                const updateEmailID = yield this.userProfileService.updateEmailId(new_email_id, user_id);
                 console.log(updateEmailID);
                 res.status(updateEmailID.statusCode).json({
                     status: updateEmailID.status,
@@ -78,13 +78,6 @@ class UserProfileController {
                     msg: "Please provide a phone number"
                 });
             }
-        });
-    }
-    catch(e) {
-        console.log(e);
-        res.status(500).json({
-            status: false,
-            msg: "Internal Server Error"
         });
     }
 }

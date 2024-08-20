@@ -60,7 +60,7 @@ class UserProfileController {
         const user_id: string | undefined = req.context?.user_id;
 
         if (new_email_id && user_id) {
-            const updateEmailID = await profileHelper.updateEmailAddress(new_email_id, user_id);
+            const updateEmailID = await this.userProfileService.updateEmailId(new_email_id, user_id);
             console.log(updateEmailID);
             res.status(updateEmailID.statusCode).json({
                 status: updateEmailID.status,
@@ -73,19 +73,8 @@ class UserProfileController {
             })
         }
 
-    } catch(e) {
-        console.log(e);
-        res.status(500).json({
-            status: false,
-            msg: "Internal Server Error"
-        })
+
     }
-},
-
-
-
-
-
 }
 
 export default UserProfileController
