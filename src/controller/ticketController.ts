@@ -28,12 +28,11 @@ class TicketController {
         }
     }
 
-    // Get a ticket by its ID
     async getSingleTicketById(req: Request, res: Response): Promise<void> {
         const ticket_id: string | undefined = req.params.ticket_id;
 
         if (ticket_id) {
-            const getResponse: HelperFunctionResponse = await this.ticketService.getSingleTicketById(ticket_id);
+            const getResponse: HelperFunctionResponse = await this.ticketService.getSingleTicketByTicketId(ticket_id);
             res.status(getResponse.statusCode).json({ status: getResponse.status, msg: getResponse.msg, data: getResponse.data });
         } else {
             res.status(StatusCode.BAD_REQUEST).json({ status: false, msg: "Please provide a valid ticket ID" });
@@ -66,6 +65,9 @@ class TicketController {
             res.status(StatusCode.UNAUTHORIZED).json({ status: false, msg: "Unauthorized access" })
         }
     }
+
+
+
 }
 
 export default TicketController;
