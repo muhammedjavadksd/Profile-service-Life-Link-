@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import TicketService from "../service/ticketService";
 import { HelperFunctionResponse } from "../util/types/Interface/UtilInterface";
-import { StatusCode, TicketCategory, TicketPriority } from "../util/types/Enum/UtilEnum";
+import { StatusCode, TicketCategory, TicketChatFrom, TicketPriority } from "../util/types/Enum/UtilEnum";
 import { ITicketCollection } from "../util/types/Interface/CollectionInterface";
 import { CustomRequest } from "../util/types/CustomeType";
 
@@ -46,7 +46,7 @@ class TicketController {
         const attachment: string = req.body.attachment;
 
         if (ticket_id) {
-            const updateResponse: HelperFunctionResponse = await this.ticketService.updateTickerProfile(updateData, ticket_id);
+            const updateResponse: HelperFunctionResponse = await this.ticketService.replayToTicket(TicketChatFrom.User, text, attachment, ticket_id);
             res.status(updateResponse.statusCode).json({ status: updateResponse.status, msg: updateResponse.msg });
         } else {
             res.status(StatusCode.BAD_REQUEST).json({ status: false, msg: "Please provide a valid ticket ID and update data" });

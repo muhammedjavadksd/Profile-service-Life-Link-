@@ -94,12 +94,31 @@ class TicketService {
     }
 
 
-    // async replayToTicket(from: TicketChatFrom, msg: string, attachment: string): Promise<HelperFunctionResponse> {
-    //     // let newChat: ITicketChat = {
-    //     //     attachment: attachment,
+    async replayToTicket(from: TicketChatFrom, msg: string, attachment: string, ticket_id: string): Promise<HelperFunctionResponse> {
 
-    //     // }
-    // }
+        const newChatId = await this.createUniqueChatID(ticket_id)
+        let newChat: ITicketChat = {
+            attachment: attachment,
+            chat_id: newChatId,
+            created_at: new Date(),
+            from,
+            text: msg
+        }
+        const addReplay = await this.ticketRepo.addChatToTicket(ticket_id, newChat);
+        if (addReplay) {
+            return {
+                msg: "Chat added to tickets",
+                status: true,
+                statusCode: StatusCode.CREATED
+            }
+        } else {
+            return {
+                msg: "Chat adding failed",
+                status: false,
+                statusCode: StatusCode.BAD_REQUEST
+            }
+        }
+    }
 
     async getSingleTicketByTicketId(ticket_id: string): Promise<HelperFunctionResponse> {
         const singleTicket = await this.ticketRepo.findTicketById(ticket_id);
