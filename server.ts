@@ -1,6 +1,6 @@
 import express, { Express } from 'express';
 import dotenv from 'dotenv'
-import bulkConsumer from './communication/bulkConsumer'
+import bulkConsumer from './src/communication/bulkConsumer'
 
 const app: Express = express()
 
@@ -12,9 +12,9 @@ app.use(logger("combined"))
 dotenv.config({ path: "./.env" });
 bulkConsumer()
 
-import profileMongoConnection from './database/connection'
-import userRouter from './router/userRouter';
-import adminRouter from './router/adminRouter'
+import profileMongoConnection from './src/database/connection'
+import userRouter from './src/router/userRouter';
+import adminRouter from './src/router/adminRouter'
 import logger from 'morgan'
 
 
