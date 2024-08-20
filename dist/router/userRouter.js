@@ -15,7 +15,7 @@ const userProfileController = new userController_1.default();
 const authMiddleware = new authMiddleware_1.default();
 userRouter.get("/get_profile", authMiddleware.isValidUser, userProfileController.getProfile);
 userRouter.patch("/update_profile", authMiddleware.isValidUser, userProfileController.updateProfile);
-userRouter.patch("/update_phone_number", authMiddleware.isValidUser, updateProfileController.updatePhoneNumber);
+userRouter.patch("/update_phone_number", authMiddleware.isValidUser, userProfileController.updatePhoneNumber);
 userRouter.patch("/update_email_id", authMiddleware.isValidUser, updateProfileController.updateEmailID);
 userRouter.patch("/profile_update_otp_submission", authMiddleware.isValidUser, validatingControler.profileUpdateOTPSubmission);
 userRouter.patch("/update_profile_picture", authMiddleware.isValidUser, updateProfileController.profilePictureUpdation);

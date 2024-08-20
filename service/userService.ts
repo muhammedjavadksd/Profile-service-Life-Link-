@@ -144,6 +144,56 @@ class UserProfileService {
             }
         }
     }
+
+
+    async updateEmailId(newEmailId: string, user_id: string) {
+
+        const findUser: IUserCollection | null = await this.userRepo.findUserByUserId(user_id) //await UserProfileModel.findOne({ user_id: user_id });
+
+        if (findUser) {
+            const otpNumber: number = utilHelper.createOtpNumber(6);
+            const otpTimer: number = constant_data.MINIMUM_OTP_TIMER();
+
+            if (findUser.email == newEmailId) {
+                return {
+                    statusCode: StatusCode.BAD_REQUEST,
+                    status: false,
+                    msg: "The new email address you provided is the same as your current email address."
+                }
+            }
+
+            const checkEmailUniquness = await this.userRepo.findProfileByEmailId(newEmailId); //await UserProfileModel.findOne({ email: newEmailAddress });
+            if (checkEmailUniquness) {
+                return {
+                    statusCode: StatusCode.BAD_REQUEST,
+                    status: false,
+                    msg: "Email id already exist"
+                }
+            }
+
+            const profileProivider = new ProfileDataProvider(process.env.EMAIL_PROFILE_UPDATE_OTP || "");
+            await this.userRepo.updateProfile({ contact_update: { email: { new_email_id: newEmailId, otp: otpNumber, otp_expire_time: otpTimer } } }, user_id);
+            profileProivider.transferData({
+                email_id: findUser.email,
+                type: "EMAIL",
+                otp: otpNumber,
+                full_name: (findUser.first_name + "  " + findUser.last_name)
+            })
+
+            return {
+                statusCode: StatusCode.OK,
+                status: true,
+                msg: "OTP has been sent to mail"
+            }
+
+        } else {
+            return {
+                statusCode: StatusCode.UNAUTHORIZED,
+                status: false,
+                msg: "Authentication failed"
+            }
+        }
+    }
 }
 
 export default UserProfileService

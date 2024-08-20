@@ -59,41 +59,11 @@ class UserProfileController {
             }
         });
     }
-}
-exports.default = UserProfileController;
-const updateProfileController = {
-    updatePhoneNumber: (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        const new_phone_number = req.body.new_phone_number;
-        const user_id = req.context.user_id;
-        try {
-            if (new_phone_number && user_id) {
-                console.log("New phone number is : " + new_phone_number);
-                console.log("User id for the user :  " + user_id);
-                const updatePhoneNumber = yield profileHelper.updatePhoneNumber(new_phone_number, user_id);
-                res.status(updatePhoneNumber.statusCode).json({
-                    status: updatePhoneNumber.status,
-                    msg: updatePhoneNumber.msg
-                });
-            }
-            else {
-                res.status(400).json({
-                    status: false,
-                    msg: "Please provide a phone number"
-                });
-            }
-        }
-        catch (e) {
-            console.log(e);
-            res.status(500).json({
-                status: false,
-                msg: "Internal Server Error"
-            });
-        }
-    }),
-    updateEmailID: (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
+    updateEmailID(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const new_email_id = req.body.new_email_id;
-            const user_id = req.context.user_id;
+            const user_id = (_a = req.context) === null || _a === void 0 ? void 0 : _a.user_id;
             if (new_email_id && user_id) {
                 const updateEmailID = yield profileHelper.updateEmailAddress(new_email_id, user_id);
                 console.log(updateEmailID);
@@ -108,15 +78,18 @@ const updateProfileController = {
                     msg: "Please provide a phone number"
                 });
             }
-        }
-        catch (e) {
-            console.log(e);
-            res.status(500).json({
-                status: false,
-                msg: "Internal Server Error"
-            });
-        }
-    }),
+        });
+    }
+    catch(e) {
+        console.log(e);
+        res.status(500).json({
+            status: false,
+            msg: "Internal Server Error"
+        });
+    }
+}
+exports.default = UserProfileController;
+const updateProfileController = {
     profilePictureUpdation: (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const user_id = req.context.user_id;

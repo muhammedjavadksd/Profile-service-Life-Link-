@@ -54,6 +54,36 @@ class UserProfileController {
         }
     }
 
+    async updateEmailID(req: CustomRequest, res: Response) {
+
+        const new_email_id: string = req.body.new_email_id;
+        const user_id: string | undefined = req.context?.user_id;
+
+        if (new_email_id && user_id) {
+            const updateEmailID = await profileHelper.updateEmailAddress(new_email_id, user_id);
+            console.log(updateEmailID);
+            res.status(updateEmailID.statusCode).json({
+                status: updateEmailID.status,
+                msg: updateEmailID.msg
+            })
+        } else {
+            res.status(400).json({
+                status: false,
+                msg: "Please provide a phone number"
+            })
+        }
+
+    } catch(e) {
+        console.log(e);
+        res.status(500).json({
+            status: false,
+            msg: "Internal Server Error"
+        })
+    }
+},
+
+
+
 
 
 }
@@ -67,66 +97,9 @@ const updateProfileController = {
 
 
 
-    updatePhoneNumber: async (req, res, next) => {
 
-        const new_phone_number = req.body.new_phone_number;
-        const user_id = req.context.user_id;
 
-        try {
-            if (new_phone_number && user_id) {
-                console.log("New phone number is : " + new_phone_number);
-                console.log("User id for the user :  " + user_id);
 
-                const updatePhoneNumber = await profileHelper.updatePhoneNumber(new_phone_number, user_id);
-
-                res.status(updatePhoneNumber.statusCode).json({
-                    status: updatePhoneNumber.status,
-                    msg: updatePhoneNumber.msg
-                })
-            } else {
-                res.status(400).json({
-                    status: false,
-                    msg: "Please provide a phone number"
-                })
-            }
-        } catch (e) {
-            console.log(e);
-            res.status(500).json({
-                status: false,
-                msg: "Internal Server Error"
-            })
-        }
-    },
-
-    updateEmailID: async (req, res, next) => {
-
-        try {
-
-            const new_email_id = req.body.new_email_id;
-            const user_id = req.context.user_id;
-
-            if (new_email_id && user_id) {
-                const updateEmailID = await profileHelper.updateEmailAddress(new_email_id, user_id);
-                console.log(updateEmailID);
-                res.status(updateEmailID.statusCode).json({
-                    status: updateEmailID.status,
-                    msg: updateEmailID.msg
-                })
-            } else {
-                res.status(400).json({
-                    status: false,
-                    msg: "Please provide a phone number"
-                })
-            }
-
-        } catch (e) {
-            console.log(e);
-            res.status(500).json({
-                status: false,
-                msg: "Internal Server Error"
-            })
-        }
-    },
 
     profilePictureUpdation: async (req, res, next) => {
 
