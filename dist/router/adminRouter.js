@@ -5,9 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // const express = require("express");
 const express_1 = __importDefault(require("express"));
-const authMiddleware = require("../../middleware/authMiddleware");
+const authMiddleware_1 = __importDefault(require("../middleware/authMiddleware"));
+// const authMiddleware = require("../../middleware/authMiddleware");
 const profileController = require("../../controller/adminController/profileController");
 const adminRouter = express_1.default.Router();
+const authMiddleware = new authMiddleware_1.default();
 //GET methods
 adminRouter.get("/:profile_id", authMiddleware.isValidAdmin, profileController.getSingleUserByProfileId);
 //POST methods

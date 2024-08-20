@@ -1,12 +1,8 @@
 
-// const express = require("express");
 import express from 'express';
 import UserProfileController from '../controller/userController';
 import AuthMiddleware from '../middleware/authMiddleware';
 
-// const authMiddleware = require("../../middleware/authMiddleware");
-const updateProfileController = require("../../controller/userController/updateProfile");
-const validatingControler = require("../../controller/userController/validatingControler");
 const userRouter = express.Router();
 
 const userProfileController = new UserProfileController();
@@ -20,6 +16,4 @@ userRouter.patch("/update_email_id", authMiddleware.isValidUser, userProfileCont
 userRouter.patch("/profile_update_otp_submission", authMiddleware.isValidUser, userProfileController.profileUpdateOTPSubmission)
 userRouter.patch("/update_profile_picture", authMiddleware.isValidUser, userProfileController.profilePictureUpdation)
 
-
-// module.exports = userRouter;
 export default userRouter

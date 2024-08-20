@@ -1,9 +1,12 @@
 
 // const express = require("express");
 import express from 'express';
-const authMiddleware = require("../../middleware/authMiddleware");
+import AuthMiddleware from '../middleware/authMiddleware';
+// const authMiddleware = require("../../middleware/authMiddleware");
 const profileController = require("../../controller/adminController/profileController");
 const adminRouter = express.Router();
+
+const authMiddleware = new AuthMiddleware();
 
 //GET methods
 adminRouter.get("/:profile_id", authMiddleware.isValidAdmin, profileController.getSingleUserByProfileId)
