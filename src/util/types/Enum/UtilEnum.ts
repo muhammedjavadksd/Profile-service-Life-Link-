@@ -15,4 +15,31 @@ enum AuthUpdateType {
     Phone = "PHONE"
 }
 
-export { StatusCode, AuthUpdateType }
+
+enum TicketPriority {
+    Critical = 'Critical',
+    High = 'High',
+    Medium = 'Medium',
+    Low = 'Low'
+}
+
+enum TicketCategory {
+    BloodAccount = "Blood Account",
+    FundRaiserAccount = "Fund Raiser Account",
+    PaymentRelated = "Payment Related",
+    Technical = "Technichal related",
+    Other = "Other"
+}
+
+enum TicketStatus {
+    Raised = "Raised",
+    Closed = "Closed",
+    ReOpened = "Reopen",
+    Answered = "Answered",
+}
+
+enum TicketChatFrom {
+    Admin = "Admin",
+    User = "User"
+}
+export { StatusCode, AuthUpdateType, TicketCategory, TicketPriority, TicketStatus, TicketChatFrom }

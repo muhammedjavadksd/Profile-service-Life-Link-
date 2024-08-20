@@ -1,4 +1,5 @@
 import { ObjectId, Document } from "mongoose"
+import { TicketCategory, TicketChatFrom, TicketPriority, TicketStatus } from "../Enum/UtilEnum"
 
 interface IContactUpdate {
     email?: {
@@ -42,6 +43,28 @@ interface IUserProfile {
     blood_donor_id: String
 }
 
-interface IUserCollection extends Document, IUserProfile { };
+interface ITicketChat {
+    chat_id: string,
+    from: TicketChatFrom,
+    text: string,
+    created_at: string,
+    attachment: string,
+}
 
-export { IProfileEdit, IUserEditProfile, IUserCollection, IUserProfile }
+interface ITicketTemplate {
+    ticket_id: string,
+    profie_id: string,
+    title: string,
+    priority: TicketPriority,
+    category: TicketCategory,
+    status: TicketStatus,
+    priority_number: number,
+    created_at: Date,
+    updated_at: Date,
+    chats: ITicketChat[]
+}
+
+interface IUserCollection extends Document, IUserProfile { };
+interface ITicketCollection extends Document, ITicketTemplate { };
+
+export { IProfileEdit, IUserEditProfile, IUserCollection, IUserProfile, ITicketTemplate, ITicketCollection }

@@ -127,6 +127,11 @@ class UserProfileController {
             })
         }
     }
+
+
+    async raiseNewTicket(req: Request, res: Response) {
+
+    }
 }
 
 export default UserProfileController
