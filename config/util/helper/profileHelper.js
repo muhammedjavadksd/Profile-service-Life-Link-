@@ -1,7 +1,7 @@
 const { default: mongoose } = require("mongoose");
 const ProfileDataProvider = require("../../../communication/Provider/ProfileProvider");
 const constant_data = require("../../const/const");
-const UserProfileModel = require("../../db/models/UserProfile");
+const UserProfileModel = require("../../../database/models/UserProfile");
 const utilHelper = require("./utilHelper");
 const path = require("path")
 

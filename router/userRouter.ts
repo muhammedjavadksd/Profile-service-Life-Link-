@@ -17,4 +17,5 @@ userRouter.patch("/profile_update_otp_submission", authMiddleware.isValidUser, v
 userRouter.patch("/update_profile_picture", authMiddleware.isValidUser, updateProfileController.profilePictureUpdation)
 
 
-module.exports = userRouter;
+// module.exports = userRouter;
+export default userRouter

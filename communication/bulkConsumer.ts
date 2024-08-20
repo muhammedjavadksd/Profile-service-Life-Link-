@@ -1,7 +1,7 @@
 const authDataConsumer = require("./Consumer/AuthDataConsumer")
 
 
-module.exports = function bulkConsumer() {
+export default function bulkConsumer() {
     console.log("Consuming data");
     authDataConsumer()
 }
