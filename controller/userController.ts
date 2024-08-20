@@ -2,10 +2,8 @@ import { Request, Response } from "express";
 import { CustomRequest } from "../util/types/CustomeType";
 import UserProfileService from "../service/userService";
 import { HelperFunctionResponse } from "../util/types/Interface/UtilInterface";
-
-const { log } = require("forever");
+import { StatusCode } from "../util/types/Enum/UtilEnum";
 const ProfileDataProvider = require("../../communication/Provider/ProfileProvider");
-const profileHelper = require("../../config/util/helper/profileHelper");
 
 
 class UserProfileController {
@@ -25,24 +23,39 @@ class UserProfileController {
     async updateProfile(req: CustomRequest, res: Response) {
 
         const userProfile = req.body.user_profile;
+        if (!req.context) {
+            res.status(StatusCode.BAD_REQUEST).json({ status: false, msg: "Profile not found" })
+            return;
+        }
         const user_id = req.context.user_id;
 
         const updateProfile: HelperFunctionResponse = await this.userProfileService.updateProfile(userProfile, user_id);
         res.status(updateProfile.statusCode).json({ status: updateProfile.status, msg: updateProfile.msg, data: updateProfile.data })
-        // profileHelper.updateProfile(userProfile, user_id).then((data) => {
+    }
 
-        //     res.status(200).json({
-        //         status: true,
-        //         msg: "Profile has been updated"
-        //     })
-        // }).catch((err) => {
-        //     console.log(err);
-        //     res.status(500).json({
-        //         status: false,
-        //         msg: "Internal Server Error"
-        //     })
-        // })
-    },
+    async updatePhoneNumber(req: CustomRequest, res: Response) {
+
+        const new_phone_number: number = req.body.new_phone_number;
+        const user_id = req.context?.user_id;
+
+        if (new_phone_number && user_id) {
+
+            const updatePhoneNumber = await this.userProfileService.updatePhoneNumber(new_phone_number, user_id);
+
+            res.status(updatePhoneNumber.statusCode).json({
+                status: updatePhoneNumber.status,
+                msg: updatePhoneNumber.msg
+            })
+        } else {
+            res.status(StatusCode.BAD_REQUEST).json({
+                status: false,
+                msg: "Please provide a phone number"
+            })
+        }
+    }
+
+
+
 }
 
 export default UserProfileController

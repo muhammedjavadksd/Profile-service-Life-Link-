@@ -24,6 +24,18 @@ class UserRepo {
             return saveProfile === null || saveProfile === void 0 ? void 0 : saveProfile.id;
         });
     }
+    findUserByUserId(user_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const singleProfile = yield this.profileCollection.findOne({ user_id });
+            return singleProfile;
+        });
+    }
+    findUserByPhoneNumber(phone_number) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const singleProfile = yield this.profileCollection.findOne({ phone_number });
+            return singleProfile;
+        });
+    }
     findProfileByEmailId(email_id) {
         return __awaiter(this, void 0, void 0, function* () {
             const singleProfile = yield this.profileCollection.findOne({ email: email_id });

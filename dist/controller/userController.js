@@ -13,9 +13,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const userService_1 = __importDefault(require("../service/userService"));
-const { log } = require("forever");
+const UtilEnum_1 = require("../util/types/Enum/UtilEnum");
 const ProfileDataProvider = require("../../communication/Provider/ProfileProvider");
-const profileHelper = require("../../config/util/helper/profileHelper");
 class UserProfileController {
     constructor() {
         this.userProfileService = new userService_1.default();
@@ -31,21 +30,33 @@ class UserProfileController {
     updateProfile(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const userProfile = req.body.user_profile;
+            if (!req.context) {
+                res.status(UtilEnum_1.StatusCode.BAD_REQUEST).json({ status: false, msg: "Profile not found" });
+                return;
+            }
             const user_id = req.context.user_id;
             const updateProfile = yield this.userProfileService.updateProfile(userProfile, user_id);
             res.status(updateProfile.statusCode).json({ status: updateProfile.status, msg: updateProfile.msg, data: updateProfile.data });
-            // profileHelper.updateProfile(userProfile, user_id).then((data) => {
-            //     res.status(200).json({
-            //         status: true,
-            //         msg: "Profile has been updated"
-            //     })
-            // }).catch((err) => {
-            //     console.log(err);
-            //     res.status(500).json({
-            //         status: false,
-            //         msg: "Internal Server Error"
-            //     })
-            // })
+        });
+    }
+    updatePhoneNumber(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const new_phone_number = req.body.new_phone_number;
+            const user_id = (_a = req.context) === null || _a === void 0 ? void 0 : _a.user_id;
+            if (new_phone_number && user_id) {
+                const updatePhoneNumber = yield this.userProfileService.updatePhoneNumber(new_phone_number, user_id);
+                res.status(updatePhoneNumber.statusCode).json({
+                    status: updatePhoneNumber.status,
+                    msg: updatePhoneNumber.msg
+                });
+            }
+            else {
+                res.status(UtilEnum_1.StatusCode.BAD_REQUEST).json({
+                    status: false,
+                    msg: "Please provide a phone number"
+                });
+            }
         });
     }
 }

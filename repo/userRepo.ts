@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongoose';
 import ProfileCollection from '../database/models/UserProfile';
-import { IUserCollection, IUserEditProfile, IUserProfile } from '../util/types/Interface/CollectionInterface';
+import { IProfileEdit, IUserCollection, IUserEditProfile, IUserProfile } from '../util/types/Interface/CollectionInterface';
 
 
 class UserRepo {
@@ -17,13 +17,23 @@ class UserRepo {
         return saveProfile?.id
     }
 
+    async findUserByUserId(user_id: string): Promise<IUserCollection | null> {
+        const singleProfile = await this.profileCollection.findOne({ user_id })
+        return singleProfile
+    }
+
+    async findUserByPhoneNumber(phone_number: number): Promise<IUserCollection | null> {
+        const singleProfile = await this.profileCollection.findOne({ phone_number })
+        return singleProfile
+    }
+
 
     async findProfileByEmailId(email_id: string): Promise<IUserCollection | null> {
         const singleProfile = await this.profileCollection.findOne({ email: email_id })
         return singleProfile
     }
 
-    async updateProfile(data: IUserEditProfile, user_id: string): Promise<boolean> {
+    async updateProfile(data: IProfileEdit, user_id: string): Promise<boolean> {
         const updateProfile = await this.profileCollection.updateOne({ user_id }, { $set: data });
         return updateProfile.modifiedCount > 0
     }
