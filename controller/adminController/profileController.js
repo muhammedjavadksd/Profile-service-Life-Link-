@@ -48,22 +48,6 @@ const profileController = {
         }
     },
 
-
-    // getFundRaiserProfile: async (req, res) => {
-    //     let fund_raiser_profile = req.params.profile_id;
-
-    //     try {
-
-    //         let fundRaiserProfile = await fundRaisingHelper.getSingleFundRaise(fund_raiser_profile);
-    //         if (helper) {
-    //             res.status(200).json({ status: true, profile: fundRaiserProfile })
-    //         } else {
-    //             res.status(404).json({ status: false, msg: "Profile not found" })
-    //         }
-    //     } catch (e) {
-    //         res.status(500).json({ status: false, msg: "Something went wrong" })
-    //     }
-    // }
 }
 
 module.exports = profileController;

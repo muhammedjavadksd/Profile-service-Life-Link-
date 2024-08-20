@@ -5,7 +5,7 @@ const profileController = require("../../controller/adminController/profileContr
 const adminRouter = express.Router();
 
 //GET methods
-adminRouter.get("/profile/:profile_id", authMiddleware.isValidAdmin, profileController.getSingleUserByProfileId)
+adminRouter.get("/:profile_id", authMiddleware.isValidAdmin, profileController.getSingleUserByProfileId)
 
 //POST methods
 adminRouter.post("/fund_raiser_profile/:profile_id", authMiddleware.isValidAdmin, profileController.getUserByIdsController)
