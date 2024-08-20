@@ -56,10 +56,6 @@ const ticketSchema = new Schema({
         required: true,
         enum: Object.values(TicketStatus)
     },
-    priority_number: {
-        type: Number,
-        required: true,
-    },
     created_at: {
         type: Date,
         required: true,

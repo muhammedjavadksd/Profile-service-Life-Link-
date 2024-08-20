@@ -47,18 +47,18 @@ interface ITicketChat {
     chat_id: string,
     from: TicketChatFrom,
     text: string,
-    created_at: string,
+    created_at: Date,
     attachment: string,
 }
 
 interface ITicketTemplate {
     ticket_id: string,
-    profie_id: string,
+    profile_id: string,
     title: string,
     priority: TicketPriority,
     category: TicketCategory,
     status: TicketStatus,
-    priority_number: number,
+
     created_at: Date,
     updated_at: Date,
     chats: ITicketChat[]

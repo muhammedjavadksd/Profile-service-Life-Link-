@@ -38,8 +38,13 @@ enum TicketStatus {
     Answered = "Answered",
 }
 
+enum IdPrefix {
+    TicketChatId = "TCI",
+    TicketId = "TI"
+}
+
 enum TicketChatFrom {
     Admin = "Admin",
     User = "User"
 }
-export { StatusCode, AuthUpdateType, TicketCategory, TicketPriority, TicketStatus, TicketChatFrom }
+export { StatusCode, AuthUpdateType, TicketCategory, TicketPriority, TicketStatus, TicketChatFrom, IdPrefix }
