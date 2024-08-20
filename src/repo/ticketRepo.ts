@@ -16,6 +16,12 @@ class TicketRepo {
         return savedTicket?.id || null;
     }
 
+
+    async findChatFromTicket(ticket_id: string, chat_id: string): Promise<ITicketCollection | null> {
+        const findChat = await this.ticketCollection.findOne({ "chats.chat_id": chat_id, ticket_id })
+        return findChat;
+    }
+
     async findTicketById(ticket_id: string): Promise<ITicketCollection | null> {
         const singleTicket = await this.ticketCollection.findOne({ ticket_id });
         return singleTicket;

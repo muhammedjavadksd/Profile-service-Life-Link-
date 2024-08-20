@@ -40,12 +40,13 @@ class TicketController {
     }
 
     // Update an existing ticket
-    async updateTicket(req: Request, res: Response): Promise<void> {
+    async replayToTicket(req: Request, res: Response): Promise<void> {
         const ticket_id: string | undefined = req.params.ticket_id;
-        const updateData: Partial<ITicketCollection> = req.body;
+        const text: string = req.body.text;
+        const attachment: string = req.body.attachment;
 
-        if (ticket_id && updateData) {
-            const updateResponse: HelperFunctionResponse = await this.ticketService.updateTicket(updateData, ticket_id);
+        if (ticket_id) {
+            const updateResponse: HelperFunctionResponse = await this.ticketService.updateTickerProfile(updateData, ticket_id);
             res.status(updateResponse.statusCode).json({ status: updateResponse.status, msg: updateResponse.msg });
         } else {
             res.status(StatusCode.BAD_REQUEST).json({ status: false, msg: "Please provide a valid ticket ID and update data" });

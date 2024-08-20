@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { IdPrefix, StatusCode, TicketCategory, TicketChatFrom, TicketPriority, TicketStatus } from "../util/types/Enum/UtilEnum";
 import { HelperFunctionResponse } from "../util/types/Interface/UtilInterface";
 import TicketRepo from "../repo/ticketRepo";
-import { ITicketTemplate } from "../util/types/Interface/CollectionInterface";
+import { ITicketChat, ITicketTemplate } from "../util/types/Interface/CollectionInterface";
 import UtilHelper from "../helper/utilHelper";
 
 class TicketService {
@@ -12,14 +12,48 @@ class TicketService {
         this.ticketRepo = new TicketRepo();
     }
 
+    async createUnqiueTicketId() {
+        const utilHelper = new UtilHelper();
+        const randomNumber: number = utilHelper.createOtpNumber(4);
+        const randomText: string = utilHelper.createRandomText(4);
+        let ticketId: string = `${IdPrefix.TicketId}-${randomNumber}-${randomText}`;
+
+        let findTickets = await this.ticketRepo.findTicketById(ticketId);
+        let index = 1;
+        while (findTickets) {
+            ticketId = `${IdPrefix.TicketId}-${randomNumber + index}-${randomText}`;
+            index++
+            findTickets = await this.ticketRepo.findTicketById(ticketId);
+        }
+        return ticketId
+    }
+
+
+    async createUniqueChatID(ticket_id: string) {
+        const utilHelper = new UtilHelper();
+        const randomNumber: number = utilHelper.createOtpNumber(4);
+        const randomText: string = utilHelper.createRandomText(4);
+        let chatId: string = `${IdPrefix.TicketChatId}-${randomText}-${randomNumber}`;
+
+        let findChats = await this.ticketRepo.findChatFromTicket(ticket_id, chatId);
+        let index = 1;
+        while (findChats) {
+            chatId = `${IdPrefix.TicketChatId}-${randomText}-${randomNumber + index}`;
+            index++
+            findChats = await this.ticketRepo.findChatFromTicket(ticket_id, chatId);
+        }
+        return chatId
+    }
+
     async createTicket(profile_id: string, title: string, priority: TicketPriority, category: TicketCategory, text: string, attachment: string): Promise<HelperFunctionResponse> {
 
         const utilHelper = new UtilHelper();
         const randomNumber: number = utilHelper.createOtpNumber(4);
         const randomText: string = utilHelper.createRandomText(4);
 
+        const ticketId: string = await this.createUnqiueTicketId();
         const chatId: string = `${IdPrefix.TicketChatId}-${randomText}-${randomNumber}`;
-        const ticketId: string = `${IdPrefix.TicketId}-${randomNumber}-${randomText}`;
+
         const todayDate: Date = new Date()
 
         let ticketData: ITicketTemplate = {
@@ -59,6 +93,14 @@ class TicketService {
         }
     }
 
+
+    // async replayToTicket(from: TicketChatFrom, msg: string, attachment: string): Promise<HelperFunctionResponse> {
+    //     // let newChat: ITicketChat = {
+    //     //     attachment: attachment,
+
+    //     // }
+    // }
+
     async getSingleTicketByTicketId(ticket_id: string): Promise<HelperFunctionResponse> {
         const singleTicket = await this.ticketRepo.findTicketById(ticket_id);
         if (singleTicket) {
@@ -79,22 +121,22 @@ class TicketService {
         }
     }
 
-    async updateTickerProfile(data: Partial<ITickerProfile>, ticker_id: string): Promise<HelperFunctionResponse> {
-        const updateTicker = await this.ticketRepo.updateTicketStatus(data, ticker_id);
-        if (updateTicker) {
-            return {
-                msg: "Ticker update success",
-                status: true,
-                statusCode: StatusCode.OK
-            };
-        } else {
-            return {
-                msg: "Ticker update failed",
-                status: false,
-                statusCode: StatusCode.BAD_REQUEST
-            };
-        }
-    }
+    // async updateTickerProfile(data: Partial<ITickerProfile>, ticker_id: string): Promise<HelperFunctionResponse> {
+    //     const updateTicker = await this.ticketRepo.updateTicketStatus(data, ticker_id);
+    //     if (updateTicker) {
+    //         return {
+    //             msg: "Ticker update success",
+    //             status: true,
+    //             statusCode: StatusCode.OK
+    //         };
+    //     } else {
+    //         return {
+    //             msg: "Ticker update failed",
+    //             status: false,
+    //             statusCode: StatusCode.BAD_REQUEST
+    //         };
+    //     }
+    // }
 
 
     async listTickets(page: number, limit: number, profile_id: string): Promise<HelperFunctionResponse> {

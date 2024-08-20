@@ -16,6 +16,7 @@ userRouter.get("/get_tickets/:ticket_id", authMiddleware.isValidUser, ticketCont
 
 userRouter.post("/raise_ticket", authMiddleware.isValidUser, ticketController.createTicket)
 
+userRouter.patch("/ticket_replay", authMiddleware.isValidUser, userProfileController.updateProfile)
 userRouter.patch("/update_profile", authMiddleware.isValidUser, userProfileController.updateProfile)
 userRouter.patch("/update_phone_number", authMiddleware.isValidUser, userProfileController.updatePhoneNumber)
 userRouter.patch("/update_email_id", authMiddleware.isValidUser, userProfileController.updateEmailID)

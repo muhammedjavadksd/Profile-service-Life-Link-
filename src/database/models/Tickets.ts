@@ -72,5 +72,7 @@ const ticketSchema = new Schema({
     ]
 })
 
+
+
 const TicketModel = model<ITicketCollection>("tickets", ticketSchema, "tickets");
 export default TicketModel

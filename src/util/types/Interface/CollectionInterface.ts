@@ -58,7 +58,6 @@ interface ITicketTemplate {
     priority: TicketPriority,
     category: TicketCategory,
     status: TicketStatus,
-
     created_at: Date,
     updated_at: Date,
     chats: ITicketChat[]
