@@ -1,6 +1,7 @@
 import express, { Express } from 'express';
 import dotenv from 'dotenv'
 import bulkConsumer from './src/communication/bulkConsumer'
+import logger from 'morgan'
 
 const app: Express = express()
 
@@ -15,7 +16,6 @@ bulkConsumer()
 import profileMongoConnection from './src/database/connection'
 import userRouter from './src/router/userRouter';
 import adminRouter from './src/router/adminRouter'
-import logger from 'morgan'
 
 
 profileMongoConnection()

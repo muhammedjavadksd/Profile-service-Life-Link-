@@ -14,9 +14,35 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const adminService_1 = __importDefault(require("../service/adminService"));
 const UtilEnum_1 = require("../util/types/Enum/UtilEnum");
+const ticketService_1 = __importDefault(require("../service/ticketService"));
 class AdminController {
     constructor() {
         this.adminService = new adminService_1.default();
+        this.ticketServcie = new ticketService_1.default();
+    }
+    addReplayToChat(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const ticket_id = req.params.ticket_id;
+            const msg = req.body.msg;
+            const attachment = req.body.attachment;
+            const addReplay = yield this.ticketServcie.replayToTicket(UtilEnum_1.TicketChatFrom.Admin, msg, attachment, ticket_id);
+            res.status(addReplay.statusCode).json({ status: addReplay.status, msg: addReplay.msg, data: addReplay.data });
+        });
+    }
+    getSingleTicket(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const ticket_id = req.params.ticket_id;
+            const findSingleTicket = yield this.ticketServcie.getSingleTicketByTicketId(ticket_id, true);
+            res.status(findSingleTicket.statusCode).json({ status: findSingleTicket.status, msg: findSingleTicket.msg, data: findSingleTicket.data });
+        });
+    }
+    getTickets(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const limit = +req.params.limit;
+            const page = +req.params.page;
+            const findTicket = yield this.ticketServcie.listAdminTickets(page, limit);
+            res.status(findTicket.statusCode).json({ status: findTicket.status, msg: findTicket.msg, data: findTicket.data });
+        });
     }
     getSingleUserByProfileId(req, res) {
         return __awaiter(this, void 0, void 0, function* () {

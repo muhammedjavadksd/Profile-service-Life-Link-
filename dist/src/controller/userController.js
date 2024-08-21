@@ -14,9 +14,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const userService_1 = __importDefault(require("../service/userService"));
 const UtilEnum_1 = require("../util/types/Enum/UtilEnum");
-const ProfileDataProvider = require("../../communication/Provider/ProfileProvider");
 class UserProfileController {
     constructor() {
+        this.getProfile = this.getProfile.bind(this);
+        this.updateProfile = this.updateProfile.bind(this);
+        this.updatePhoneNumber = this.updatePhoneNumber.bind(this);
+        this.updateEmailID = this.updateEmailID.bind(this);
+        this.profilePictureUpdation = this.profilePictureUpdation.bind(this);
+        this.profileUpdateOTPSubmission = this.profileUpdateOTPSubmission.bind(this);
         this.userProfileService = new userService_1.default();
     }
     getProfile(req, res) {
@@ -136,8 +141,3 @@ class UserProfileController {
     }
 }
 exports.default = UserProfileController;
-const updateProfileController = {};
-module.exports = updateProfileController;
-const profileHelper = require("../../config/util/helper/profileHelper");
-const validatingControler = {};
-module.exports = validatingControler;

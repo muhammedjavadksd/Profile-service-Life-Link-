@@ -19,7 +19,7 @@ adminRouter.get("/get_ticket/:ticket_id", authMiddleware.isValidAdmin, adminCont
 //POST methods
 adminRouter.post("/find_users_byids", authMiddleware.isValidAdmin, adminController.getUserByIdsController)
 
-adminRouter.patch("/replay_ticket/:ticket_id", authMiddleware.isValidAdmin),
+adminRouter.patch("/replay_ticket/:ticket_id", authMiddleware.isValidAdmin, adminController.addReplayToChat)
 
 // module.exports = adminRouter;
 export default adminRouter

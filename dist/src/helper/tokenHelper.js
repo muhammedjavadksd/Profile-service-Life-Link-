@@ -38,4 +38,3 @@ class TokenHelper {
     }
 }
 exports.default = TokenHelper;
-// module.exports = tokenHelper;

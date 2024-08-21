@@ -13,9 +13,9 @@ const ticketController = new TicketController();
 userRouter.get("/get_profile", authMiddleware.isValidUser, userProfileController.getProfile)
 userRouter.get("/get_tickets/:page/:limit", authMiddleware.isValidUser, ticketController.listTickets)
 userRouter.get("/get_tickets/:ticket_id", authMiddleware.isValidUser, ticketController.listTickets)
+userRouter.get("/ticket-attachment-url", authMiddleware.isValidUser, ticketController.ticketAttachementUrl)
 
 userRouter.post("/raise_ticket", authMiddleware.isValidUser, ticketController.createTicket)
-userRouter.post("/ticket-attachment-url", authMiddleware.isValidUser, ticketController.createTicket)
 
 userRouter.patch("/ticket_replay", authMiddleware.isValidUser, userProfileController.updateProfile)
 userRouter.patch("/update_profile", authMiddleware.isValidUser, userProfileController.updateProfile)

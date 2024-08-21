@@ -5,13 +5,14 @@ import { IUserCollection, IUserEditProfile, IUserProfile } from "../util/types/I
 import { HelperFunctionResponse } from "../util/types/Interface/UtilInterface";
 import ProfileDataProvider from "../communication/ProfileProvider";
 import UtilHelper from "../helper/utilHelper";
+import constant_data from "../util/data/const";
 
 // const { default: mongoose } = require("mongoose");
 // const ProfileDataProvider = require("../../../communication/Provider/ProfileProvider");
-const constant_data = require("../../const/const");
-const UserProfileModel = require("../../../database/models/UserProfile");
+// const constant_data = require("../../const/const");
+// const UserProfileModel = require("../../../database/models/UserProfile");
 // const utilHelper = require("./utilHelper");
-const path = require("path")
+// const path = require("path")
 
 
 class UserProfileService {
@@ -202,7 +203,7 @@ class UserProfileService {
 
     async validateUpdateProfileOTP(otp_number: number, type: AuthUpdateType, user_id: string): Promise<HelperFunctionResponse> {
 
-        const userData: IUserCollection = await UserProfileModel.findOne({ user_id });
+        const userData: IUserCollection | null = await this.userRepo.findUserByUserId(user_id) //UserProfileModel.findOne({ user_id });
         if (userData) {
             if (type == AuthUpdateType.Email) {
                 const userOTPNumber = userData.contact_update.email?.otp // userData.contact_update.email.otp;

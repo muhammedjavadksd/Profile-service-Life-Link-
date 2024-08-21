@@ -3,7 +3,6 @@ import { CustomRequest } from "../util/types/CustomeType";
 import UserProfileService from "../service/userService";
 import { HelperFunctionResponse } from "../util/types/Interface/UtilInterface";
 import { AuthUpdateType, StatusCode } from "../util/types/Enum/UtilEnum";
-const ProfileDataProvider = require("../../communication/Provider/ProfileProvider");
 
 
 class UserProfileController {
@@ -11,6 +10,12 @@ class UserProfileController {
     userProfileService;
 
     constructor() {
+        this.getProfile = this.getProfile.bind(this)
+        this.updateProfile = this.updateProfile.bind(this)
+        this.updatePhoneNumber = this.updatePhoneNumber.bind(this)
+        this.updateEmailID = this.updateEmailID.bind(this)
+        this.profilePictureUpdation = this.profilePictureUpdation.bind(this)
+        this.profileUpdateOTPSubmission = this.profileUpdateOTPSubmission.bind(this)
         this.userProfileService = new UserProfileService();
     }
 
@@ -128,10 +133,6 @@ class UserProfileController {
         }
     }
 
-
-    async raiseNewTicket(req: Request, res: Response) {
-
-    }
 }
 
 export default UserProfileController

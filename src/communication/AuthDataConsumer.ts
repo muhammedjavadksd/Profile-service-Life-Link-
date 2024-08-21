@@ -31,7 +31,9 @@ class ProfileConsumer {
                     }
                 }, { noAck: true })
             }
-            reject()
+            // reject()
+            console.log("Channel not found");
+
         })
     }
 }

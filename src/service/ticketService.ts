@@ -73,6 +73,9 @@ class TicketService {
         return chatId
     }
 
+
+
+
     async createTicket(profile_id: string, title: string, priority: TicketPriority, category: TicketCategory, text: string, attachment: string): Promise<HelperFunctionResponse> {
 
         const utilHelper = new UtilHelper();
@@ -83,6 +86,11 @@ class TicketService {
         const chatId: string = `${IdPrefix.TicketChatId}-${randomText}-${randomNumber}`;
 
         const todayDate: Date = new Date()
+
+        const s3Helper = new S3BucketHelper(process.env.TICKET_ATTACHMENT_BUCKET || "")
+        if (attachment) {
+            attachment = s3Helper.getImageNameFromUrl(attachment);
+        }
 
         let ticketData: ITicketTemplate = {
             ticket_id: ticketId,

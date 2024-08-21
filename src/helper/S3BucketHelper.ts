@@ -27,6 +27,13 @@ class S3BucketHelper implements IS3BucketHelper {
         const url = await getSignedUrl(this.s3Config, new PutObjectCommand({ Bucket: this.bucketName, Key: key }), { expiresIn: 3600 })
         return url;
     }
+
+    getImageNameFromUrl(presigned_url: string) {
+        const url = new URL(presigned_url);
+        const pathName = url.pathname
+        const splitPath = pathName.split("/");
+        return `${this.bucketName}/${splitPath[2]}`
+    }
 }
 
 export default S3BucketHelper

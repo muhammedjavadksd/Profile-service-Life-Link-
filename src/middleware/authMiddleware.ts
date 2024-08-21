@@ -10,6 +10,8 @@ class AuthMiddleware {
     tokenHelper;
 
     constructor() {
+        this.isValidUser = this.isValidUser.bind(this)
+        this.isValidAdmin = this.isValidAdmin.bind(this)
         this.tokenHelper = new TokenHelper();
     }
 
@@ -30,8 +32,12 @@ class AuthMiddleware {
                         if (!req.context) {
                             req.context = {}
                         }
+
+                        console.log(tokenValidity);
+
                         req.context.token = token;
                         req.context.user_id = tokenValidity.user_id;
+                        req.context.profile_id = tokenValidity.profile_id;
                         req.context.email_id = tokenValidity.email
 
                         next()

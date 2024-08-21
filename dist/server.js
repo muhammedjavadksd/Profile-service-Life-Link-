@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const bulkConsumer_1 = __importDefault(require("./src/communication/bulkConsumer"));
+const morgan_1 = __importDefault(require("morgan"));
 const app = (0, express_1.default)();
 //middleware
 app.use(express_1.default.json());
@@ -16,7 +17,6 @@ dotenv_1.default.config({ path: "./.env" });
 const connection_1 = __importDefault(require("./src/database/connection"));
 const userRouter_1 = __importDefault(require("./src/router/userRouter"));
 const adminRouter_1 = __importDefault(require("./src/router/adminRouter"));
-const morgan_1 = __importDefault(require("morgan"));
 (0, connection_1.default)();
 app.use("/", userRouter_1.default);
 app.use("/admin", adminRouter_1.default);

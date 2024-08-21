@@ -9,6 +9,11 @@ class TicketController {
     private ticketService: TicketService;
 
     constructor() {
+        this.ticketAttachementUrl = this.ticketAttachementUrl.bind(this)
+        this.createTicket = this.createTicket.bind(this)
+        this.getSingleTicketById = this.getSingleTicketById.bind(this)
+        this.replayToTicket = this.replayToTicket.bind(this)
+        this.listTickets = this.listTickets.bind(this)
         this.ticketService = new TicketService();
     }
 

@@ -1,9 +1,8 @@
-import { model } from "mongoose";
-import { TicketCategory, TicketChatFrom, TicketPriority, TicketStatus } from "../../util/types/Enum/UtilEnum";
-import { ITicketCollection, ITicketTemplate } from "../../util/types/Interface/CollectionInterface";
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const mongoose_1 = require("mongoose");
+const UtilEnum_1 = require("../../util/types/Enum/UtilEnum");
 const { Schema } = require("mongoose");
-
 const ticketChatSchema = new Schema({
     chat_id: {
         type: String,
@@ -12,7 +11,7 @@ const ticketChatSchema = new Schema({
     from: {
         type: String,
         required: true,
-        enum: Object.values(TicketChatFrom)
+        enum: Object.values(UtilEnum_1.TicketChatFrom)
     },
     text: {
         type: String,
@@ -26,8 +25,7 @@ const ticketChatSchema = new Schema({
         type: String,
         required: false
     },
-})
-
+});
 const ticketSchema = new Schema({
     ticket_id: {
         type: String,
@@ -44,17 +42,17 @@ const ticketSchema = new Schema({
     priority: {
         type: String,
         required: true,
-        enum: Object.values(TicketPriority)
+        enum: Object.values(UtilEnum_1.TicketPriority)
     },
     category: {
         type: String,
         required: true,
-        enum: Object.values(TicketCategory)
+        enum: Object.values(UtilEnum_1.TicketCategory)
     },
     status: {
         type: String,
         required: true,
-        enum: Object.values(TicketStatus)
+        enum: Object.values(UtilEnum_1.TicketStatus)
     },
     created_at: {
         type: Date,
@@ -70,9 +68,6 @@ const ticketSchema = new Schema({
             required: true
         }
     ]
-})
-
-
-
-const TicketModel = model<ITicketCollection>("tickets", ticketSchema, "tickets");
-export default TicketModel
+});
+const TicketModel = (0, mongoose_1.model)("tickets", ticketSchema, "tickets");
+exports.default = TicketModel;
