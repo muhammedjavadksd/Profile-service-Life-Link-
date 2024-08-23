@@ -63,7 +63,22 @@ interface ITicketTemplate {
     chats: ITicketChat[]
 }
 
+interface IMessageSchema {
+    timeline: string,
+    msg: string,
+    seen: boolean
+}
+
+interface IChatTemplate {
+    profile_one: string,
+    profile_two: string,
+    chat_started: string,
+    chats: IMessageSchema[]
+}
+
+
 interface IUserCollection extends Document, IUserProfile { };
 interface ITicketCollection extends Document, ITicketTemplate { };
+interface IChatCollection extends Document, IChatTemplate { };
 
-export { IProfileEdit, IUserEditProfile, IUserCollection, IUserProfile, ITicketTemplate, ITicketCollection, ITicketChat }
+export { IChatCollection, IMessageSchema, IProfileEdit, IUserEditProfile, IUserCollection, IUserProfile, ITicketTemplate, ITicketCollection, ITicketChat }
