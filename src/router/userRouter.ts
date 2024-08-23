@@ -16,6 +16,9 @@ userRouter.get("/get_tickets/:ticket_id", authMiddleware.isValidUser, ticketCont
 userRouter.get("/ticket-attachment-url", authMiddleware.isValidUser, ticketController.ticketAttachementUrl)
 
 userRouter.post("/raise_ticket", authMiddleware.isValidUser, ticketController.createTicket)
+userRouter.post("/create_chat", authMiddleware.isValidUser, userProfileController.createChat)
+userRouter.post("/add_message/:room_id", authMiddleware.isValidUser, authMiddleware.isValidChat, userProfileController.addMessageToChat)
+userRouter.post("/block-status/:status/:room_id", authMiddleware.isValidUser, authMiddleware.isValidChat, userProfileController.blockStatus)
 
 userRouter.patch("/ticket_replay", authMiddleware.isValidUser, userProfileController.updateProfile)
 userRouter.patch("/update_profile", authMiddleware.isValidUser, userProfileController.updateProfile)

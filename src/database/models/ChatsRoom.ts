@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose";
 import { IChatCollection } from "../../util/types/Interface/CollectionInterface";
-// import { ChatFrom } from "../../Util/Types/Enum";
-// import { IChatCollection } from "../../Util/Types/Interface/ModelInterface";
+
+
 
 const messageSchema = new Schema({
     timeline: {
@@ -15,10 +15,24 @@ const messageSchema = new Schema({
     seen: {
         type: Boolean,
         required: true
+    },
+    is_block: {
+        type: Boolean,
+        required: true
+    },
+    profile_id: {
+        type: String,
+        required: true
     }
 })
 
+
 const chatSchema = new Schema({
+    chat_id: {
+        type: String,
+        required: true,
+        unique: true
+    },
     profile_one: {
         type: String,
         required: true
@@ -31,12 +45,20 @@ const chatSchema = new Schema({
         type: String,
         default: new Date()
     },
-    chats: {
-        type: [messageSchema],
-        required: true
+    blocked: {
+        status: {
+            type: Boolean,
+            required: false
+        },
+        blocked_from: {
+            type: String,
+            required: function (this: { status: boolean | undefined }): boolean {
+                return this.status !== undefined;
+            }
+        }
     }
 })
 
-const ChatCollection = model<IChatCollection>("chat", chatSchema)
+const ChatCollection = model<IChatCollection>("chat_room", chatSchema)
 
 export default ChatCollection

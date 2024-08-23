@@ -3,6 +3,8 @@ import { NextFunction, Response } from "express";
 import { CustomRequest } from "../util/types/CustomeType";
 import TokenHelper from "../helper/tokenHelper";
 import { JwtPayload } from "jsonwebtoken";
+import ChatRepository from "../repo/chatRepo";
+import { StatusCode } from "../util/types/Enum/UtilEnum";
 
 
 class AuthMiddleware {
@@ -13,6 +15,24 @@ class AuthMiddleware {
         this.isValidUser = this.isValidUser.bind(this)
         this.isValidAdmin = this.isValidAdmin.bind(this)
         this.tokenHelper = new TokenHelper();
+    }
+
+
+    async isValidChat(req: CustomRequest, res: Response, next: NextFunction) {
+        const context = req.context;
+        const room_id = req.params.room_id;
+        if (context) {
+            const profile_id = context?.profile_id;
+            if (profile_id) {
+                const chatRepo = new ChatRepository();
+                const findChat = await chatRepo.findChatById(room_id);
+                if (findChat?.profile_one == profile_id || findChat?.profile_two == profile_id) {
+                    next()
+                    return;
+                }
+            }
+        }
+        res.status(StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un authorized access" })
     }
 
     async isValidUser(req: CustomRequest, res: Response, next: NextFunction) {

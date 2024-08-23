@@ -66,19 +66,26 @@ interface ITicketTemplate {
 interface IMessageSchema {
     timeline: string,
     msg: string,
-    seen: boolean
+    seen: boolean,
+    is_block: boolean
+    profile_id: string
 }
 
 interface IChatTemplate {
+    chat_id: string,
     profile_one: string,
     profile_two: string,
-    chat_started: string,
-    chats: IMessageSchema[]
+    chat_started: Date,
+    blocked: {
+        status: boolean,
+        blocked_from?: string
+    },
 }
 
 
 interface IUserCollection extends Document, IUserProfile { };
 interface ITicketCollection extends Document, ITicketTemplate { };
 interface IChatCollection extends Document, IChatTemplate { };
+interface IMessageCollection extends Document, IMessageSchema { };
 
-export { IChatCollection, IMessageSchema, IProfileEdit, IUserEditProfile, IUserCollection, IUserProfile, ITicketTemplate, ITicketCollection, ITicketChat }
+export { IChatCollection, IMessageCollection, IMessageSchema, IChatTemplate, IProfileEdit, IUserEditProfile, IUserCollection, IUserProfile, ITicketTemplate, ITicketCollection, ITicketChat }

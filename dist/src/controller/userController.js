@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const userService_1 = __importDefault(require("../service/userService"));
 const UtilEnum_1 = require("../util/types/Enum/UtilEnum");
+const chatService_1 = __importDefault(require("../service/chatService"));
 class UserProfileController {
     constructor() {
         this.getProfile = this.getProfile.bind(this);
@@ -22,7 +23,11 @@ class UserProfileController {
         this.updateEmailID = this.updateEmailID.bind(this);
         this.profilePictureUpdation = this.profilePictureUpdation.bind(this);
         this.profileUpdateOTPSubmission = this.profileUpdateOTPSubmission.bind(this);
+        this.createChat = this.createChat.bind(this);
+        this.addMessageToChat = this.addMessageToChat.bind(this);
+        this.blockStatus = this.blockStatus.bind(this);
         this.userProfileService = new userService_1.default();
+        this.chatService = new chatService_1.default();
     }
     getProfile(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -137,6 +142,60 @@ class UserProfileController {
                     msg: "Authentication failed"
                 });
             }
+        });
+    }
+    createChat(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const context = req.context;
+            if (context) {
+                const profile_id = context.profile_id;
+                const second_profile = req.body.to_profile;
+                const msg = req.body.msg;
+                const createChat = yield this.chatService.startChat(profile_id, second_profile, msg);
+                res.status(createChat.statusCode).json({ status: createChat.status, msg: createChat.msg, data: createChat.data });
+            }
+            else {
+                res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un authraized access", });
+            }
+        });
+    }
+    addMessageToChat(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const msg = req.body.message;
+            const room_id = req.params.room_id;
+            const context = req.context;
+            if (context) {
+                const profile_id = context.profile_id;
+                if (profile_id) {
+                    const addMessage = yield this.chatService.addMessage(room_id, msg, profile_id);
+                    res.status(addMessage.statusCode).json({ status: addMessage.status, msg: addMessage.msg, data: addMessage.data });
+                    return;
+                }
+            }
+            res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un authraized access", });
+        });
+    }
+    blockStatus(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const room_id = req.params.room_id;
+            const status = req.params.status;
+            const context = req.context;
+            if (context) {
+                const profile_id = context.profile_id;
+                if (profile_id) {
+                    if (status == "block") {
+                        const blockRoom = yield this.chatService.blockChat(room_id, profile_id);
+                        res.status(blockRoom.statusCode).json({ status: blockRoom.status, msg: blockRoom.msg, data: blockRoom.data });
+                        return;
+                    }
+                    else {
+                        const blockRoom = yield this.chatService.unBlockChat(room_id, profile_id);
+                        res.status(blockRoom.statusCode).json({ status: blockRoom.status, msg: blockRoom.msg, data: blockRoom.data });
+                        return;
+                    }
+                }
+            }
+            res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un authraized access", });
         });
     }
 }

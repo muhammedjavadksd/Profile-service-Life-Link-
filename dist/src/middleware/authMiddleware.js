@@ -13,11 +13,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const tokenHelper_1 = __importDefault(require("../helper/tokenHelper"));
+const chatRepo_1 = __importDefault(require("../repo/chatRepo"));
+const UtilEnum_1 = require("../util/types/Enum/UtilEnum");
 class AuthMiddleware {
     constructor() {
         this.isValidUser = this.isValidUser.bind(this);
         this.isValidAdmin = this.isValidAdmin.bind(this);
         this.tokenHelper = new tokenHelper_1.default();
+    }
+    isValidChat(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const context = req.context;
+            const room_id = req.params.room_id;
+            if (context) {
+                const profile_id = context === null || context === void 0 ? void 0 : context.profile_id;
+                if (profile_id) {
+                    const chatRepo = new chatRepo_1.default();
+                    const findChat = yield chatRepo.findChatById(room_id);
+                    if ((findChat === null || findChat === void 0 ? void 0 : findChat.profile_one) == profile_id || (findChat === null || findChat === void 0 ? void 0 : findChat.profile_two) == profile_id) {
+                        next();
+                        return;
+                    }
+                }
+            }
+            res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un authorized access" });
+        });
     }
     isValidUser(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
