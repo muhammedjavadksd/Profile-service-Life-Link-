@@ -198,5 +198,18 @@ class UserProfileController {
             res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un authraized access", });
         });
     }
+    getMyChats(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const context = req.context;
+            if (context) {
+                const profile_id = context === null || context === void 0 ? void 0 : context.profile_id;
+                if (profile_id) {
+                    const myChats = yield this.chatService.getMyChats(profile_id);
+                    res.status(myChats.statusCode).json({ status: myChats.status, msg: myChats.msg, data: myChats.data });
+                }
+            }
+            res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un authraized access", });
+        });
+    }
 }
 exports.default = UserProfileController;

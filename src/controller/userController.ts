@@ -193,6 +193,20 @@ class UserProfileController {
         res.status(StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un authraized access", })
     }
 
+
+    async getMyChats(req: CustomRequest, res: Response): Promise<void> {
+
+        const context = req.context;
+        if (context) {
+            const profile_id = context?.profile_id;
+            if (profile_id) {
+                const myChats = await this.chatService.getMyChats(profile_id);
+                res.status(myChats.statusCode).json({ status: myChats.status, msg: myChats.msg, data: myChats.data })
+            }
+        }
+        res.status(StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un authraized access", })
+    }
+
 }
 
 export default UserProfileController
