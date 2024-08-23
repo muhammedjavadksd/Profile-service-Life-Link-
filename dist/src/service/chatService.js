@@ -23,6 +23,7 @@ class ChatService {
         this.blockChat = this.blockChat.bind(this);
         this.unBlockChat = this.unBlockChat.bind(this);
         this.startChat = this.startChat.bind(this);
+        // this.getMyChats = this.getMyChats.bind(this)
         this.chatRepo = new chatRepo_1.default();
     }
     createChatId() {
@@ -52,6 +53,12 @@ class ChatService {
                         statusCode: UtilEnum_1.StatusCode.BAD_REQUEST
                     };
                 }
+                const unseen_message_count = findRoom.messages.unseen_message_count;
+                const updateMessageDetails = {
+                    last_message: msg,
+                    last_message_from: profile_id,
+                    unseen_message_count: unseen_message_count ? (unseen_message_count + 1) : 1
+                };
                 const message = {
                     msg,
                     seen: false,
@@ -60,6 +67,8 @@ class ChatService {
                     profile_id: profile_id
                 };
                 yield this.chatRepo.addMessageToChat(room_id, message);
+                yield this.chatRepo.addMessageDetails(room_id, updateMessageDetails);
+                // await this.chatRepo.
                 return {
                     status: true,
                     msg: "Message added success",
@@ -145,6 +154,11 @@ class ChatService {
                 profile_two: profile_two,
                 blocked: {
                     status: false
+                },
+                messages: {
+                    last_message: msg,
+                    last_message_from: profile_one,
+                    unseen_message_count: 1
                 }
             };
             const messageScheme = {

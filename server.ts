@@ -20,6 +20,10 @@ import adminRouter from './src/router/adminRouter'
 
 profileMongoConnection()
 
+
+
+
+
 app.use("/", userRouter)
 app.use("/admin", adminRouter)
 

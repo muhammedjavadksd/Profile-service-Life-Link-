@@ -26,6 +26,7 @@ class UserProfileController {
         this.createChat = this.createChat.bind(this);
         this.addMessageToChat = this.addMessageToChat.bind(this);
         this.blockStatus = this.blockStatus.bind(this);
+        this.getMyChats = this.getMyChats.bind(this);
         this.userProfileService = new userService_1.default();
         this.chatService = new chatService_1.default();
     }
@@ -206,6 +207,7 @@ class UserProfileController {
                 if (profile_id) {
                     const myChats = yield this.chatService.getMyChats(profile_id);
                     res.status(myChats.statusCode).json({ status: myChats.status, msg: myChats.msg, data: myChats.data });
+                    return;
                 }
             }
             res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un authraized access", });

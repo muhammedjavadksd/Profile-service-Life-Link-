@@ -19,13 +19,58 @@ class ChatRepository {
     }
     findChatMyChat(profile_id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const myChat = yield this.chatCollection.findOne({
-                $or: [{
-                        profile_one: profile_id,
-                    }, {
-                        profile_two: profile_id
-                    }]
-            });
+            const myChat = yield this.chatCollection.aggregate([{
+                    $match: {
+                        $or: [
+                            {
+                                profile_one: profile_id,
+                            },
+                            {
+                                profile_two: profile_id
+                            }
+                        ]
+                    },
+                },
+                {
+                    $addFields: {
+                        "chat_profile_id": {
+                            $cond: {
+                                if: { $eq: ['$profile_one', profile_id] },
+                                then: "$profile_two",
+                                else: "$profile_one"
+                            }
+                        }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "user_profile",
+                        as: "chat_person",
+                        foreignField: "profile_id",
+                        localField: "chat_profile_id"
+                    }
+                },
+                {
+                    $project: {
+                        "_id": 0,
+                        "profile_one": 0,
+                        "profile_two": 0,
+                        "chat_person._id": 0,
+                        "chat_person.user_id": 0,
+                        "chat_person.email": 0,
+                        "chat_person.phone_number": 0,
+                    }
+                }
+            ]);
+            console.log("My chats");
+            console.log(myChat[0].chat_person);
+            // await this.chatCollection.findOne({
+            //     $or: [{
+            //         profile_one: profile_id,
+            //     }, {
+            //         profile_two: profile_id
+            //     }]
+            // });
             return myChat;
         });
     }
@@ -71,6 +116,12 @@ class ChatRepository {
         return __awaiter(this, void 0, void 0, function* () {
             const addMessage = yield ChatsRoom_1.default.updateOne({ chat_id: chatId }, { $push: { chats: message } });
             return addMessage.modifiedCount > 0;
+        });
+    }
+    addMessageDetails(room_id, details) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const updateRoom = yield this.chatCollection.updateOne({ chat_id: room_id }, { $set: { messages: details } });
+            return updateRoom.modifiedCount > 0;
         });
     }
 }

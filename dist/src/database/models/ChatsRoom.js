@@ -41,6 +41,20 @@ const chatSchema = new mongoose_1.Schema({
         type: String,
         default: new Date()
     },
+    messages: {
+        last_message: {
+            type: String,
+            required: true
+        },
+        last_message_from: {
+            type: String,
+            required: true
+        },
+        unseen_message_count: {
+            type: Number,
+            required: true
+        }
+    },
     blocked: {
         status: {
             type: Boolean,

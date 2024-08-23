@@ -15,7 +15,7 @@ userRouter.get("/get_profile", authMiddleware.isValidUser, userProfileController
 userRouter.get("/get_tickets/:page/:limit", authMiddleware.isValidUser, ticketController.listTickets);
 userRouter.get("/get_tickets/:ticket_id", authMiddleware.isValidUser, ticketController.listTickets);
 userRouter.get("/ticket-attachment-url", authMiddleware.isValidUser, ticketController.ticketAttachementUrl);
-userRouter.get("/get_chat_rooms", authMiddleware.isValidUser, ticketController.ticketAttachementUrl);
+userRouter.get("/get_chat_rooms", authMiddleware.isValidUser, userProfileController.getMyChats);
 userRouter.get("/get_chat/:room_id", authMiddleware.isValidUser, authMiddleware.isValidChat, ticketController.ticketAttachementUrl);
 userRouter.post("/raise_ticket", authMiddleware.isValidUser, ticketController.createTicket);
 userRouter.post("/create_chat", authMiddleware.isValidUser, userProfileController.createChat);

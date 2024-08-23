@@ -71,6 +71,12 @@ interface IMessageSchema {
     profile_id: string
 }
 
+interface IChatMessageDetails {
+    last_message: string,
+    last_message_from: string
+    unseen_message_count: number
+}
+
 interface IChatTemplate {
     chat_id: string,
     profile_one: string,
@@ -80,6 +86,7 @@ interface IChatTemplate {
         status: boolean,
         blocked_from?: string
     },
+    messages: IChatMessageDetails
 }
 
 
@@ -88,4 +95,4 @@ interface ITicketCollection extends Document, ITicketTemplate { };
 interface IChatCollection extends Document, IChatTemplate { };
 interface IMessageCollection extends Document, IMessageSchema { };
 
-export { IChatCollection, IMessageCollection, IMessageSchema, IChatTemplate, IProfileEdit, IUserEditProfile, IUserCollection, IUserProfile, ITicketTemplate, ITicketCollection, ITicketChat }
+export { IChatCollection, IChatMessageDetails, IMessageCollection, IMessageSchema, IChatTemplate, IProfileEdit, IUserEditProfile, IUserCollection, IUserProfile, ITicketTemplate, ITicketCollection, ITicketChat }

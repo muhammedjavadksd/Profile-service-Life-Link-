@@ -2,7 +2,7 @@ import { ObjectId } from "mongoose";
 import ChatRepository from "../repo/chatRepo";
 import { HelperFunctionResponse } from "../util/types/Interface/UtilInterface";
 import { StatusCode } from "../util/types/Enum/UtilEnum";
-import { IChatTemplate, IMessageSchema } from "../util/types/Interface/CollectionInterface";
+import { IChatMessageDetails, IChatTemplate, IMessageSchema } from "../util/types/Interface/CollectionInterface";
 import UtilHelper from "../helper/utilHelper";
 
 
@@ -23,6 +23,7 @@ class ChatService implements IChatService {
         this.blockChat = this.blockChat.bind(this)
         this.unBlockChat = this.unBlockChat.bind(this)
         this.startChat = this.startChat.bind(this)
+        // this.getMyChats = this.getMyChats.bind(this)
         this.chatRepo = new ChatRepository();
     }
 
@@ -51,6 +52,13 @@ class ChatService implements IChatService {
                     statusCode: StatusCode.BAD_REQUEST
                 }
             }
+
+            const unseen_message_count: number = findRoom.messages.unseen_message_count
+            const updateMessageDetails: IChatMessageDetails = {
+                last_message: msg,
+                last_message_from: profile_id,
+                unseen_message_count: unseen_message_count ? (unseen_message_count + 1) : 1
+            }
             const message: IMessageSchema = {
                 msg,
                 seen: false,
@@ -59,6 +67,8 @@ class ChatService implements IChatService {
                 profile_id: profile_id
             }
             await this.chatRepo.addMessageToChat(room_id, message);
+            await this.chatRepo.addMessageDetails(room_id, updateMessageDetails);
+            // await this.chatRepo.
             return {
                 status: true,
                 msg: "Message added success",
@@ -143,6 +153,11 @@ class ChatService implements IChatService {
             profile_two: profile_two,
             blocked: {
                 status: false
+            },
+            messages: {
+                last_message: msg,
+                last_message_from: profile_one,
+                unseen_message_count: 1
             }
         }
         const messageScheme: IMessageSchema = {
