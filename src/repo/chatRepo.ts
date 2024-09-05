@@ -51,6 +51,7 @@ class ChatRepository implements IChatRepo {
                 localField: "chat_profile_id"
             }
         },
+        { $unwind: '$chat_person' },
         {
             $project: {
                 "_id": 0,

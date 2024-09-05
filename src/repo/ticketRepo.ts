@@ -2,6 +2,7 @@ import { ObjectId } from "mongoose";
 import TicketModel from "../database/models/Tickets";
 import { ITicketChat, ITicketCollection, ITicketTemplate } from "../util/types/Interface/CollectionInterface";
 import { TicketPriority, TicketStatus } from "../util/types/Enum/UtilEnum";
+import { IPaginatedResponse } from "../util/types/Interface/UtilInterface";
 
 class TicketRepo {
     private ticketCollection;
@@ -53,9 +54,55 @@ class TicketRepo {
         return coundTickets
     }
 
-    async findUserPaginedTicket(profile_id: string, skip: number, limit: number): Promise<ITicketCollection[] | []> {
-        const tickets = await this.ticketCollection.find({ profile_id }).skip(skip).limit(limit);
-        return tickets;
+    async findUserPaginedTicket(profile_id: string, skip: number, limit: number): Promise<IPaginatedResponse<ITicketCollection[]>> {
+
+        try {
+            const tickets = await this.ticketCollection.aggregate([
+                {
+                    $match: { profile_id }
+                },
+                {
+                    $facet: {
+                        paginated: [
+                            {
+                                $skip: skip
+                            },
+                            {
+                                $limit: limit
+                            }
+                        ],
+                        total_records: [
+                            {
+                                $count: "total_records"
+                            }
+                        ]
+                    }
+                },
+                {
+                    $unwind: "$total_records"
+                },
+                {
+                    $project: {
+                        paginated: 1,
+                        total_records: "$total_records.total_records"
+                    }
+                }
+            ])
+
+
+            const response: IPaginatedResponse<ITicketCollection[]> = {
+                paginated: tickets[0].paginated,
+                total_records: tickets[0].total_records
+            }
+
+            return response;
+        } catch (e) {
+            const response: IPaginatedResponse<ITicketCollection[]> = {
+                paginated: [],
+                total_records: 0
+            }
+            return response;
+        }
     }
 
     async findPaginedTicket(skip: number, limit: number): Promise<ITicketCollection[] | []> {

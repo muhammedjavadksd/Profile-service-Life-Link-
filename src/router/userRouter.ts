@@ -11,8 +11,8 @@ const authMiddleware = new AuthMiddleware();
 const ticketController = new TicketController();
 
 userRouter.get("/get_profile", authMiddleware.isValidUser, userProfileController.getProfile)
-userRouter.get("/get_tickets/:page/:limit", authMiddleware.isValidUser, ticketController.listTickets)
-userRouter.get("/get_tickets/:ticket_id", authMiddleware.isValidUser, ticketController.listTickets)
+userRouter.get("/get-tickets/:page/:limit", authMiddleware.isValidUser, ticketController.listTickets)
+userRouter.get("/get_tickets/:ticket_id", authMiddleware.isValidUser, ticketController.getSingleTicketById)
 userRouter.get("/ticket-attachment-url", authMiddleware.isValidUser, ticketController.ticketAttachementUrl)
 userRouter.get("/get_chat_rooms", authMiddleware.isValidUser, userProfileController.getMyChats)
 userRouter.get("/get_chat/:room_id", authMiddleware.isValidUser, authMiddleware.isValidChat, ticketController.ticketAttachementUrl)
@@ -22,7 +22,7 @@ userRouter.post("/create_chat", authMiddleware.isValidUser, userProfileControlle
 userRouter.post("/add_message/:room_id", authMiddleware.isValidUser, authMiddleware.isValidChat, userProfileController.addMessageToChat)
 userRouter.post("/block-status/:status/:room_id", authMiddleware.isValidUser, authMiddleware.isValidChat, userProfileController.blockStatus)
 
-userRouter.patch("/ticket_replay", authMiddleware.isValidUser, userProfileController.updateProfile)
+userRouter.patch("/ticket_replay/:ticket_id", authMiddleware.isValidUser, ticketController.replayToTicket)
 userRouter.patch("/update_profile", authMiddleware.isValidUser, userProfileController.updateProfile)
 userRouter.patch("/update_phone_number", authMiddleware.isValidUser, userProfileController.updatePhoneNumber)
 userRouter.patch("/update_email_id", authMiddleware.isValidUser, userProfileController.updateEmailID)
