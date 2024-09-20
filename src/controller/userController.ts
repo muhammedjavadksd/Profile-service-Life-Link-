@@ -2,14 +2,16 @@ import { Request, Response } from "express";
 import { CustomRequest } from "../util/types/CustomeType";
 import UserProfileService from "../service/userService";
 import { HelperFunctionResponse } from "../util/types/Interface/UtilInterface";
-import { AuthUpdateType, StatusCode } from "../util/types/Enum/UtilEnum";
+import { AuthUpdateType, S3Folder, StatusCode } from "../util/types/Enum/UtilEnum";
 import ChatService from "../service/chatService";
+import ImageService from "../service/imageService";
 
 
 class UserProfileController {
 
     userProfileService;
     chatService;
+    imageService;
 
     constructor() {
         this.getProfile = this.getProfile.bind(this)
@@ -22,8 +24,21 @@ class UserProfileController {
         this.addMessageToChat = this.addMessageToChat.bind(this)
         this.blockStatus = this.blockStatus.bind(this)
         this.getMyChats = this.getMyChats.bind(this)
+        this.getSingleChat = this.getSingleChat.bind(this)
+        this.getPresignedUrl = this.getPresignedUrl.bind(this)
         this.userProfileService = new UserProfileService();
         this.chatService = new ChatService();
+        this.imageService = new ImageService()
+    }
+
+    async getPresignedUrl(req: Request, res: Response): Promise<void> {
+        const fileName = req.query.file;
+        if (fileName) {
+            const signedUrl = await this.imageService.createPresignedUrl(fileName.toString(), process.env.TICKET_ATTACHMENT_BUCKET || "", S3Folder.TicktAttachment);
+            res.status(signedUrl.statusCode).json({ status: signedUrl.status, msg: signedUrl.msg, data: signedUrl.data })
+        } else {
+            res.status(StatusCode.BAD_REQUEST).json({ status: false, msg: "Something went wrong" })
+        }
     }
 
     async getProfile(req: CustomRequest, res: Response) {
@@ -207,6 +222,23 @@ class UserProfileController {
             }
         }
         res.status(StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un authraized access", })
+    }
+
+    async getSingleChat(req: CustomRequest, res: Response): Promise<void> {
+
+        const profile_id: string = req.context?.profile_id
+        const chat_id: string = req.params.room_id
+
+
+        console.log("Finding single chat");
+
+
+        if (profile_id && chat_id) {
+            const findChat = await this.chatService.getSingleChat(chat_id, profile_id);
+            res.status(findChat.statusCode).json({ status: findChat.status, msg: findChat.msg, data: findChat.data })
+        } else {
+            res.status(StatusCode.UNAUTHORIZED).json({ status: false, msg: "Unauthraized access" })
+        }
     }
 
 }

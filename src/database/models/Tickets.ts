@@ -24,7 +24,6 @@ const ticketChatSchema = new Schema({
     },
     attachment: {
         type: String,
-        required: false
     },
 })
 

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { IdPrefix, StatusCode, TicketCategory, TicketChatFrom, TicketPriority, TicketStatus } from "../util/types/Enum/UtilEnum";
+import { IdPrefix, S3Folder, StatusCode, TicketCategory, TicketChatFrom, TicketPriority, TicketStatus } from "../util/types/Enum/UtilEnum";
 import { HelperFunctionResponse } from "../util/types/Interface/UtilInterface";
 import TicketRepo from "../repo/ticketRepo";
 import { ITicketChat, ITicketTemplate } from "../util/types/Interface/CollectionInterface";
@@ -15,30 +15,30 @@ class TicketService {
 
 
 
-    async generatePresignedUrl(): Promise<HelperFunctionResponse> {
-        const s3Bucket = new S3BucketHelper(process.env.TICKET_ATTACHMENT_BUCKET || "");
-        const utilHelper = new UtilHelper();
-        const randomNumber: number = utilHelper.createOtpNumber(4)
-        const randomText: string = utilHelper.createRandomText(4)
-        const key: string = `ticket-attachment-${randomNumber}-${randomText}`
-        const presignedUrl = await s3Bucket.generatePresignedUrl(key)
-        if (presignedUrl) {
-            return {
-                msg: "Presigned url created",
-                status: true,
-                statusCode: StatusCode.CREATED,
-                data: {
-                    url: presignedUrl
-                }
-            }
-        } else {
-            return {
-                msg: "Failed to create presigned url",
-                status: false,
-                statusCode: StatusCode.BAD_REQUEST,
-            }
-        }
-    }
+    // async generatePresignedUrl(): Promise<HelperFunctionResponse> {
+    //     const s3Bucket = new S3BucketHelper(process.env.TICKET_ATTACHMENT_BUCKET || "");
+    //     const utilHelper = new UtilHelper();
+    //     const randomNumber: number = utilHelper.createOtpNumber(4)
+    //     const randomText: string = utilHelper.createRandomText(4)
+    //     const key: string = `ticket-attachment-${randomNumber}-${randomText}`
+    //     const presignedUrl = await s3Bucket.generatePresignedUrl(key)
+    //     if (presignedUrl) {
+    //         return {
+    //             msg: "Presigned url created",
+    //             status: true,
+    //             statusCode: StatusCode.CREATED,
+    //             data: {
+    //                 url: presignedUrl
+    //             }
+    //         }
+    //     } else {
+    //         return {
+    //             msg: "Failed to create presigned url",
+    //             status: false,
+    //             statusCode: StatusCode.BAD_REQUEST,
+    //         }
+    //     }
+    // }
 
     async createUnqiueTicketId() {
         const utilHelper = new UtilHelper();
@@ -86,10 +86,18 @@ class TicketService {
         const chatId: string = `${IdPrefix.TicketChatId}-${randomText}-${randomNumber}`;
 
         const todayDate: Date = new Date()
+        let attachmentDocs = null;
 
-        const s3Helper = new S3BucketHelper(process.env.TICKET_ATTACHMENT_BUCKET || "")
+        const s3Helper = new S3BucketHelper(process.env.TICKET_ATTACHMENT_BUCKET || "", S3Folder.TicktAttachment);
         if (attachment) {
-            attachment = s3Helper.getImageNameFromUrl(attachment);
+            const findName = utilHelper.extractImageNameFromPresignedUrl(attachment);
+            if (findName) {
+                const checkSecurity = await s3Helper.findFile(findName);
+                const attachmentUrl = s3Helper.getViewUrl(findName);
+                if (checkSecurity && attachmentUrl) {
+                    attachmentDocs = attachmentUrl
+                }
+            }
         }
 
         let ticketData: ITicketTemplate = {
@@ -102,7 +110,7 @@ class TicketService {
             title,
             priority,
             chats: [{
-                attachment,
+                attachment: attachmentDocs,
                 chat_id: chatId,
                 created_at: todayDate,
                 from: TicketChatFrom.User,
@@ -132,9 +140,29 @@ class TicketService {
 
     async replayToTicket(from: TicketChatFrom, msg: string, attachment: string, ticket_id: string): Promise<HelperFunctionResponse> {
 
+        const utilHelper = new UtilHelper()
         const newChatId = await this.createUniqueChatID(ticket_id)
+        const s3Helper = new S3BucketHelper(process.env.TICKET_ATTACHMENT_BUCKET || "", S3Folder.TicktAttachment);
+        let attachmentDocs = null;
+
+
+        if (attachment) {
+            const findName = utilHelper.extractImageNameFromPresignedUrl(attachment);
+            if (findName) {
+                const find = await s3Helper.findFile(findName)
+                console.log(find);
+                if (find && findName) {
+                    const getViewUrl = s3Helper.getViewUrl(findName);
+                    console.log("View url");
+                    console.log(getViewUrl);
+                    if (getViewUrl) {
+                        attachmentDocs = getViewUrl
+                    }
+                }
+            }
+        }
         let newChat: ITicketChat = {
-            attachment: attachment,
+            attachment: attachmentDocs,
             chat_id: newChatId,
             created_at: new Date(),
             from,
@@ -145,7 +173,10 @@ class TicketService {
             return {
                 msg: "Chat added to tickets",
                 status: true,
-                statusCode: StatusCode.CREATED
+                statusCode: StatusCode.CREATED,
+                data: {
+                    attachment: attachmentDocs
+                }
             }
         } else {
             return {
@@ -173,7 +204,7 @@ class TicketService {
                 status: true,
                 statusCode: StatusCode.OK,
                 data: {
-                    ticker: singleTicket
+                    ticket: singleTicket
                 }
             };
         } else {
@@ -203,20 +234,15 @@ class TicketService {
     // }
 
 
-    async listAdminTickets(page: number, limit: number): Promise<HelperFunctionResponse> {
+    async listAdminTickets(page: number, limit: number, status: TicketStatus): Promise<HelperFunctionResponse> {
         const skip: number = (page - 1) * limit;
-        const findTickets = await this.ticketRepo.findPaginedTicket(skip, limit);
-        const countDocuments = await this.ticketRepo.countTickets();
-        if (findTickets.length) {
+        const findTickets = await this.ticketRepo.findPaginedTicket(skip, limit, status);
+        if (findTickets.paginated.length) {
             return {
                 status: true,
                 msg: "Ticket found",
                 statusCode: StatusCode.OK,
-                data: {
-                    tickets: findTickets,
-                    total_records: countDocuments,
-                    total_pages: countDocuments / limit
-                }
+                data: findTickets
             }
         } else {
             return {
@@ -230,17 +256,13 @@ class TicketService {
     async listTickets(page: number, limit: number, profile_id: string): Promise<HelperFunctionResponse> {
         const skip: number = (page - 1) * limit;
         const findTickets = await this.ticketRepo.findUserPaginedTicket(profile_id, skip, limit);
-        const countDocuments = await this.ticketRepo.countUserTicket(profile_id);
-        if (findTickets.length) {
+        // const countDocuments = await this.ticketRepo.countUserTicket(profile_id);
+        if (findTickets.total_records) {
             return {
                 status: true,
                 msg: "Ticket found",
                 statusCode: StatusCode.OK,
-                data: {
-                    tickets: findTickets,
-                    total_records: countDocuments,
-                    total_pages: countDocuments / limit
-                }
+                data: findTickets
             }
         } else {
             return {

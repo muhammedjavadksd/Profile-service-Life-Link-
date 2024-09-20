@@ -19,6 +19,65 @@ class ChatRepository implements IChatRepo {
         this.chatCollection = ChatCollection;
     }
 
+    async findSingleChat(chat_id: string, profile_id: string): Promise<IChatCollection[]> {
+        const myChat = await this.chatCollection.aggregate([{
+            $match: {
+                chat_id,
+            },
+        },
+        {
+            $addFields: {
+                "chat_profile_id": {
+                    $cond: {
+                        if: { $eq: ['$profile_one', profile_id] },
+                        then: "$profile_two",
+                        else: "$profile_one"
+                    }
+                }
+            }
+        },
+        {
+            $lookup: {
+                from: "user_profile",
+                as: "chat_person",
+                foreignField: "profile_id",
+                localField: "chat_profile_id"
+            }
+        },
+        {
+            $lookup: {
+                from: "messages",
+                as: "chat_history",
+                foreignField: "room_id",
+                localField: "chat_id"
+            }
+        },
+        { $unwind: '$chat_person' },
+        {
+            $project: {
+                "_id": 0,
+                "profile_one": 0,
+                "profile_two": 0,
+                "chat_person._id": 0,
+                "chat_person.user_id": 0,
+                "chat_person.email": 0,
+                "chat_person.phone_number": 0,
+            }
+        }
+        ])
+        console.log("My chats");
+
+        // console.log(myChat[0].chat_person)
+        // await this.chatCollection.findOne({
+        //     $or: [{
+        //         profile_one: profile_id,
+        //     }, {
+        //         profile_two: profile_id
+        //     }]
+        // });
+        return myChat[0]
+    }
+
     async findChatMyChat(profile_id: string): Promise<IChatCollection[]> {
         const myChat = await this.chatCollection.aggregate([{
             $match: {
@@ -66,7 +125,7 @@ class ChatRepository implements IChatRepo {
         ])
         console.log("My chats");
 
-        console.log(myChat[0].chat_person)
+        // console.log(myChat[0].chat_person)
         // await this.chatCollection.findOne({
         //     $or: [{
         //         profile_one: profile_id,
@@ -81,6 +140,11 @@ class ChatRepository implements IChatRepo {
         const newChat = new this.chatCollection(chat);
         const insert = await newChat.save();
         return insert.id
+    }
+
+    async findRoomById(room_id: string): Promise<IChatCollection | null> {
+        const find = await this.chatCollection.findOne({ chat_id: room_id });
+        return find
     }
 
     async blockChat(chat_id: string, profile_id: string): Promise<boolean> {

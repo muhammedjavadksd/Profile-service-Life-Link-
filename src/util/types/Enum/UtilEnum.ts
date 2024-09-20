@@ -10,6 +10,10 @@ enum StatusCode {
 }
 
 
+enum S3Folder {
+    TicktAttachment = "ticket-attachment"
+}
+
 enum AuthUpdateType {
     Email = "EMAIL",
     Phone = "PHONE"
@@ -47,4 +51,4 @@ enum TicketChatFrom {
     Admin = "Admin",
     User = "User"
 }
-export { StatusCode, AuthUpdateType, TicketCategory, TicketPriority, TicketStatus, TicketChatFrom, IdPrefix }
+export { S3Folder, StatusCode, AuthUpdateType, TicketCategory, TicketPriority, TicketStatus, TicketChatFrom, IdPrefix }

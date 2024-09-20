@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.IdPrefix = exports.TicketChatFrom = exports.TicketStatus = exports.TicketPriority = exports.TicketCategory = exports.AuthUpdateType = exports.StatusCode = void 0;
+exports.IdPrefix = exports.TicketChatFrom = exports.TicketStatus = exports.TicketPriority = exports.TicketCategory = exports.AuthUpdateType = exports.StatusCode = exports.S3Folder = void 0;
 var StatusCode;
 (function (StatusCode) {
     StatusCode[StatusCode["OK"] = 200] = "OK";
@@ -12,6 +12,10 @@ var StatusCode;
     StatusCode[StatusCode["FORBIDDEN"] = 403] = "FORBIDDEN";
     StatusCode[StatusCode["CONFLICT"] = 409] = "CONFLICT";
 })(StatusCode || (exports.StatusCode = StatusCode = {}));
+var S3Folder;
+(function (S3Folder) {
+    S3Folder["TicktAttachment"] = "ticket-attachment";
+})(S3Folder || (exports.S3Folder = S3Folder = {}));
 var AuthUpdateType;
 (function (AuthUpdateType) {
     AuthUpdateType["Email"] = "EMAIL";

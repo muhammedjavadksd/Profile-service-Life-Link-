@@ -26,7 +26,15 @@ class AuthMiddleware {
             if (profile_id) {
                 const chatRepo = new ChatRepository();
                 const findChat = await chatRepo.findChatById(room_id);
+                console.log("Auth profile");
+                console.log(findChat);
+                console.log(profile_id);
+
+
+
                 if (findChat?.profile_one == profile_id || findChat?.profile_two == profile_id) {
+                    console.log("Next steps");
+
                     next()
                     return;
                 }

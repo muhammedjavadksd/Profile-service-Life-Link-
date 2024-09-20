@@ -20,33 +20,30 @@ class TicketService {
     constructor() {
         this.ticketRepo = new ticketRepo_1.default();
     }
-    generatePresignedUrl() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const s3Bucket = new S3BucketHelper_1.default(process.env.TICKET_ATTACHMENT_BUCKET || "");
-            const utilHelper = new utilHelper_1.default();
-            const randomNumber = utilHelper.createOtpNumber(4);
-            const randomText = utilHelper.createRandomText(4);
-            const key = `ticket-attachment-${randomNumber}-${randomText}`;
-            const presignedUrl = yield s3Bucket.generatePresignedUrl(key);
-            if (presignedUrl) {
-                return {
-                    msg: "Presigned url created",
-                    status: true,
-                    statusCode: UtilEnum_1.StatusCode.CREATED,
-                    data: {
-                        url: presignedUrl
-                    }
-                };
-            }
-            else {
-                return {
-                    msg: "Failed to create presigned url",
-                    status: false,
-                    statusCode: UtilEnum_1.StatusCode.BAD_REQUEST,
-                };
-            }
-        });
-    }
+    // async generatePresignedUrl(): Promise<HelperFunctionResponse> {
+    //     const s3Bucket = new S3BucketHelper(process.env.TICKET_ATTACHMENT_BUCKET || "");
+    //     const utilHelper = new UtilHelper();
+    //     const randomNumber: number = utilHelper.createOtpNumber(4)
+    //     const randomText: string = utilHelper.createRandomText(4)
+    //     const key: string = `ticket-attachment-${randomNumber}-${randomText}`
+    //     const presignedUrl = await s3Bucket.generatePresignedUrl(key)
+    //     if (presignedUrl) {
+    //         return {
+    //             msg: "Presigned url created",
+    //             status: true,
+    //             statusCode: StatusCode.CREATED,
+    //             data: {
+    //                 url: presignedUrl
+    //             }
+    //         }
+    //     } else {
+    //         return {
+    //             msg: "Failed to create presigned url",
+    //             status: false,
+    //             statusCode: StatusCode.BAD_REQUEST,
+    //         }
+    //     }
+    // }
     createUnqiueTicketId() {
         return __awaiter(this, void 0, void 0, function* () {
             const utilHelper = new utilHelper_1.default();
@@ -87,9 +84,17 @@ class TicketService {
             const ticketId = yield this.createUnqiueTicketId();
             const chatId = `${UtilEnum_1.IdPrefix.TicketChatId}-${randomText}-${randomNumber}`;
             const todayDate = new Date();
-            const s3Helper = new S3BucketHelper_1.default(process.env.TICKET_ATTACHMENT_BUCKET || "");
+            let attachmentDocs = null;
+            const s3Helper = new S3BucketHelper_1.default(process.env.TICKET_ATTACHMENT_BUCKET || "", UtilEnum_1.S3Folder.TicktAttachment);
             if (attachment) {
-                attachment = s3Helper.getImageNameFromUrl(attachment);
+                const findName = utilHelper.extractImageNameFromPresignedUrl(attachment);
+                if (findName) {
+                    const checkSecurity = yield s3Helper.findFile(findName);
+                    const attachmentUrl = s3Helper.getViewUrl(findName);
+                    if (checkSecurity && attachmentUrl) {
+                        attachmentDocs = attachmentUrl;
+                    }
+                }
             }
             let ticketData = {
                 ticket_id: ticketId,
@@ -101,7 +106,7 @@ class TicketService {
                 title,
                 priority,
                 chats: [{
-                        attachment,
+                        attachment: attachmentDocs,
                         chat_id: chatId,
                         created_at: todayDate,
                         from: UtilEnum_1.TicketChatFrom.User,
@@ -130,9 +135,29 @@ class TicketService {
     }
     replayToTicket(from, msg, attachment, ticket_id) {
         return __awaiter(this, void 0, void 0, function* () {
+            const utilHelper = new utilHelper_1.default();
             const newChatId = yield this.createUniqueChatID(ticket_id);
+            const s3Helper = new S3BucketHelper_1.default(process.env.TICKET_ATTACHMENT_BUCKET || "", UtilEnum_1.S3Folder.TicktAttachment);
+            let attachmentDocs = null;
+            console.log("Start");
+            if (attachment) {
+                console.log(attachment);
+                const findName = utilHelper.extractImageNameFromPresignedUrl(attachment);
+                if (findName) {
+                    const find = yield s3Helper.findFile(findName);
+                    console.log(find);
+                    if (find && findName) {
+                        const getViewUrl = s3Helper.getViewUrl(findName);
+                        console.log("View url");
+                        console.log(getViewUrl);
+                        if (getViewUrl) {
+                            attachmentDocs = getViewUrl;
+                        }
+                    }
+                }
+            }
             let newChat = {
-                attachment: attachment,
+                attachment: attachmentDocs,
                 chat_id: newChatId,
                 created_at: new Date(),
                 from,
@@ -143,7 +168,10 @@ class TicketService {
                 return {
                     msg: "Chat added to tickets",
                     status: true,
-                    statusCode: UtilEnum_1.StatusCode.CREATED
+                    statusCode: UtilEnum_1.StatusCode.CREATED,
+                    data: {
+                        attachment: attachmentDocs
+                    }
                 };
             }
             else {
@@ -173,7 +201,7 @@ class TicketService {
                     status: true,
                     statusCode: UtilEnum_1.StatusCode.OK,
                     data: {
-                        ticker: singleTicket
+                        ticket: singleTicket
                     }
                 };
             }
@@ -232,17 +260,13 @@ class TicketService {
         return __awaiter(this, void 0, void 0, function* () {
             const skip = (page - 1) * limit;
             const findTickets = yield this.ticketRepo.findUserPaginedTicket(profile_id, skip, limit);
-            const countDocuments = yield this.ticketRepo.countUserTicket(profile_id);
-            if (findTickets.length) {
+            // const countDocuments = await this.ticketRepo.countUserTicket(profile_id);
+            if (findTickets.total_records) {
                 return {
                     status: true,
                     msg: "Ticket found",
                     statusCode: UtilEnum_1.StatusCode.OK,
-                    data: {
-                        tickets: findTickets,
-                        total_records: countDocuments,
-                        total_pages: countDocuments / limit
-                    }
+                    data: findTickets
                 };
             }
             else {

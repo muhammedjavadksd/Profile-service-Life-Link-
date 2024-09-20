@@ -2,8 +2,18 @@ import express, { Express } from 'express';
 import dotenv from 'dotenv'
 import bulkConsumer from './src/communication/bulkConsumer'
 import logger from 'morgan'
+import { Server } from 'socket.io'
+
+
 
 const app: Express = express()
+const io = new Server({
+    cors: {
+        origin: "*"
+    }
+})
+
+// ChatHelper()
 
 //middleware
 app.use(express.json())
@@ -16,13 +26,10 @@ bulkConsumer()
 import profileMongoConnection from './src/database/connection'
 import userRouter from './src/router/userRouter';
 import adminRouter from './src/router/adminRouter'
+import ChatHelper from './src/helper/chatHelper';
 
 
 profileMongoConnection()
-
-
-
-
 
 app.use("/", userRouter)
 app.use("/admin", adminRouter)

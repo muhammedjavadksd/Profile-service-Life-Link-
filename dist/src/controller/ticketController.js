@@ -16,19 +16,17 @@ const ticketService_1 = __importDefault(require("../service/ticketService"));
 const UtilEnum_1 = require("../util/types/Enum/UtilEnum");
 class TicketController {
     constructor() {
-        this.ticketAttachementUrl = this.ticketAttachementUrl.bind(this);
+        // this.ticketAttachementUrl = this.ticketAttachementUrl.bind(this)
         this.createTicket = this.createTicket.bind(this);
         this.getSingleTicketById = this.getSingleTicketById.bind(this);
         this.replayToTicket = this.replayToTicket.bind(this);
         this.listTickets = this.listTickets.bind(this);
         this.ticketService = new ticketService_1.default();
     }
-    ticketAttachementUrl(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const createUrl = yield this.ticketService.generatePresignedUrl();
-            res.status(createUrl.statusCode).json({ status: createUrl.status, msg: createUrl.msg, data: createUrl.data });
-        });
-    }
+    // async ticketAttachementUrl(req: Request, res: Response): Promise<void> {
+    //     const createUrl: HelperFunctionResponse = await this.ticketService.generatePresignedUrl();
+    //     res.status(createUrl.statusCode).json({ status: createUrl.status, msg: createUrl.msg, data: createUrl.data })
+    // }
     createTicket(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
@@ -69,7 +67,7 @@ class TicketController {
             const attachment = req.body.attachment;
             if (ticket_id) {
                 const updateResponse = yield this.ticketService.replayToTicket(UtilEnum_1.TicketChatFrom.User, text, attachment, ticket_id);
-                res.status(updateResponse.statusCode).json({ status: updateResponse.status, msg: updateResponse.msg });
+                res.status(updateResponse.statusCode).json({ status: updateResponse.status, msg: updateResponse.msg, data: updateResponse.data });
             }
             else {
                 res.status(UtilEnum_1.StatusCode.BAD_REQUEST).json({ status: false, msg: "Please provide a valid ticket ID and update data" });

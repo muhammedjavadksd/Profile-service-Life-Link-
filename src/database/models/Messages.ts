@@ -2,6 +2,10 @@ import { model, Schema } from "mongoose";
 import { IChatCollection, IMessageCollection } from "../../util/types/Interface/CollectionInterface";
 
 const messageSchema = new Schema({
+    room_id: {
+        type: String,
+        required: true
+    },
     timeline: {
         type: String,
         required: true
@@ -26,6 +30,6 @@ const messageSchema = new Schema({
 
 
 
-const ChatCollection = model<IMessageCollection>("messages", messageSchema)
+const MessagesCollection = model<IMessageCollection>("messages", messageSchema)
 
-export default ChatCollection
+export default MessagesCollection

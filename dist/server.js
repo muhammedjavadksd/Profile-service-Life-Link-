@@ -7,7 +7,14 @@ const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const bulkConsumer_1 = __importDefault(require("./src/communication/bulkConsumer"));
 const morgan_1 = __importDefault(require("morgan"));
+const socket_io_1 = require("socket.io");
 const app = (0, express_1.default)();
+const io = new socket_io_1.Server({
+    cors: {
+        origin: "*"
+    }
+});
+// ChatHelper()
 //middleware
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));

@@ -48,7 +48,7 @@ interface ITicketChat {
     from: TicketChatFrom,
     text: string,
     created_at: Date,
-    attachment: string,
+    attachment: string | null,
 }
 
 interface ITicketTemplate {
@@ -64,7 +64,8 @@ interface ITicketTemplate {
 }
 
 interface IMessageSchema {
-    timeline: string,
+    room_id: string,
+    timeline: Date,
     msg: string,
     seen: boolean,
     is_block: boolean

@@ -105,9 +105,56 @@ class TicketRepo {
         }
     }
 
-    async findPaginedTicket(skip: number, limit: number): Promise<ITicketCollection[] | []> {
-        const tickets = await this.ticketCollection.find({}).skip(skip).limit(limit);
-        return tickets;
+    async findPaginedTicket(skip: number, limit: number, status: TicketStatus): Promise<IPaginatedResponse<ITicketCollection[]>> {
+        try {
+            const tickets = await this.ticketCollection.aggregate([
+                {
+                    $match: {
+                        status
+                    }
+                },
+                {
+                    $facet: {
+                        paginated: [
+                            {
+                                $skip: skip
+                            },
+                            {
+                                $limit: limit
+                            }
+                        ],
+                        total_records: [
+                            {
+                                $count: "total_records"
+                            }
+                        ]
+                    }
+                },
+                {
+                    $unwind: "$total_records"
+                },
+                {
+                    $project: {
+                        paginated: 1,
+                        total_records: "$total_records.total_records"
+                    }
+                }
+            ])
+
+
+            const response: IPaginatedResponse<ITicketCollection[]> = {
+                paginated: tickets[0].paginated,
+                total_records: tickets[0].total_records
+            }
+
+            return response;
+        } catch (e) {
+            const response: IPaginatedResponse<ITicketCollection[]> = {
+                paginated: [],
+                total_records: 0
+            }
+            return response;
+        }
     }
 
     async updateTicketStatus(ticket_id: string, status: TicketStatus): Promise<boolean> {

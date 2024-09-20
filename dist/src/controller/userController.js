@@ -27,8 +27,22 @@ class UserProfileController {
         this.addMessageToChat = this.addMessageToChat.bind(this);
         this.blockStatus = this.blockStatus.bind(this);
         this.getMyChats = this.getMyChats.bind(this);
+        this.getSingleChat = this.getSingleChat.bind(this);
+        this.getPresignedUrl = this.getPresignedUrl.bind(this);
         this.userProfileService = new userService_1.default();
         this.chatService = new chatService_1.default();
+    }
+    getPresignedUrl(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const fileName = req.query.file;
+            if (fileName) {
+                const signedUrl = yield this.userProfileService.createPresignedUrl(fileName.toString());
+                res.status(signedUrl.statusCode).json({ status: signedUrl.status, msg: signedUrl.msg, data: signedUrl.data });
+            }
+            else {
+                res.status(UtilEnum_1.StatusCode.BAD_REQUEST).json({ status: false, msg: "Something went wrong" });
+            }
+        });
     }
     getProfile(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -211,6 +225,21 @@ class UserProfileController {
                 }
             }
             res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un authraized access", });
+        });
+    }
+    getSingleChat(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const profile_id = (_a = req.context) === null || _a === void 0 ? void 0 : _a.profile_id;
+            const chat_id = req.params.room_id;
+            console.log("Finding single chat");
+            if (profile_id && chat_id) {
+                const findChat = yield this.chatService.getSingleChat(chat_id, profile_id);
+                res.status(findChat.statusCode).json({ status: findChat.status, msg: findChat.msg, data: findChat.data });
+            }
+            else {
+                res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({ status: false, msg: "Unauthraized access" });
+            }
         });
     }
 }

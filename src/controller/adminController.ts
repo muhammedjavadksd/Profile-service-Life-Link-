@@ -1,18 +1,24 @@
 import { Request, Response, NextFunction } from "express";
 import AdminService from "../service/adminService";
 import { HelperFunctionResponse } from "../util/types/Interface/UtilInterface";
-import { StatusCode, TicketChatFrom } from "../util/types/Enum/UtilEnum";
+import { S3Folder, StatusCode, TicketChatFrom, TicketStatus } from "../util/types/Enum/UtilEnum";
 import TicketService from "../service/ticketService";
+import ImageService from "../service/imageService";
 
 class AdminController {
 
 
     adminService;
     ticketServcie;
+    imageService;
+
     constructor() {
         this.adminService = new AdminService();
         this.ticketServcie = new TicketService();
+        this.imageService = new ImageService()
     }
+
+
 
 
     async addReplayToChat(req: Request, res: Response): Promise<void> {
@@ -31,11 +37,22 @@ class AdminController {
         res.status(findSingleTicket.statusCode).json({ status: findSingleTicket.status, msg: findSingleTicket.msg, data: findSingleTicket.data })
     }
 
+    async createPresignedUrl(req: Request, res: Response): Promise<void> {
+        const fileName = req.query.file;
+        if (fileName) {
+            const signedUrl = await this.imageService.createPresignedUrl(fileName.toString(), process.env.TICKET_ATTACHMENT_BUCKET || "", S3Folder.TicktAttachment);
+            res.status(signedUrl.statusCode).json({ status: signedUrl.status, msg: signedUrl.msg, data: signedUrl.data })
+        } else {
+            res.status(StatusCode.BAD_REQUEST).json({ status: false, msg: "Something went wrong" })
+        }
+    }
+
     async getTickets(req: Request, res: Response): Promise<void> {
         const limit: number = +req.params.limit;
         const page: number = +req.params.page;
+        const status: TicketStatus = req.params.status as TicketStatus;
 
-        const findTicket: HelperFunctionResponse = await this.ticketServcie.listAdminTickets(page, limit);
+        const findTicket: HelperFunctionResponse = await this.ticketServcie.listAdminTickets(page, limit, status);
         res.status(findTicket.statusCode).json({ status: findTicket.status, msg: findTicket.msg, data: findTicket.data })
     }
 

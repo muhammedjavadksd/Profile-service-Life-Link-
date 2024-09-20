@@ -66,8 +66,51 @@ class TicketRepo {
     }
     findUserPaginedTicket(profile_id, skip, limit) {
         return __awaiter(this, void 0, void 0, function* () {
-            const tickets = yield this.ticketCollection.find({ profile_id }).skip(skip).limit(limit);
-            return tickets;
+            try {
+                const tickets = yield this.ticketCollection.aggregate([
+                    {
+                        $match: { profile_id }
+                    },
+                    {
+                        $facet: {
+                            paginated: [
+                                {
+                                    $skip: skip
+                                },
+                                {
+                                    $limit: limit
+                                }
+                            ],
+                            total_records: [
+                                {
+                                    $count: "total_records"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        $unwind: "$total_records"
+                    },
+                    {
+                        $project: {
+                            paginated: 1,
+                            total_records: "$total_records.total_records"
+                        }
+                    }
+                ]);
+                const response = {
+                    paginated: tickets[0].paginated,
+                    total_records: tickets[0].total_records
+                };
+                return response;
+            }
+            catch (e) {
+                const response = {
+                    paginated: [],
+                    total_records: 0
+                };
+                return response;
+            }
         });
     }
     findPaginedTicket(skip, limit) {

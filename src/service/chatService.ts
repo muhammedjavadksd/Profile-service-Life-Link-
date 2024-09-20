@@ -4,6 +4,7 @@ import { HelperFunctionResponse } from "../util/types/Interface/UtilInterface";
 import { StatusCode } from "../util/types/Enum/UtilEnum";
 import { IChatMessageDetails, IChatTemplate, IMessageSchema } from "../util/types/Interface/CollectionInterface";
 import UtilHelper from "../helper/utilHelper";
+import MessagesRepo from "../repo/MessagesRepo";
 
 
 interface IChatService {
@@ -15,6 +16,7 @@ interface IChatService {
 class ChatService implements IChatService {
 
     chatRepo;
+    messagesRepo;
 
     constructor() {
         this.createChatId = this.createChatId.bind(this)
@@ -25,6 +27,7 @@ class ChatService implements IChatService {
         this.startChat = this.startChat.bind(this)
         // this.getMyChats = this.getMyChats.bind(this)
         this.chatRepo = new ChatRepository();
+        this.messagesRepo = new MessagesRepo()
     }
 
 
@@ -60,14 +63,16 @@ class ChatService implements IChatService {
                 unseen_message_count: unseen_message_count ? (unseen_message_count + 1) : 1
             }
             const message: IMessageSchema = {
+                room_id,
                 msg,
                 seen: false,
-                timeline: new Date().toISOString(),
+                timeline: new Date(),
                 is_block: findRoom.blocked?.status,
-                profile_id: profile_id
+                profile_id: profile_id,
+                // to_profile: findRoom.
             }
-            await this.chatRepo.addMessageToChat(room_id, message);
-            await this.chatRepo.addMessageDetails(room_id, updateMessageDetails);
+            await this.messagesRepo.insertOne(message);
+            // await this.chatRepo.addMessageDetails(room_id, updateMessageDetails);
             // await this.chatRepo.
             return {
                 status: true,
@@ -161,17 +166,19 @@ class ChatService implements IChatService {
             }
         }
         const messageScheme: IMessageSchema = {
+            room_id: chat_id,
             is_block: false,
             msg: msg,
             profile_id: profile_one,
             seen: false,
-            timeline: new Date().toISOString()
+            timeline: new Date()
         }
 
 
         const saveChat = await this.chatRepo.createChat(chat)
         if (saveChat) {
-            await this.chatRepo.addMessageToChat(chat_id, messageScheme)
+            // await this.chatRepo.addMessageToChat(chat_id, messageScheme)
+            await this.messagesRepo.insertOne(messageScheme)
             return {
                 status: true,
                 msg: "Chat created success",
@@ -185,6 +192,32 @@ class ChatService implements IChatService {
                 status: false,
                 msg: "Chat created failed",
                 statusCode: StatusCode.BAD_REQUEST,
+            }
+        }
+    }
+
+
+    async getSingleChat(chat_id: string, profile_id: string): Promise<HelperFunctionResponse> {
+
+        const findChat = await this.chatRepo.findSingleChat(chat_id, profile_id);
+        console.log("Single Chat");
+
+        console.log(findChat);
+
+        if (findChat) {
+            return {
+                status: true,
+                msg: "Chat found",
+                data: {
+                    chat: findChat
+                },
+                statusCode: StatusCode.OK
+            }
+        } else {
+            return {
+                status: false,
+                msg: "No chat found",
+                statusCode: StatusCode.NOT_FOUND
             }
         }
     }

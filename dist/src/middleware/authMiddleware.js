@@ -30,7 +30,11 @@ class AuthMiddleware {
                 if (profile_id) {
                     const chatRepo = new chatRepo_1.default();
                     const findChat = yield chatRepo.findChatById(room_id);
+                    console.log("Auth profile");
+                    console.log(findChat);
+                    console.log(profile_id);
                     if ((findChat === null || findChat === void 0 ? void 0 : findChat.profile_one) == profile_id || (findChat === null || findChat === void 0 ? void 0 : findChat.profile_two) == profile_id) {
+                        console.log("Next steps");
                         next();
                         return;
                     }

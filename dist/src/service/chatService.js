@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const chatRepo_1 = __importDefault(require("../repo/chatRepo"));
 const UtilEnum_1 = require("../util/types/Enum/UtilEnum");
 const utilHelper_1 = __importDefault(require("../helper/utilHelper"));
+const MessagesRepo_1 = __importDefault(require("../repo/MessagesRepo"));
 class ChatService {
     constructor() {
         this.createChatId = this.createChatId.bind(this);
@@ -25,6 +26,7 @@ class ChatService {
         this.startChat = this.startChat.bind(this);
         // this.getMyChats = this.getMyChats.bind(this)
         this.chatRepo = new chatRepo_1.default();
+        this.messagesRepo = new MessagesRepo_1.default();
     }
     createChatId() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -60,14 +62,16 @@ class ChatService {
                     unseen_message_count: unseen_message_count ? (unseen_message_count + 1) : 1
                 };
                 const message = {
+                    room_id,
                     msg,
                     seen: false,
-                    timeline: new Date().toISOString(),
+                    timeline: new Date(),
                     is_block: (_a = findRoom.blocked) === null || _a === void 0 ? void 0 : _a.status,
-                    profile_id: profile_id
+                    profile_id: profile_id,
+                    // to_profile: findRoom.
                 };
-                yield this.chatRepo.addMessageToChat(room_id, message);
-                yield this.chatRepo.addMessageDetails(room_id, updateMessageDetails);
+                yield this.messagesRepo.insertOne(message);
+                // await this.chatRepo.addMessageDetails(room_id, updateMessageDetails);
                 // await this.chatRepo.
                 return {
                     status: true,
@@ -162,15 +166,17 @@ class ChatService {
                 }
             };
             const messageScheme = {
+                room_id: chat_id,
                 is_block: false,
                 msg: msg,
                 profile_id: profile_one,
                 seen: false,
-                timeline: new Date().toISOString()
+                timeline: new Date()
             };
             const saveChat = yield this.chatRepo.createChat(chat);
             if (saveChat) {
-                yield this.chatRepo.addMessageToChat(chat_id, messageScheme);
+                // await this.chatRepo.addMessageToChat(chat_id, messageScheme)
+                yield this.messagesRepo.insertOne(messageScheme);
                 return {
                     status: true,
                     msg: "Chat created success",
@@ -185,6 +191,30 @@ class ChatService {
                     status: false,
                     msg: "Chat created failed",
                     statusCode: UtilEnum_1.StatusCode.BAD_REQUEST,
+                };
+            }
+        });
+    }
+    getSingleChat(chat_id, profile_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const findChat = yield this.chatRepo.findSingleChat(chat_id, profile_id);
+            console.log("Single Chat");
+            console.log(findChat);
+            if (findChat) {
+                return {
+                    status: true,
+                    msg: "Chat found",
+                    data: {
+                        chat: findChat
+                    },
+                    statusCode: UtilEnum_1.StatusCode.OK
+                };
+            }
+            else {
+                return {
+                    status: false,
+                    msg: "No chat found",
+                    statusCode: UtilEnum_1.StatusCode.NOT_FOUND
                 };
             }
         });

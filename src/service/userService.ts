@@ -1,12 +1,13 @@
 import mongoose from "mongoose";
 import UserRepo from "../repo/userRepo";
-import { AuthUpdateType, StatusCode } from "../util/types/Enum/UtilEnum";
+import { AuthUpdateType, S3Folder, StatusCode } from "../util/types/Enum/UtilEnum";
 import { IUserCollection, IUserEditProfile, IUserProfile } from "../util/types/Interface/CollectionInterface";
 import { HelperFunctionResponse } from "../util/types/Interface/UtilInterface";
 import ProfileDataProvider from "../communication/ProfileProvider";
 import UtilHelper from "../helper/utilHelper";
 import constant_data from "../util/data/const";
-
+import S3BucketHelper from "../helper/S3BucketHelper";
+import { config } from 'dotenv'
 // const { default: mongoose } = require("mongoose");
 // const ProfileDataProvider = require("../../../communication/Provider/ProfileProvider");
 // const constant_data = require("../../const/const");
@@ -21,7 +22,10 @@ class UserProfileService {
 
     constructor() {
         this.userRepo = new UserRepo();
+        config()
     }
+
+
 
     async createUser(profile: IUserProfile): Promise<HelperFunctionResponse> {
         const insertUser = await this.userRepo.insertProfile(profile)

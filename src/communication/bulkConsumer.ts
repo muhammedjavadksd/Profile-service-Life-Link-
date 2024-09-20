@@ -7,9 +7,12 @@ import ProfileConsumer from "./AuthDataConsumer"
 export default async function bulkConsumer() {
 
     const profileConsumer = new ProfileConsumer(process.env.AUTH_TRANSFER || "");
-    const userProfileService = new UserProfileService();
-    const data = await profileConsumer.authDataConsumer() as unknown as IUserProfile;
-    userProfileService.createUser(data);
+    await profileConsumer._init__()
+
+    console.log("Bulk consumer");
+
+    await profileConsumer.authDataConsumer() as unknown as IUserProfile;
+    // userProfileService.createUser(data);
 
     // authDataConsumer()
 }
