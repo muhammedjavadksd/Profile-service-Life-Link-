@@ -113,10 +113,55 @@ class TicketRepo {
             }
         });
     }
-    findPaginedTicket(skip, limit) {
+    findPaginedTicket(skip, limit, status) {
         return __awaiter(this, void 0, void 0, function* () {
-            const tickets = yield this.ticketCollection.find({}).skip(skip).limit(limit);
-            return tickets;
+            try {
+                const tickets = yield this.ticketCollection.aggregate([
+                    {
+                        $match: {
+                            status
+                        }
+                    },
+                    {
+                        $facet: {
+                            paginated: [
+                                {
+                                    $skip: skip
+                                },
+                                {
+                                    $limit: limit
+                                }
+                            ],
+                            total_records: [
+                                {
+                                    $count: "total_records"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        $unwind: "$total_records"
+                    },
+                    {
+                        $project: {
+                            paginated: 1,
+                            total_records: "$total_records.total_records"
+                        }
+                    }
+                ]);
+                const response = {
+                    paginated: tickets[0].paginated,
+                    total_records: tickets[0].total_records
+                };
+                return response;
+            }
+            catch (e) {
+                const response = {
+                    paginated: [],
+                    total_records: 0
+                };
+                return response;
+            }
         });
     }
     updateTicketStatus(ticket_id, status) {

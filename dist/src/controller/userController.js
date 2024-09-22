@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const userService_1 = __importDefault(require("../service/userService"));
 const UtilEnum_1 = require("../util/types/Enum/UtilEnum");
 const chatService_1 = __importDefault(require("../service/chatService"));
+const imageService_1 = __importDefault(require("../service/imageService"));
 class UserProfileController {
     constructor() {
         this.getProfile = this.getProfile.bind(this);
@@ -31,12 +32,13 @@ class UserProfileController {
         this.getPresignedUrl = this.getPresignedUrl.bind(this);
         this.userProfileService = new userService_1.default();
         this.chatService = new chatService_1.default();
+        this.imageService = new imageService_1.default();
     }
     getPresignedUrl(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const fileName = req.query.file;
             if (fileName) {
-                const signedUrl = yield this.userProfileService.createPresignedUrl(fileName.toString());
+                const signedUrl = yield this.imageService.createPresignedUrl(fileName.toString(), process.env.TICKET_ATTACHMENT_BUCKET || "", UtilEnum_1.S3Folder.TicktAttachment);
                 res.status(signedUrl.statusCode).json({ status: signedUrl.status, msg: signedUrl.msg, data: signedUrl.data });
             }
             else {

@@ -17,7 +17,6 @@ const UtilEnum_1 = require("../util/types/Enum/UtilEnum");
 const ProfileProvider_1 = __importDefault(require("../communication/ProfileProvider"));
 const utilHelper_1 = __importDefault(require("../helper/utilHelper"));
 const const_1 = __importDefault(require("../util/data/const"));
-const S3BucketHelper_1 = __importDefault(require("../helper/S3BucketHelper"));
 const dotenv_1 = require("dotenv");
 // const { default: mongoose } = require("mongoose");
 // const ProfileDataProvider = require("../../../communication/Provider/ProfileProvider");
@@ -29,31 +28,6 @@ class UserProfileService {
     constructor() {
         this.userRepo = new userRepo_1.default();
         (0, dotenv_1.config)();
-    }
-    createPresignedUrl(fileName) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const utilHelper = new utilHelper_1.default();
-            const s3Helper = new S3BucketHelper_1.default(process.env.TICKET_ATTACHMENT_BUCKET || "", UtilEnum_1.S3Folder.TicktAttachment);
-            const key = `${utilHelper.createRandomText(5)}_${fileName}`;
-            const presigned_url = yield s3Helper.generatePresignedUrl(key);
-            if (presigned_url) {
-                return {
-                    msg: "Presigned url created",
-                    status: true,
-                    statusCode: UtilEnum_1.StatusCode.CREATED,
-                    data: {
-                        url: presigned_url
-                    }
-                };
-            }
-            else {
-                return {
-                    msg: "Url create failed",
-                    status: false,
-                    statusCode: UtilEnum_1.StatusCode.BAD_REQUEST
-                };
-            }
-        });
     }
     createUser(profile) {
         return __awaiter(this, void 0, void 0, function* () {

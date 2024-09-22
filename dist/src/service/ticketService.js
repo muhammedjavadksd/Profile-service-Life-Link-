@@ -139,9 +139,7 @@ class TicketService {
             const newChatId = yield this.createUniqueChatID(ticket_id);
             const s3Helper = new S3BucketHelper_1.default(process.env.TICKET_ATTACHMENT_BUCKET || "", UtilEnum_1.S3Folder.TicktAttachment);
             let attachmentDocs = null;
-            console.log("Start");
             if (attachment) {
-                console.log(attachment);
                 const findName = utilHelper.extractImageNameFromPresignedUrl(attachment);
                 if (findName) {
                     const find = yield s3Helper.findFile(findName);
@@ -230,21 +228,16 @@ class TicketService {
     //         };
     //     }
     // }
-    listAdminTickets(page, limit) {
+    listAdminTickets(page, limit, status) {
         return __awaiter(this, void 0, void 0, function* () {
             const skip = (page - 1) * limit;
-            const findTickets = yield this.ticketRepo.findPaginedTicket(skip, limit);
-            const countDocuments = yield this.ticketRepo.countTickets();
-            if (findTickets.length) {
+            const findTickets = yield this.ticketRepo.findPaginedTicket(skip, limit, status);
+            if (findTickets.paginated.length) {
                 return {
                     status: true,
                     msg: "Ticket found",
                     statusCode: UtilEnum_1.StatusCode.OK,
-                    data: {
-                        tickets: findTickets,
-                        total_records: countDocuments,
-                        total_pages: countDocuments / limit
-                    }
+                    data: findTickets
                 };
             }
             else {

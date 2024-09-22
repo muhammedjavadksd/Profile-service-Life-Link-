@@ -15,10 +15,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const adminService_1 = __importDefault(require("../service/adminService"));
 const UtilEnum_1 = require("../util/types/Enum/UtilEnum");
 const ticketService_1 = __importDefault(require("../service/ticketService"));
+const imageService_1 = __importDefault(require("../service/imageService"));
 class AdminController {
     constructor() {
         this.adminService = new adminService_1.default();
         this.ticketServcie = new ticketService_1.default();
+        this.imageService = new imageService_1.default();
     }
     addReplayToChat(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -36,11 +38,24 @@ class AdminController {
             res.status(findSingleTicket.statusCode).json({ status: findSingleTicket.status, msg: findSingleTicket.msg, data: findSingleTicket.data });
         });
     }
+    createPresignedUrl(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const fileName = req.query.file;
+            if (fileName) {
+                const signedUrl = yield this.imageService.createPresignedUrl(fileName.toString(), process.env.TICKET_ATTACHMENT_BUCKET || "", UtilEnum_1.S3Folder.TicktAttachment);
+                res.status(signedUrl.statusCode).json({ status: signedUrl.status, msg: signedUrl.msg, data: signedUrl.data });
+            }
+            else {
+                res.status(UtilEnum_1.StatusCode.BAD_REQUEST).json({ status: false, msg: "Something went wrong" });
+            }
+        });
+    }
     getTickets(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const limit = +req.params.limit;
             const page = +req.params.page;
-            const findTicket = yield this.ticketServcie.listAdminTickets(page, limit);
+            const status = req.params.status;
+            const findTicket = yield this.ticketServcie.listAdminTickets(page, limit, status);
             res.status(findTicket.statusCode).json({ status: findTicket.status, msg: findTicket.msg, data: findTicket.data });
         });
     }
