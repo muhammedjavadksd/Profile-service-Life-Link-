@@ -90,6 +90,8 @@ class AuthMiddleware {
     async isValidAdmin(req: CustomRequest, res: Response, next: NextFunction) {
         const headers = req.headers;
 
+
+
         if (headers.authorization && headers['authorization'].split(' ')[0] === 'Bearer') {
             if (!req.context) {
                 req.context = {}
@@ -102,8 +104,9 @@ class AuthMiddleware {
                 if (checkValidity?.email) {
                     req.context.email_id = checkValidity?.email;
                     req.context.token = token;
-                    req.context.user_id = checkValidity.id;
+                    console.log("This passed");
                     next()
+                    return;
                 } else {
                     res.status(401).json({
                         status: false,

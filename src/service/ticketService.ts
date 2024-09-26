@@ -152,6 +152,7 @@ class TicketService {
                 const find = await s3Helper.findFile(findName)
                 console.log(find);
                 if (find && findName) {
+
                     const getViewUrl = s3Helper.getViewUrl(findName);
                     console.log("View url");
                     console.log(getViewUrl);
@@ -234,10 +235,12 @@ class TicketService {
     // }
 
 
-    async listAdminTickets(page: number, limit: number, status: TicketStatus): Promise<HelperFunctionResponse> {
+    async listAdminTickets(page: number, limit: number, status?: TicketStatus, category?: TicketCategory, search?: string): Promise<HelperFunctionResponse> {
         const skip: number = (page - 1) * limit;
-        const findTickets = await this.ticketRepo.findPaginedTicket(skip, limit, status);
+        const findTickets = await this.ticketRepo.findPaginedTicket(skip, limit, status, category, search);
         if (findTickets.paginated.length) {
+            console.log(findTickets);
+
             return {
                 status: true,
                 msg: "Ticket found",

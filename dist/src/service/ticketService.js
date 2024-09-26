@@ -228,11 +228,12 @@ class TicketService {
     //         };
     //     }
     // }
-    listAdminTickets(page, limit, status) {
+    listAdminTickets(page, limit, status, category, search) {
         return __awaiter(this, void 0, void 0, function* () {
             const skip = (page - 1) * limit;
-            const findTickets = yield this.ticketRepo.findPaginedTicket(skip, limit, status);
+            const findTickets = yield this.ticketRepo.findPaginedTicket(skip, limit, status, category, search);
             if (findTickets.paginated.length) {
+                console.log(findTickets);
                 return {
                     status: true,
                     msg: "Ticket found",

@@ -95,8 +95,9 @@ class AuthMiddleware {
                     if (checkValidity === null || checkValidity === void 0 ? void 0 : checkValidity.email) {
                         req.context.email_id = checkValidity === null || checkValidity === void 0 ? void 0 : checkValidity.email;
                         req.context.token = token;
-                        req.context.user_id = checkValidity.id;
+                        console.log("This passed");
                         next();
+                        return;
                     }
                     else {
                         res.status(401).json({

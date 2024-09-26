@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import AdminService from "../service/adminService";
 import { HelperFunctionResponse } from "../util/types/Interface/UtilInterface";
-import { S3Folder, StatusCode, TicketChatFrom, TicketStatus } from "../util/types/Enum/UtilEnum";
+import { S3Folder, StatusCode, TicketCategory, TicketChatFrom, TicketStatus } from "../util/types/Enum/UtilEnum";
 import TicketService from "../service/ticketService";
 import ImageService from "../service/imageService";
 
@@ -16,6 +16,11 @@ class AdminController {
         this.adminService = new AdminService();
         this.ticketServcie = new TicketService();
         this.imageService = new ImageService()
+        this.getSingleTicket = this.getSingleTicket.bind(this)
+        this.getTickets = this.getTickets.bind(this)
+        this.addReplayToChat = this.addReplayToChat.bind(this)
+        this.createPresignedUrl = this.createPresignedUrl.bind(this)
+        this.getSingleUserByProfileId = this.getSingleUserByProfileId.bind(this)
     }
 
 
@@ -33,12 +38,18 @@ class AdminController {
     async getSingleTicket(req: Request, res: Response): Promise<void> {
         const ticket_id: string = req.params.ticket_id
 
+        console.log("Single ticket");
+
+
+
         const findSingleTicket = await this.ticketServcie.getSingleTicketByTicketId(ticket_id, true);
         res.status(findSingleTicket.statusCode).json({ status: findSingleTicket.status, msg: findSingleTicket.msg, data: findSingleTicket.data })
     }
 
     async createPresignedUrl(req: Request, res: Response): Promise<void> {
         const fileName = req.query.file;
+
+        console.log("This workded");
         if (fileName) {
             const signedUrl = await this.imageService.createPresignedUrl(fileName.toString(), process.env.TICKET_ATTACHMENT_BUCKET || "", S3Folder.TicktAttachment);
             res.status(signedUrl.statusCode).json({ status: signedUrl.status, msg: signedUrl.msg, data: signedUrl.data })
@@ -50,9 +61,13 @@ class AdminController {
     async getTickets(req: Request, res: Response): Promise<void> {
         const limit: number = +req.params.limit;
         const page: number = +req.params.page;
-        const status: TicketStatus = req.params.status as TicketStatus;
+        const status: TicketStatus | null = req.params.status as TicketStatus;
+        const category: TicketCategory | null = req.query.category as TicketCategory;
+        const query: string | undefined = req.query.query?.toString()
 
-        const findTicket: HelperFunctionResponse = await this.ticketServcie.listAdminTickets(page, limit, status);
+        const findTicket: HelperFunctionResponse = await this.ticketServcie.listAdminTickets(page, limit, status, category, query);
+        console.log(findTicket);
+
         res.status(findTicket.statusCode).json({ status: findTicket.status, msg: findTicket.msg, data: findTicket.data })
     }
 

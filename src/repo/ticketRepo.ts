@@ -1,7 +1,7 @@
 import { ObjectId } from "mongoose";
 import TicketModel from "../database/models/Tickets";
 import { ITicketChat, ITicketCollection, ITicketTemplate } from "../util/types/Interface/CollectionInterface";
-import { TicketPriority, TicketStatus } from "../util/types/Enum/UtilEnum";
+import { TicketCategory, TicketPriority, TicketStatus } from "../util/types/Enum/UtilEnum";
 import { IPaginatedResponse } from "../util/types/Interface/UtilInterface";
 
 class TicketRepo {
@@ -35,8 +35,26 @@ class TicketRepo {
     }
 
     async findTicketById(ticket_id: string): Promise<ITicketCollection | null> {
-        const singleTicket = await this.ticketCollection.findOne({ ticket_id });
-        return singleTicket;
+        const singleTicket = await this.ticketCollection.aggregate(
+            [
+                {
+                    $match: {
+                        ticket_id
+                    }
+                },
+                // {
+                //     $lookup: {
+                //         from: "user_profile",
+                //         localField: "profile_id",
+                //         as: "profile",
+                //         foreignField: "profile_id"
+                //     }
+                // },
+                // {
+                //     $unwind: "$profile"
+                // }
+            ]);
+        return singleTicket[0];
     }
 
     async findTicketsByProfileId(profile_id: string): Promise<ITicketCollection[] | []> {
@@ -105,13 +123,36 @@ class TicketRepo {
         }
     }
 
-    async findPaginedTicket(skip: number, limit: number, status: TicketStatus): Promise<IPaginatedResponse<ITicketCollection[]>> {
+    async findPaginedTicket(skip: number, limit: number, status?: TicketStatus, category?: TicketCategory, search?: string): Promise<IPaginatedResponse<ITicketCollection[]>> {
         try {
+
+            const matchFilter: Record<string, any> = status ? { 'status': status } : {}
+
+
+
+            if (search) {
+                matchFilter['ticket_id'] = {
+                    $regex: search,
+                    $options: "i"
+                }
+            }
+
+            if (category) {
+                matchFilter['category'] = category
+            }
+
+            console.log(search);
+            console.log(category);
+
+            console.log("Macth filter");
+
+
+            console.log(matchFilter);
+
+
             const tickets = await this.ticketCollection.aggregate([
                 {
-                    $match: {
-                        status
-                    }
+                    $match: matchFilter
                 },
                 {
                     $facet: {
@@ -142,6 +183,11 @@ class TicketRepo {
             ])
 
 
+            console.log("All tickets");
+            console.log(tickets);
+
+
+
             const response: IPaginatedResponse<ITicketCollection[]> = {
                 paginated: tickets[0].paginated,
                 total_records: tickets[0].total_records
@@ -149,6 +195,8 @@ class TicketRepo {
 
             return response;
         } catch (e) {
+            console.log(e);
+
             const response: IPaginatedResponse<ITicketCollection[]> = {
                 paginated: [],
                 total_records: 0
@@ -173,7 +221,13 @@ class TicketRepo {
     async addChatToTicket(ticket_id: string, chat: ITicketChat): Promise<boolean> {
         const updateTicket = await this.ticketCollection.updateOne(
             { ticket_id },
-            { $push: { chats: chat }, $set: { updated_at: new Date() } }
+            {
+                $push: { chats: chat },
+                $set: {
+                    updated_at: new Date(),
+                    status: TicketStatus.Answered
+                }
+            }
         );
         return updateTicket.modifiedCount > 0;
     }

@@ -1,4 +1,4 @@
-import express, { Express } from 'express';
+import express, { Express, NextFunction, Request } from 'express';
 import dotenv from 'dotenv'
 import bulkConsumer from './src/communication/bulkConsumer'
 import logger from 'morgan'
@@ -12,6 +12,7 @@ const io = new Server({
         origin: "*"
     }
 })
+
 
 // ChatHelper()
 
@@ -31,11 +32,16 @@ import ChatHelper from './src/helper/chatHelper';
 
 profileMongoConnection()
 
+
+
 app.use("/", userRouter)
 app.use("/admin", adminRouter)
 
 //const
 const PORT: number = parseInt(process.env.PORT || "", 10) || 7004
+
+
+
 
 app.listen(PORT, () => {
     console.log("Profile started at Port : " + PORT)

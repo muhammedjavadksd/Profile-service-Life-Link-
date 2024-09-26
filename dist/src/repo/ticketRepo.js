@@ -42,8 +42,25 @@ class TicketRepo {
     }
     findTicketById(ticket_id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const singleTicket = yield this.ticketCollection.findOne({ ticket_id });
-            return singleTicket;
+            const singleTicket = yield this.ticketCollection.aggregate([
+                {
+                    $match: {
+                        ticket_id
+                    }
+                },
+                // {
+                //     $lookup: {
+                //         from: "user_profile",
+                //         localField: "profile_id",
+                //         as: "profile",
+                //         foreignField: "profile_id"
+                //     }
+                // },
+                // {
+                //     $unwind: "$profile"
+                // }
+            ]);
+            return singleTicket[0];
         });
     }
     findTicketsByProfileId(profile_id) {
@@ -113,14 +130,26 @@ class TicketRepo {
             }
         });
     }
-    findPaginedTicket(skip, limit, status) {
+    findPaginedTicket(skip, limit, status, category, search) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const matchFilter = status ? { 'status': status } : {};
+                if (search) {
+                    matchFilter['ticket_id'] = {
+                        $regex: search,
+                        $options: "i"
+                    };
+                }
+                if (category) {
+                    matchFilter['category'] = category;
+                }
+                console.log(search);
+                console.log(category);
+                console.log("Macth filter");
+                console.log(matchFilter);
                 const tickets = yield this.ticketCollection.aggregate([
                     {
-                        $match: {
-                            status
-                        }
+                        $match: matchFilter
                     },
                     {
                         $facet: {
@@ -149,6 +178,8 @@ class TicketRepo {
                         }
                     }
                 ]);
+                console.log("All tickets");
+                console.log(tickets);
                 const response = {
                     paginated: tickets[0].paginated,
                     total_records: tickets[0].total_records
@@ -156,6 +187,7 @@ class TicketRepo {
                 return response;
             }
             catch (e) {
+                console.log(e);
                 const response = {
                     paginated: [],
                     total_records: 0
@@ -178,7 +210,13 @@ class TicketRepo {
     }
     addChatToTicket(ticket_id, chat) {
         return __awaiter(this, void 0, void 0, function* () {
-            const updateTicket = yield this.ticketCollection.updateOne({ ticket_id }, { $push: { chats: chat }, $set: { updated_at: new Date() } });
+            const updateTicket = yield this.ticketCollection.updateOne({ ticket_id }, {
+                $push: { chats: chat },
+                $set: {
+                    updated_at: new Date(),
+                    status: UtilEnum_1.TicketStatus.Answered
+                }
+            });
             return updateTicket.modifiedCount > 0;
         });
     }

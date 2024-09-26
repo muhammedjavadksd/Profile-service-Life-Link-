@@ -20,7 +20,7 @@ class ProfileConsumer {
     }
     _init__() {
         return __awaiter(this, void 0, void 0, function* () {
-            const connection = yield amqplib_1.default.connect("amqp://localhost");
+            const connection = yield amqplib_1.default.connect(process.env.RABBITMQ_URL || "");
             const channel = yield connection.createChannel();
             yield channel.assertQueue(this.queue);
             // console.log(channel);

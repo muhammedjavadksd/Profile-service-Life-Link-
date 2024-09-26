@@ -11,10 +11,10 @@ const adminRouter = express_1.default.Router();
 const authMiddleware = new authMiddleware_1.default();
 const adminController = new adminController_1.default();
 //GET methods
-adminRouter.get("/:profile_id", authMiddleware.isValidAdmin, adminController.getSingleUserByProfileId);
-adminRouter.get("/get_tickets/:page/:limit/:status", authMiddleware.isValidAdmin, adminController.getTickets);
+adminRouter.get("/get_tickets/:limit/:page/:status?", authMiddleware.isValidAdmin, adminController.getTickets);
 adminRouter.get("/get_ticket/:ticket_id", authMiddleware.isValidAdmin, adminController.getSingleTicket);
 adminRouter.get("/presigned_url", authMiddleware.isValidAdmin, adminController.createPresignedUrl);
+adminRouter.get("/:profile_id", authMiddleware.isValidAdmin, adminController.getSingleUserByProfileId);
 //POST methods
 // adminRouter.post("/fund_raiser_profile/:profile_id", authMiddleware.isValidAdmin, profileController.getUserByIdsController)
 //POST methods

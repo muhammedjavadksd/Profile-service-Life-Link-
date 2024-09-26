@@ -14,7 +14,7 @@ class ProfileConsumer {
     }
 
     async _init__() {
-        const connection = await amqplib.connect("amqp://localhost");
+        const connection = await amqplib.connect(process.env.RABBITMQ_URL || "");
         const channel = await connection.createChannel();
         await channel.assertQueue(this.queue);
         // console.log(channel);
