@@ -30,6 +30,8 @@ jobs:
           username: ubuntu
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           script: |
+              sudo docker system prune -af --volumes
               sudo docker-compose -f /var/www/docker-compose.yaml pull
               sudo docker-compose -f /var/www/docker-compose.yaml up -d --remove-orphans
+
 
