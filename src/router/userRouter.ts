@@ -1,5 +1,5 @@
 
-import express from 'express';
+import express, { Request, Response } from 'express';
 import UserProfileController from '../controller/userController';
 import AuthMiddleware from '../middleware/authMiddleware';
 import TicketController from '../controller/ticketController';
@@ -9,6 +9,10 @@ const userRouter = express.Router();
 const userProfileController = new UserProfileController();
 const authMiddleware = new AuthMiddleware();
 const ticketController = new TicketController();
+
+userRouter.get("/", (req: Request, res: Response) => {
+    res.status(200).send("Welcome to authentication service");
+})
 
 userRouter.get("/get_profile", authMiddleware.isValidUser, userProfileController.getProfile)
 userRouter.get("/get-tickets/:page/:limit", authMiddleware.isValidUser, ticketController.listTickets)

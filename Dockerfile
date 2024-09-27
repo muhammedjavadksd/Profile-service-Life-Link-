@@ -4,4 +4,5 @@ COPY .package*.json ./
 COPY . .
 RUN npm install
 RUN npx tsc
+RUN npm update
 CMD ["npm","start"]
