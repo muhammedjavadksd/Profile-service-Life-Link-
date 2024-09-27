@@ -11,6 +11,9 @@ const userRouter = express_1.default.Router();
 const userProfileController = new userController_1.default();
 const authMiddleware = new authMiddleware_1.default();
 const ticketController = new ticketController_1.default();
+userRouter.get("/", (req, res) => {
+    res.status(200).send("Welcome to profile service");
+});
 userRouter.get("/get_profile", authMiddleware.isValidUser, userProfileController.getProfile);
 userRouter.get("/get-tickets/:page/:limit", authMiddleware.isValidUser, ticketController.listTickets);
 userRouter.get("/get-tickets/:ticket_id", authMiddleware.isValidUser, ticketController.getSingleTicketById);
