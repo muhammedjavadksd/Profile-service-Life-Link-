@@ -11,7 +11,7 @@ const authMiddleware = new AuthMiddleware();
 const ticketController = new TicketController();
 
 userRouter.get("/", (req: Request, res: Response) => {
-    res.status(200).send("Welcome to authentication service");
+    res.status(200).send("Welcome to profile service");
 })
 
 userRouter.get("/get_profile", authMiddleware.isValidUser, userProfileController.getProfile)
