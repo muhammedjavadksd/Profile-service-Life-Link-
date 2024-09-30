@@ -19,7 +19,9 @@ const webServer: Server = new Server(httpServer, {
     }
 })
 
-cors({ origin: ["http://localhost:3000"] })
+app.use(cors({
+    origin: ['http://localhost:3000', "https://life-link.online"]
+}))
 
 
 ChatHelper(webServer)
