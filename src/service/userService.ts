@@ -132,6 +132,7 @@ class UserProfileService {
             }
 
             const profileDataProvide = new ProfileDataProvider(process.env.EMAIL_PROFILE_UPDATE_OTP || "");
+            await profileDataProvide._init__(process.env.EMAIL_PROFILE_UPDATE_OTP || "")
             profileDataProvide.transferData({
                 email_id: findUser.email,
                 type: "PHONE",

@@ -129,6 +129,7 @@ class UserProfileService {
                     otp_expire_time: otpTimer
                 };
                 const profileDataProvide = new ProfileProvider_1.default(process.env.EMAIL_PROFILE_UPDATE_OTP || "");
+                yield profileDataProvide._init__(process.env.EMAIL_PROFILE_UPDATE_OTP || "");
                 profileDataProvide.transferData({
                     email_id: findUser.email,
                     type: "PHONE",
