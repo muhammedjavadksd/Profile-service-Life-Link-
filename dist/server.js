@@ -6,19 +6,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const bulkConsumer_1 = __importDefault(require("./src/communication/bulkConsumer"));
-const morgan_1 = __importDefault(require("morgan"));
 const socket_io_1 = require("socket.io");
+const http_1 = __importDefault(require("http"));
+const cors_1 = __importDefault(require("cors"));
+const chatHelper_1 = __importDefault(require("./src/helper/chatHelper"));
 const app = (0, express_1.default)();
-const io = new socket_io_1.Server({
+const httpServer = http_1.default.createServer(app);
+const webServer = new socket_io_1.Server(httpServer, {
     cors: {
-        origin: "*"
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"],
+        credentials: true
     }
 });
-// ChatHelper()
+(0, cors_1.default)({ origin: ["http://localhost:3000"] });
+(0, chatHelper_1.default)(webServer);
 //middleware
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
-app.use((0, morgan_1.default)("combined"));
+// app.use(logger("combined"))
 dotenv_1.default.config({ path: "./.env" });
 (0, bulkConsumer_1.default)();
 const connection_1 = __importDefault(require("./src/database/connection"));
@@ -29,6 +35,6 @@ app.use("/", userRouter_1.default);
 app.use("/admin", adminRouter_1.default);
 //const
 const PORT = parseInt(process.env.PORT || "", 10) || 7004;
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
     console.log("Profile started at Port : " + PORT);
 });

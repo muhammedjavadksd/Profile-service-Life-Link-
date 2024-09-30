@@ -30,4 +30,5 @@ userRouter.patch("/update_phone_number", authMiddleware.isValidUser, userProfile
 userRouter.patch("/update_email_id", authMiddleware.isValidUser, userProfileController.updateEmailID);
 userRouter.patch("/profile_update_otp_submission", authMiddleware.isValidUser, userProfileController.profileUpdateOTPSubmission);
 userRouter.patch("/update_profile_picture", authMiddleware.isValidUser, userProfileController.profilePictureUpdation);
+userRouter.patch("/seen-message/:room_id", authMiddleware.isValidUser, userProfileController.seenMessage);
 exports.default = userRouter;

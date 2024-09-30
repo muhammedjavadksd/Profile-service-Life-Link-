@@ -17,6 +17,12 @@ class ChatRepository {
     constructor() {
         this.chatCollection = ChatsRoom_1.default;
     }
+    updateRoomByModel(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield data.save();
+            return true;
+        });
+    }
     findSingleChat(chat_id, profile_id) {
         return __awaiter(this, void 0, void 0, function* () {
             const myChat = yield this.chatCollection.aggregate([{
@@ -48,7 +54,22 @@ class ChatRepository {
                         from: "messages",
                         as: "chat_history",
                         foreignField: "room_id",
-                        localField: "chat_id"
+                        localField: "chat_id",
+                        pipeline: [
+                            {
+                                $match: {
+                                    $or: [
+                                        { 'is_block.status': false },
+                                        {
+                                            $and: [
+                                                { 'is_block.status': true },
+                                                { 'is_block.blocked_from': { $ne: profile_id } }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
                     }
                 },
                 { $unwind: '$chat_person' },
@@ -149,10 +170,11 @@ class ChatRepository {
     }
     blockChat(chat_id, profile_id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const newChat = yield this.chatCollection.findById(chat_id);
+            const newChat = yield this.chatCollection.findOne({ chat_id });
             if (newChat) {
                 newChat.blocked.status = true;
                 newChat.blocked.blocked_from = profile_id;
+                yield this.updateRoomByModel(newChat);
                 return true;
             }
             else {
@@ -162,9 +184,10 @@ class ChatRepository {
     }
     unBlockChat(chat_id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const newChat = yield this.chatCollection.findById(chat_id);
+            const newChat = yield this.chatCollection.findOne({ chat_id });
             if (newChat) {
                 newChat.blocked.status = false;
+                yield this.updateRoomByModel(newChat);
                 return true;
             }
             else {

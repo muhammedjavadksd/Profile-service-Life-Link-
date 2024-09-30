@@ -25,6 +25,9 @@ class AuthMiddleware {
         return __awaiter(this, void 0, void 0, function* () {
             const context = req.context;
             const room_id = req.params.room_id;
+            console.log("The context");
+            console.log(req.params);
+            console.log(req.context);
             if (context) {
                 const profile_id = context === null || context === void 0 ? void 0 : context.profile_id;
                 if (profile_id) {
@@ -48,6 +51,7 @@ class AuthMiddleware {
             const headers = req.headers;
             const authorization = headers.authorization;
             try {
+                console.log(authorization);
                 if (authorization) {
                     const auth_data = authorization.split(" ");
                     if (auth_data[0] == "Bearer") {

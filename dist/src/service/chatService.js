@@ -24,9 +24,40 @@ class ChatService {
         this.blockChat = this.blockChat.bind(this);
         this.unBlockChat = this.unBlockChat.bind(this);
         this.startChat = this.startChat.bind(this);
-        // this.getMyChats = this.getMyChats.bind(this)
+        this.seenMessage = this.seenMessage.bind(this);
         this.chatRepo = new chatRepo_1.default();
         this.messagesRepo = new MessagesRepo_1.default();
+    }
+    seenMessage(room_id, profile_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const findChat = yield this.chatRepo.findRoomById(room_id);
+            if ((findChat === null || findChat === void 0 ? void 0 : findChat.profile_one) == profile_id || (findChat === null || findChat === void 0 ? void 0 : findChat.profile_two) == profile_id) {
+                findChat.messages.unseen_message_count = 0;
+                yield this.chatRepo.updateRoomByModel(findChat);
+                const updateMessage = yield this.messagesRepo.updateSeen(room_id);
+                console.log("Update message");
+                console.log(updateMessage);
+                if (updateMessage) {
+                    return {
+                        msg: "Message seen status updated",
+                        status: true,
+                        statusCode: UtilEnum_1.StatusCode.OK
+                    };
+                }
+                return {
+                    msg: "Message seen status failed",
+                    status: false,
+                    statusCode: UtilEnum_1.StatusCode.BAD_REQUEST
+                };
+            }
+            else {
+                return {
+                    msg: "Un authraized access",
+                    status: false,
+                    statusCode: UtilEnum_1.StatusCode.UNAUTHORIZED
+                };
+            }
+        });
     }
     createChatId() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -66,12 +97,14 @@ class ChatService {
                     msg,
                     seen: false,
                     timeline: new Date(),
-                    is_block: (_a = findRoom.blocked) === null || _a === void 0 ? void 0 : _a.status,
+                    is_block: {
+                        status: (_a = findRoom.blocked) === null || _a === void 0 ? void 0 : _a.status,
+                        blocked_from: findRoom.blocked.blocked_from || null
+                    },
                     profile_id: profile_id,
-                    // to_profile: findRoom.
                 };
                 yield this.messagesRepo.insertOne(message);
-                // await this.chatRepo.addMessageDetails(room_id, updateMessageDetails);
+                yield this.chatRepo.addMessageDetails(room_id, updateMessageDetails);
                 // await this.chatRepo.
                 return {
                     status: true,
@@ -167,7 +200,10 @@ class ChatService {
             };
             const messageScheme = {
                 room_id: chat_id,
-                is_block: false,
+                is_block: {
+                    status: false,
+                    blocked_from: null
+                },
                 msg: msg,
                 profile_id: profile_one,
                 seen: false,

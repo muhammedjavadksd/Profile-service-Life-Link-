@@ -11,6 +11,7 @@ interface IChatService {
     startChat(profile_one: string, profile_two: string, msg: string): Promise<HelperFunctionResponse>
     getMyChats(profile_id: string): Promise<HelperFunctionResponse>
     addMessage(room_id: string, msg: string, profile_id: string): Promise<HelperFunctionResponse>
+    seenMessage(room_id: string, profile_id: string): Promise<HelperFunctionResponse>
 }
 
 class ChatService implements IChatService {
@@ -25,9 +26,40 @@ class ChatService implements IChatService {
         this.blockChat = this.blockChat.bind(this)
         this.unBlockChat = this.unBlockChat.bind(this)
         this.startChat = this.startChat.bind(this)
-        // this.getMyChats = this.getMyChats.bind(this)
+        this.seenMessage = this.seenMessage.bind(this)
         this.chatRepo = new ChatRepository();
         this.messagesRepo = new MessagesRepo()
+    }
+
+    async seenMessage(room_id: string, profile_id: string): Promise<HelperFunctionResponse> {
+        const findChat = await this.chatRepo.findRoomById(room_id);
+        if (findChat?.profile_one == profile_id || findChat?.profile_two == profile_id) {
+            findChat.messages.unseen_message_count = 0
+            await this.chatRepo.updateRoomByModel(findChat);
+            const updateMessage = await this.messagesRepo.updateSeen(room_id);
+            console.log("Update message");
+
+            console.log(updateMessage);
+
+            if (updateMessage) {
+                return {
+                    msg: "Message seen status updated",
+                    status: true,
+                    statusCode: StatusCode.OK
+                }
+            }
+            return {
+                msg: "Message seen status failed",
+                status: false,
+                statusCode: StatusCode.BAD_REQUEST
+            }
+        } else {
+            return {
+                msg: "Un authraized access",
+                status: false,
+                statusCode: StatusCode.UNAUTHORIZED
+            }
+        }
     }
 
 
@@ -67,12 +99,14 @@ class ChatService implements IChatService {
                 msg,
                 seen: false,
                 timeline: new Date(),
-                is_block: findRoom.blocked?.status,
+                is_block: {
+                    status: findRoom.blocked?.status,
+                    blocked_from: findRoom.blocked.blocked_from || null
+                },
                 profile_id: profile_id,
-                // to_profile: findRoom.
             }
             await this.messagesRepo.insertOne(message);
-            // await this.chatRepo.addMessageDetails(room_id, updateMessageDetails);
+            await this.chatRepo.addMessageDetails(room_id, updateMessageDetails);
             // await this.chatRepo.
             return {
                 status: true,
@@ -167,7 +201,10 @@ class ChatService implements IChatService {
         }
         const messageScheme: IMessageSchema = {
             room_id: chat_id,
-            is_block: false,
+            is_block: {
+                status: false,
+                blocked_from: null
+            },
             msg: msg,
             profile_id: profile_one,
             seen: false,

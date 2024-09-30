@@ -68,7 +68,10 @@ interface IMessageSchema {
     timeline: Date,
     msg: string,
     seen: boolean,
-    is_block: boolean
+    is_block: {
+        status: boolean,
+        blocked_from: string | null
+    },
     profile_id: string
 }
 

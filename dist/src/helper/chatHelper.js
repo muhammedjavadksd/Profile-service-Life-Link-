@@ -22,26 +22,41 @@ function ChatHelper(io) {
     const chatRepo = new chatRepo_1.default();
     const tokenHelper = new tokenHelper_1.default();
     const utilHelper = new utilHelper_1.default();
+    io.on("message", (data) => {
+        console.log("New message arrrived");
+    });
     io.on("connection", (socket) => __awaiter(this, void 0, void 0, function* () {
-        console.log("New connection attemp");
         const token = socket.handshake.query.token;
+        console.log("The token is");
+        console.log(token);
         if (token && typeof token == "string") {
             const tokenId = utilHelper.getTokenFromHeader(token);
             if (tokenId) {
-                const tokenValidity = yield tokenHelper.decodeJWTToken(token.toString());
+                console.log("This is token");
+                console.log(tokenId);
+                const tokenValidity = yield tokenHelper.decodeJWTToken(tokenId.toString());
+                console.log("Token validity");
+                console.log(tokenValidity);
                 if (tokenValidity && typeof tokenValidity == "object") {
                     const profile_id = tokenValidity.profile_id;
                     console.log("New connection established");
-                    // socket.on("join", (userId: string) => {
-                    //     socket.userId = userId;
-                    // })
+                    socket.on("join", (userId) => {
+                        socket.userId = userId;
+                        socket.join(userId); // Add the socket to the user's room
+                        console.log(`User ${userId} joined room.`);
+                    });
                     socket.on("message", (chat) => __awaiter(this, void 0, void 0, function* () {
+                        console.log("new message");
+                        console.log(chat);
                         const findRoom = yield chatRepo.findRoomById(chat.room_id);
                         if (findRoom) {
                             const toId = findRoom.profile_one == profile_id ? findRoom.profile_two : findRoom.profile_one;
                             if (toId) {
                                 const message = {
-                                    is_block: !!findRoom.blocked,
+                                    is_block: {
+                                        status: findRoom.blocked.status,
+                                        blocked_from: findRoom.blocked.blocked_from || null
+                                    },
                                     msg: chat.msg,
                                     profile_id: tokenValidity.profile_id,
                                     room_id: chat.room_id,
@@ -49,12 +64,23 @@ function ChatHelper(io) {
                                     timeline: chat.timeline
                                 };
                                 chatService.addMessage(chat.room_id, chat.msg, chat.profile_id);
-                                socket.to(toId).emit("new_message", message);
+                                if (!findRoom.blocked.status) {
+                                    socket.to(toId).emit("new_message", message);
+                                }
                             }
                         }
                     }));
                 }
+                else {
+                    console.log("Token type is invalid");
+                }
             }
+            else {
+                console.log("Token not found wiht header");
+            }
+        }
+        else {
+            console.log("No token found");
         }
     }));
 }

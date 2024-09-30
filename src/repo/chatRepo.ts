@@ -8,6 +8,7 @@ interface IChatRepo {
     addMessageToChat(chatId: string, message: IMessageSchema): Promise<boolean>
     findChatMyChat(profile_id: string): Promise<IChatCollection[]>
     addMessageDetails(room_id: string, details: IChatMessageDetails): Promise<boolean>
+    updateRoomByModel(data: IChatCollection): Promise<boolean>
 }
 
 
@@ -17,6 +18,12 @@ class ChatRepository implements IChatRepo {
 
     constructor() {
         this.chatCollection = ChatCollection;
+    }
+
+
+    async updateRoomByModel(data: IChatCollection): Promise<boolean> {
+        await data.save();
+        return true
     }
 
     async findSingleChat(chat_id: string, profile_id: string): Promise<IChatCollection[]> {
@@ -49,7 +56,22 @@ class ChatRepository implements IChatRepo {
                 from: "messages",
                 as: "chat_history",
                 foreignField: "room_id",
-                localField: "chat_id"
+                localField: "chat_id",
+                pipeline: [
+                    {
+                        $match: {
+                            $or: [
+                                { 'is_block.status': false },
+                                {
+                                    $and: [
+                                        { 'is_block.status': true },
+                                        { 'is_block.blocked_from': { $ne: profile_id } }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
             }
         },
         { $unwind: '$chat_person' },
@@ -148,10 +170,11 @@ class ChatRepository implements IChatRepo {
     }
 
     async blockChat(chat_id: string, profile_id: string): Promise<boolean> {
-        const newChat = await this.chatCollection.findById(chat_id);
+        const newChat = await this.chatCollection.findOne({ chat_id });
         if (newChat) {
             newChat.blocked.status = true
             newChat.blocked.blocked_from = profile_id
+            await this.updateRoomByModel(newChat);
             return true
         } else {
             return false
@@ -160,9 +183,10 @@ class ChatRepository implements IChatRepo {
 
 
     async unBlockChat(chat_id: string): Promise<boolean> {
-        const newChat = await this.chatCollection.findById(chat_id);
+        const newChat = await this.chatCollection.findOne({ chat_id });
         if (newChat) {
             newChat.blocked.status = false
+            await this.updateRoomByModel(newChat);
             return true
         } else {
             return false

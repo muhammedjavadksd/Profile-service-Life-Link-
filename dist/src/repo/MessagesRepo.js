@@ -21,5 +21,21 @@ class MessagesRepo {
             return save === null || save === void 0 ? void 0 : save.id;
         });
     }
+    updateSeen(room_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const findLastData = yield Messages_1.default.findOne({ room_id }).sort({ timeline: -1 });
+            console.log("Last data");
+            console.log(findLastData);
+            if (findLastData) {
+                console.log(yield Messages_1.default.findOne({ _id: findLastData === null || findLastData === void 0 ? void 0 : findLastData._id }));
+                const updateSeen = yield Messages_1.default.updateOne({ _id: findLastData === null || findLastData === void 0 ? void 0 : findLastData._id }, { $set: { seen: true } });
+                console.log(updateSeen);
+                return updateSeen.modifiedCount > 0;
+            }
+            else {
+                return false;
+            }
+        });
+    }
 }
 exports.default = MessagesRepo;

@@ -21,6 +21,13 @@ class AuthMiddleware {
     async isValidChat(req: CustomRequest, res: Response, next: NextFunction) {
         const context = req.context;
         const room_id = req.params.room_id;
+
+        console.log("The context");
+
+        console.log(req.params);
+
+        console.log(req.context);
+
         if (context) {
             const profile_id = context?.profile_id;
             if (profile_id) {
@@ -48,6 +55,9 @@ class AuthMiddleware {
         const authorization = headers.authorization;
 
         try {
+
+            console.log(authorization);
+
             if (authorization) {
                 const auth_data = authorization.split(" ");
 

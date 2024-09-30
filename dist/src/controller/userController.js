@@ -30,9 +30,25 @@ class UserProfileController {
         this.getMyChats = this.getMyChats.bind(this);
         this.getSingleChat = this.getSingleChat.bind(this);
         this.getPresignedUrl = this.getPresignedUrl.bind(this);
+        this.seenMessage = this.seenMessage.bind(this);
         this.userProfileService = new userService_1.default();
         this.chatService = new chatService_1.default();
         this.imageService = new imageService_1.default();
+    }
+    seenMessage(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const room_id = req.params.room_id;
+            const user_id = (_a = req.context) === null || _a === void 0 ? void 0 : _a.profile_id;
+            console.log("Message seen update");
+            if (user_id) {
+                const updateSeen = yield this.chatService.seenMessage(room_id, user_id);
+                res.status(updateSeen.statusCode).json({ status: updateSeen.status, msg: updateSeen.msg, data: updateSeen.data });
+            }
+            else {
+                res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({ status: false, msg: "Authentication failed" });
+            }
+        });
     }
     getPresignedUrl(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -198,6 +214,8 @@ class UserProfileController {
             const status = req.params.status;
             const context = req.context;
             if (context) {
+                console.log("The public context");
+                console.log(status);
                 const profile_id = context.profile_id;
                 if (profile_id) {
                     if (status == "block") {

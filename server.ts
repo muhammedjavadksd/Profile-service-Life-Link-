@@ -3,23 +3,31 @@ import dotenv from 'dotenv'
 import bulkConsumer from './src/communication/bulkConsumer'
 import logger from 'morgan'
 import { Server } from 'socket.io'
-
+import http from 'http'
+import cors from 'cors';
+import ChatHelper from './src/helper/chatHelper';
 
 
 const app: Express = express()
-const io = new Server({
+const httpServer = http.createServer(app);
+
+const webServer: Server = new Server(httpServer, {
     cors: {
-        origin: "*"
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"],
+        credentials: true
     }
 })
 
+cors({ origin: ["http://localhost:3000"] })
 
-// ChatHelper()
+
+ChatHelper(webServer)
 
 //middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(logger("combined"))
+// app.use(logger("combined"))
 
 dotenv.config({ path: "./.env" });
 bulkConsumer()
@@ -27,7 +35,6 @@ bulkConsumer()
 import profileMongoConnection from './src/database/connection'
 import userRouter from './src/router/userRouter';
 import adminRouter from './src/router/adminRouter'
-import ChatHelper from './src/helper/chatHelper';
 
 
 profileMongoConnection()
@@ -43,6 +50,6 @@ const PORT: number = parseInt(process.env.PORT || "", 10) || 7004
 
 
 
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
     console.log("Profile started at Port : " + PORT)
 })

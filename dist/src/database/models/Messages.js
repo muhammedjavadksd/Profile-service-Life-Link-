@@ -1,6 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
+const BlockSchema = new mongoose_1.Schema({
+    status: {
+        type: Boolean,
+        required: true
+    },
+    blocked_from: {
+        type: String,
+    }
+});
 const messageSchema = new mongoose_1.Schema({
     room_id: {
         type: String,
@@ -19,7 +28,7 @@ const messageSchema = new mongoose_1.Schema({
         required: true
     },
     is_block: {
-        type: Boolean,
+        type: BlockSchema,
         required: true
     },
     profile_id: {

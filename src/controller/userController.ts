@@ -26,9 +26,26 @@ class UserProfileController {
         this.getMyChats = this.getMyChats.bind(this)
         this.getSingleChat = this.getSingleChat.bind(this)
         this.getPresignedUrl = this.getPresignedUrl.bind(this)
+        this.seenMessage = this.seenMessage.bind(this)
         this.userProfileService = new UserProfileService();
         this.chatService = new ChatService();
         this.imageService = new ImageService()
+    }
+
+    async seenMessage(req: CustomRequest, res: Response): Promise<void> {
+
+        const room_id: string = req.params.room_id;
+        const user_id: string | undefined = req.context?.profile_id;
+
+        console.log("Message seen update");
+
+
+        if (user_id) {
+            const updateSeen = await this.chatService.seenMessage(room_id, user_id);
+            res.status(updateSeen.statusCode).json({ status: updateSeen.status, msg: updateSeen.msg, data: updateSeen.data });
+        } else {
+            res.status(StatusCode.UNAUTHORIZED).json({ status: false, msg: "Authentication failed" })
+        }
     }
 
     async getPresignedUrl(req: Request, res: Response): Promise<void> {
@@ -192,6 +209,10 @@ class UserProfileController {
         const status: string = req.params.status;
         const context = req.context;
         if (context) {
+
+            console.log("The public context");
+            console.log(status);
+
             const profile_id: string = context.profile_id;
             if (profile_id) {
                 if (status == "block") {
