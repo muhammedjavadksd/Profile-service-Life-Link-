@@ -31,7 +31,7 @@ jobs:
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           script: |
               sudo docker system prune -af --volumes
-              sudo docker-compose -f /var/www/docker-compose.yaml pull javadjazz123/lifelink_profile
+              sudo docker-compose -f /var/www/docker-compose.yaml pull profile
               sudo docker-compose -f /var/www/docker-compose.yaml up -d --remove-orphans
 
 
