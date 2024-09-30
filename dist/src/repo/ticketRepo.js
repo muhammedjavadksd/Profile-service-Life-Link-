@@ -26,6 +26,12 @@ class TicketRepo {
             return (savedTicket === null || savedTicket === void 0 ? void 0 : savedTicket.id) || null;
         });
     }
+    findPriority(date) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const find = yield this.ticketCollection.find({ priority: UtilEnum_1.TicketPriority.High, created_at: { $gte: date } });
+            return find.length <= 2;
+        });
+    }
     findHighPriorityOnThisMonth(profile_id) {
         return __awaiter(this, void 0, void 0, function* () {
             const now = new Date();

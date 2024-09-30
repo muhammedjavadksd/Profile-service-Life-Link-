@@ -85,6 +85,16 @@ class TicketService {
             const chatId = `${UtilEnum_1.IdPrefix.TicketChatId}-${randomText}-${randomNumber}`;
             const todayDate = new Date();
             let attachmentDocs = null;
+            const daysAgo = new Date();
+            daysAgo.setDate(daysAgo.getDate() - 30);
+            const findPriority = yield this.ticketRepo.findPriority(daysAgo);
+            if (!findPriority && priority == UtilEnum_1.TicketPriority.High) {
+                return {
+                    msg: "You have already raised two high priority ticket by the last 30 days",
+                    status: false,
+                    statusCode: UtilEnum_1.StatusCode.BAD_REQUEST
+                };
+            }
             const s3Helper = new S3BucketHelper_1.default(process.env.TICKET_ATTACHMENT_BUCKET || "", UtilEnum_1.S3Folder.TicktAttachment);
             if (attachment) {
                 const findName = utilHelper.extractImageNameFromPresignedUrl(attachment);

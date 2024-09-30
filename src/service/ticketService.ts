@@ -88,6 +88,18 @@ class TicketService {
         const todayDate: Date = new Date()
         let attachmentDocs = null;
 
+        const daysAgo = new Date();
+        daysAgo.setDate(daysAgo.getDate() - 30);
+
+        const findPriority = await this.ticketRepo.findPriority(daysAgo);
+        if (!findPriority && priority == TicketPriority.High) {
+            return {
+                msg: "You have already raised two high priority ticket by the last 30 days",
+                status: false,
+                statusCode: StatusCode.BAD_REQUEST
+            }
+        }
+
         const s3Helper = new S3BucketHelper(process.env.TICKET_ATTACHMENT_BUCKET || "", S3Folder.TicktAttachment);
         if (attachment) {
             const findName = utilHelper.extractImageNameFromPresignedUrl(attachment);

@@ -13,10 +13,14 @@ class TicketRepo {
 
     async insertTicket(ticket: ITicketTemplate): Promise<ObjectId | null> {
         console.log(ticket);
-
         const ticketInstance = new this.ticketCollection(ticket);
         const savedTicket = await ticketInstance.save();
         return savedTicket?.id || null;
+    }
+
+    async findPriority(date: Date): Promise<boolean> {
+        const find = await this.ticketCollection.find({ priority: TicketPriority.High, created_at: { $gte: date } });
+        return find.length <= 2
     }
 
 
