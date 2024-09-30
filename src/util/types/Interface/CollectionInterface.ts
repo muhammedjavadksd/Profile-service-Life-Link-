@@ -18,6 +18,7 @@ interface IUserEditProfile {
     first_name?: String,
     last_name?: String,
     profile_picture?: String,
+    blood_donor_id?: String,
 }
 
 interface IProfileEdit {

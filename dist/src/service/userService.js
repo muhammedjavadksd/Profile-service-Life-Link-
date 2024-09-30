@@ -79,6 +79,7 @@ class UserProfileService {
                 first_name: data.first_name,
                 last_name: data.last_name,
                 profile_picture: data.profile_picture,
+                blood_donor_id: data.blood_donor_id
             };
             const updateProfile = yield this.userRepo.updateProfile(edit_data, user_id);
             if (updateProfile) {
