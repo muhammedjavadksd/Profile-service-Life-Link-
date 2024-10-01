@@ -203,21 +203,9 @@ class ChatService implements IChatService {
             }
         }
 
-        const chat_id: string = await this.createChatId();
-        const chat: IChatTemplate = {
-            chat_id,
-            chat_started: new Date(),
-            profile_one: profile_one,
-            profile_two: profile_two,
-            blocked: {
-                status: false
-            },
-            messages: {
-                last_message: msg,
-                last_message_from: profile_one,
-                unseen_message_count: 1
-            }
-        }
+        const checkRoom = await this.chatRepo.isRoomExist(profile_one, profile_two);
+        const chat_id: string = checkRoom || await this.createChatId();
+
         const messageScheme: IMessageSchema = {
             room_id: chat_id,
             is_block: {
@@ -230,24 +218,49 @@ class ChatService implements IChatService {
             timeline: new Date()
         }
 
-
-        const saveChat = await this.chatRepo.createChat(chat)
-        if (saveChat) {
-            // await this.chatRepo.addMessageToChat(chat_id, messageScheme)
+        if (checkRoom) {
             await this.messagesRepo.insertOne(messageScheme)
             return {
                 status: true,
-                msg: "Chat created success",
+                msg: "Message has been sent",
                 statusCode: StatusCode.CREATED,
                 data: {
-                    chat_id: saveChat
+                    chat_id
                 }
             }
         } else {
-            return {
-                status: false,
-                msg: "Chat created failed",
-                statusCode: StatusCode.BAD_REQUEST,
+            const chat: IChatTemplate = {
+                chat_id,
+                chat_started: new Date(),
+                profile_one: profile_one,
+                profile_two: profile_two,
+                blocked: {
+                    status: false
+                },
+                messages: {
+                    last_message: msg,
+                    last_message_from: profile_one,
+                    unseen_message_count: 1
+                }
+            }
+
+            const saveChat = await this.chatRepo.createChat(chat)
+            if (saveChat) {
+                await this.messagesRepo.insertOne(messageScheme)
+                return {
+                    status: true,
+                    msg: "Chat created success",
+                    statusCode: StatusCode.CREATED,
+                    data: {
+                        chat_id: saveChat
+                    }
+                }
+            } else {
+                return {
+                    status: false,
+                    msg: "Chat created failed",
+                    statusCode: StatusCode.BAD_REQUEST,
+                }
             }
         }
     }

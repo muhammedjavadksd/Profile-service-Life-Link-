@@ -9,6 +9,7 @@ interface IChatRepo {
     findChatMyChat(profile_id: string): Promise<IChatCollection[]>
     addMessageDetails(room_id: string, details: IChatMessageDetails): Promise<boolean>
     updateRoomByModel(data: IChatCollection): Promise<boolean>
+    isRoomExist(profile_one: string, profile_two: string): Promise<string | false>
 }
 
 
@@ -20,6 +21,26 @@ class ChatRepository implements IChatRepo {
         this.chatCollection = ChatCollection;
     }
 
+
+    async isRoomExist(profile_one: string, profile_two: string): Promise<string | false> {
+        const findRoom = await this.chatCollection.findOne({
+            $or: [
+                {
+                    $and: [
+                        { profile_one },
+                        { profile_two }
+                    ]
+                },
+                {
+                    $and: [
+                        { profile_one: profile_two },
+                        { profile_two: profile_one }
+                    ]
+                }
+            ]
+        })
+        return findRoom?.chat_id || false
+    }
 
     async updateRoomByModel(data: IChatCollection): Promise<boolean> {
         await data.save();
