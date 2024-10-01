@@ -1,6 +1,6 @@
 
 enum CreateChatVia {
-    Email = "email",
+    DonorId = "donor-id",
     ProfileId = "profile_id"
 }
 

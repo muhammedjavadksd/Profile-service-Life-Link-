@@ -186,8 +186,8 @@ class ChatService implements IChatService {
 
     async startChat(profile_one: string, profile_two: string, msg: string, via: CreateChatVia): Promise<HelperFunctionResponse> {
 
-        if (via == CreateChatVia.Email) {
-            const findProfileByEmail = await this.userRepo.findProfileByEmailId(profile_two);
+        if (via == CreateChatVia.DonorId) {
+            const findProfileByEmail = await this.userRepo.findProfileByDonorId(profile_two);
             console.log(findProfileByEmail);
             console.log(profile_two);
             console.log("The docs");

@@ -22,6 +22,11 @@ class UserRepo {
         return singleProfile
     }
 
+    async findProfileByDonorId(donor_id: string): Promise<IUserCollection | null> {
+        const singleProfile = await this.profileCollection.findOne({ blood_donor_id: donor_id })
+        return singleProfile
+    }
+
     async findUserByUserId(user_id: string): Promise<IUserCollection | null> {
         const singleProfile = await this.profileCollection.findOne({ user_id })
         return singleProfile
