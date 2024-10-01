@@ -1,6 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.IdPrefix = exports.TicketChatFrom = exports.TicketStatus = exports.TicketPriority = exports.TicketCategory = exports.AuthUpdateType = exports.StatusCode = exports.S3Folder = void 0;
+exports.CreateChatVia = exports.IdPrefix = exports.TicketChatFrom = exports.TicketStatus = exports.TicketPriority = exports.TicketCategory = exports.AuthUpdateType = exports.StatusCode = exports.S3Folder = void 0;
+var CreateChatVia;
+(function (CreateChatVia) {
+    CreateChatVia["Email"] = "email";
+    CreateChatVia["ProfileId"] = "profile_id";
+})(CreateChatVia || (exports.CreateChatVia = CreateChatVia = {}));
 var StatusCode;
 (function (StatusCode) {
     StatusCode[StatusCode["OK"] = 200] = "OK";

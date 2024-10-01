@@ -184,7 +184,8 @@ class UserProfileController {
                 const profile_id = context.profile_id;
                 const second_profile = req.body.to_profile;
                 const msg = req.body.msg;
-                const createChat = yield this.chatService.startChat(profile_id, second_profile, msg);
+                const via = req.params.via;
+                const createChat = yield this.chatService.startChat(profile_id, second_profile, msg, via);
                 res.status(createChat.statusCode).json({ status: createChat.status, msg: createChat.msg, data: createChat.data });
             }
             else {

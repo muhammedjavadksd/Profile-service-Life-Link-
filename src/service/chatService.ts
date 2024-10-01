@@ -188,6 +188,10 @@ class ChatService implements IChatService {
 
         if (via == CreateChatVia.Email) {
             const findProfileByEmail = await this.userRepo.findProfileByEmailId(profile_two);
+            console.log(findProfileByEmail);
+            console.log(profile_two);
+            console.log("The docs");
+
             if (findProfileByEmail) {
                 profile_two = findProfileByEmail.profile_id.toString();
             } else {

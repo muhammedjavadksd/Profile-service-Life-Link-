@@ -16,6 +16,7 @@ const chatRepo_1 = __importDefault(require("../repo/chatRepo"));
 const UtilEnum_1 = require("../util/types/Enum/UtilEnum");
 const utilHelper_1 = __importDefault(require("../helper/utilHelper"));
 const MessagesRepo_1 = __importDefault(require("../repo/MessagesRepo"));
+const userRepo_1 = __importDefault(require("../repo/userRepo"));
 class ChatService {
     constructor() {
         this.createChatId = this.createChatId.bind(this);
@@ -25,6 +26,7 @@ class ChatService {
         this.unBlockChat = this.unBlockChat.bind(this);
         this.startChat = this.startChat.bind(this);
         this.seenMessage = this.seenMessage.bind(this);
+        this.userRepo = new userRepo_1.default();
         this.chatRepo = new chatRepo_1.default();
         this.messagesRepo = new MessagesRepo_1.default();
     }
@@ -181,8 +183,21 @@ class ChatService {
             }
         });
     }
-    startChat(profile_one, profile_two, msg) {
+    startChat(profile_one, profile_two, msg, via) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (via == UtilEnum_1.CreateChatVia.Email) {
+                const findProfileByEmail = yield this.userRepo.findProfileByEmailId(profile_two);
+                if (findProfileByEmail) {
+                    profile_two = findProfileByEmail.profile_id.toString();
+                }
+                else {
+                    return {
+                        msg: "The profile is not active",
+                        status: false,
+                        statusCode: UtilEnum_1.StatusCode.NOT_FOUND
+                    };
+                }
+            }
             const chat_id = yield this.createChatId();
             const chat = {
                 chat_id,
