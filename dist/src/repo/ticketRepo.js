@@ -29,7 +29,7 @@ class TicketRepo {
     findPriority(date) {
         return __awaiter(this, void 0, void 0, function* () {
             const find = yield this.ticketCollection.find({ priority: UtilEnum_1.TicketPriority.High, created_at: { $gte: date } });
-            return find.length <= 2;
+            return find.length <= 1;
         });
     }
     findHighPriorityOnThisMonth(profile_id) {

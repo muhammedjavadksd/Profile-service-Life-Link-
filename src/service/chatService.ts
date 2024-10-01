@@ -1,23 +1,25 @@
 import { ObjectId } from "mongoose";
 import ChatRepository from "../repo/chatRepo";
 import { HelperFunctionResponse } from "../util/types/Interface/UtilInterface";
-import { StatusCode } from "../util/types/Enum/UtilEnum";
+import { CreateChatVia, StatusCode } from "../util/types/Enum/UtilEnum";
 import { IChatMessageDetails, IChatTemplate, IMessageSchema } from "../util/types/Interface/CollectionInterface";
 import UtilHelper from "../helper/utilHelper";
 import MessagesRepo from "../repo/MessagesRepo";
+import UserRepo from "../repo/userRepo";
 
 
 interface IChatService {
-    startChat(profile_one: string, profile_two: string, msg: string): Promise<HelperFunctionResponse>
     getMyChats(profile_id: string): Promise<HelperFunctionResponse>
     addMessage(room_id: string, msg: string, profile_id: string): Promise<HelperFunctionResponse>
     seenMessage(room_id: string, profile_id: string): Promise<HelperFunctionResponse>
+    startChat(profile_one: string, profile_two: string, msg: string, via: CreateChatVia): Promise<HelperFunctionResponse>
 }
 
 class ChatService implements IChatService {
 
     chatRepo;
     messagesRepo;
+    userRepo;
 
     constructor() {
         this.createChatId = this.createChatId.bind(this)
@@ -27,6 +29,7 @@ class ChatService implements IChatService {
         this.unBlockChat = this.unBlockChat.bind(this)
         this.startChat = this.startChat.bind(this)
         this.seenMessage = this.seenMessage.bind(this)
+        this.userRepo = new UserRepo()
         this.chatRepo = new ChatRepository();
         this.messagesRepo = new MessagesRepo()
     }
@@ -181,8 +184,20 @@ class ChatService implements IChatService {
         }
     }
 
-    async startChat(profile_one: string, profile_two: string, msg: string): Promise<HelperFunctionResponse> {
+    async startChat(profile_one: string, profile_two: string, msg: string, via: CreateChatVia): Promise<HelperFunctionResponse> {
 
+        if (via == CreateChatVia.Email) {
+            const findProfileByEmail = await this.userRepo.findProfileByEmailId(profile_two);
+            if (findProfileByEmail) {
+                profile_two = findProfileByEmail.profile_id.toString();
+            } else {
+                return {
+                    msg: "The profile is not active",
+                    status: false,
+                    statusCode: StatusCode.NOT_FOUND
+                }
+            }
+        }
 
         const chat_id: string = await this.createChatId();
         const chat: IChatTemplate = {

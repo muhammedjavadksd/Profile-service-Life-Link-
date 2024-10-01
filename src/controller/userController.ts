@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { CustomRequest } from "../util/types/CustomeType";
 import UserProfileService from "../service/userService";
 import { HelperFunctionResponse } from "../util/types/Interface/UtilInterface";
-import { AuthUpdateType, S3Folder, StatusCode } from "../util/types/Enum/UtilEnum";
+import { AuthUpdateType, CreateChatVia, S3Folder, StatusCode } from "../util/types/Enum/UtilEnum";
 import ChatService from "../service/chatService";
 import ImageService from "../service/imageService";
 
@@ -181,8 +181,9 @@ class UserProfileController {
             const profile_id = context.profile_id;
             const second_profile = req.body.to_profile;
             const msg = req.body.msg;
+            const via: CreateChatVia = req.params.via as unknown as CreateChatVia;
 
-            const createChat: HelperFunctionResponse = await this.chatService.startChat(profile_id, second_profile, msg);
+            const createChat: HelperFunctionResponse = await this.chatService.startChat(profile_id, second_profile, msg, via);
             res.status(createChat.statusCode).json({ status: createChat.status, msg: createChat.msg, data: createChat.data })
         } else {
             res.status(StatusCode.UNAUTHORIZED).json({ status: false, msg: "Un authraized access", })

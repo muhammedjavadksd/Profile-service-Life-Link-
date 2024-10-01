@@ -20,7 +20,7 @@ class TicketRepo {
 
     async findPriority(date: Date): Promise<boolean> {
         const find = await this.ticketCollection.find({ priority: TicketPriority.High, created_at: { $gte: date } });
-        return find.length <= 2
+        return find.length <= 1
     }
 
 

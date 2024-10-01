@@ -22,7 +22,7 @@ userRouter.get("/get_chat/:room_id", authMiddleware.isValidUser, authMiddleware.
 userRouter.get("/presigned_url", authMiddleware.isValidUser, userProfileController.getPresignedUrl)
 
 userRouter.post("/raise_ticket", authMiddleware.isValidUser, ticketController.createTicket)
-userRouter.post("/create_chat", authMiddleware.isValidUser, userProfileController.createChat)
+userRouter.post("/create_chat/:via", authMiddleware.isValidUser, userProfileController.createChat)
 userRouter.post("/add_message/:room_id", authMiddleware.isValidUser, authMiddleware.isValidChat, userProfileController.addMessageToChat)
 
 userRouter.patch("/block-status/:status/:room_id", authMiddleware.isValidUser, authMiddleware.isValidChat, userProfileController.blockStatus)

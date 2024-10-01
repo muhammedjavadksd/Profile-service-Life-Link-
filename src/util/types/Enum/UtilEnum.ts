@@ -1,3 +1,9 @@
+
+enum CreateChatVia {
+    Email = "email",
+    ProfileId = "profile_id"
+}
+
 enum StatusCode {
     OK = 200,
     CREATED = 201,
@@ -51,4 +57,4 @@ enum TicketChatFrom {
     Admin = "Admin",
     User = "User"
 }
-export { S3Folder, StatusCode, AuthUpdateType, TicketCategory, TicketPriority, TicketStatus, TicketChatFrom, IdPrefix }
+export { S3Folder, StatusCode, AuthUpdateType, TicketCategory, TicketPriority, TicketStatus, TicketChatFrom, IdPrefix, CreateChatVia }
