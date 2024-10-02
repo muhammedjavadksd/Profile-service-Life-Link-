@@ -17,6 +17,27 @@ class ChatRepository {
     constructor() {
         this.chatCollection = ChatsRoom_1.default;
     }
+    isRoomExist(profile_one, profile_two) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const findRoom = yield this.chatCollection.findOne({
+                $or: [
+                    {
+                        $and: [
+                            { profile_one },
+                            { profile_two }
+                        ]
+                    },
+                    {
+                        $and: [
+                            { profile_one: profile_two },
+                            { profile_two: profile_one }
+                        ]
+                    }
+                ]
+            });
+            return (findRoom === null || findRoom === void 0 ? void 0 : findRoom.chat_id) || false;
+        });
+    }
     updateRoomByModel(data) {
         return __awaiter(this, void 0, void 0, function* () {
             yield data.save();

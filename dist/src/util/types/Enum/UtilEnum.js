@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateChatVia = exports.IdPrefix = exports.TicketChatFrom = exports.TicketStatus = exports.TicketPriority = exports.TicketCategory = exports.AuthUpdateType = exports.StatusCode = exports.S3Folder = void 0;
 var CreateChatVia;
 (function (CreateChatVia) {
-    CreateChatVia["Email"] = "email";
+    CreateChatVia["DonorId"] = "donor-id";
     CreateChatVia["ProfileId"] = "profile_id";
 })(CreateChatVia || (exports.CreateChatVia = CreateChatVia = {}));
 var StatusCode;

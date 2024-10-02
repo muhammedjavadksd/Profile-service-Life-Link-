@@ -30,6 +30,12 @@ class UserRepo {
             return singleProfile;
         });
     }
+    findProfileByDonorId(donor_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const singleProfile = yield this.profileCollection.findOne({ blood_donor_id: donor_id });
+            return singleProfile;
+        });
+    }
     findUserByUserId(user_id) {
         return __awaiter(this, void 0, void 0, function* () {
             const singleProfile = yield this.profileCollection.findOne({ user_id });
