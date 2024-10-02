@@ -20,7 +20,7 @@ const webServer = new socket_io_1.Server(httpServer, {
     }
 });
 app.use((0, cors_1.default)({
-    origin: ['http://localhost:3000', "https://life-link.online"]
+    origin: ["http://localhost:3000", "https://life-link.online", "https://www.life-link.online"]
 }));
 (0, chatHelper_1.default)(webServer);
 //middleware

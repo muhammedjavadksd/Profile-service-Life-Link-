@@ -20,7 +20,7 @@ const webServer: Server = new Server(httpServer, {
 })
 
 app.use(cors({
-    origin: ['http://localhost:3000', "https://life-link.online"]
+    origin: ["http://localhost:3000", "https://life-link.online", "https://www.life-link.online"]
 }))
 
 
