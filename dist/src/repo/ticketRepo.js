@@ -26,6 +26,43 @@ class TicketRepo {
             return (savedTicket === null || savedTicket === void 0 ? void 0 : savedTicket.id) || null;
         });
     }
+    findInActive(days, skip, limit) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const today = new Date();
+            today.setDate(today.getDate() - days);
+            try {
+                const find = yield this.ticketCollection.aggregate([
+                    {
+                        $match: {
+                            updated_at: { $lt: today },
+                            status: { $ne: UtilEnum_1.TicketStatus.Closed }
+                        }
+                    },
+                    {
+                        $skip: skip
+                    },
+                    {
+                        $limit: limit
+                    },
+                    {
+                        $lookup: {
+                            from: "user_profile",
+                            localField: "profile_id",
+                            foreignField: "profile_id",
+                            as: "profile"
+                        }
+                    },
+                    {
+                        $unwind: "$profile"
+                    }
+                ]);
+                return find;
+            }
+            catch (e) {
+                return [];
+            }
+        });
+    }
     findPriority(date) {
         return __awaiter(this, void 0, void 0, function* () {
             const find = yield this.ticketCollection.find({ priority: UtilEnum_1.TicketPriority.High, created_at: { $gte: date } });
@@ -54,17 +91,6 @@ class TicketRepo {
                         ticket_id
                     }
                 },
-                // {
-                //     $lookup: {
-                //         from: "user_profile",
-                //         localField: "profile_id",
-                //         as: "profile",
-                //         foreignField: "profile_id"
-                //     }
-                // },
-                // {
-                //     $unwind: "$profile"
-                // }
             ]);
             return singleTicket[0];
         });
@@ -205,6 +231,12 @@ class TicketRepo {
     updateTicketStatus(ticket_id, status) {
         return __awaiter(this, void 0, void 0, function* () {
             const updateTicket = yield this.ticketCollection.updateOne({ ticket_id }, { $set: { status, updated_at: new Date() } });
+            return updateTicket.modifiedCount > 0;
+        });
+    }
+    bulkUpdateTicketStatus(ticket_ids, status) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const updateTicket = yield this.ticketCollection.updateOne({ ticket_id: { $in: ticket_ids } }, { $set: { status, updated_at: new Date() } });
             return updateTicket.modifiedCount > 0;
         });
     }

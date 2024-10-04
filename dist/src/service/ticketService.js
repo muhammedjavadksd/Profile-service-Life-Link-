@@ -16,9 +16,83 @@ const UtilEnum_1 = require("../util/types/Enum/UtilEnum");
 const ticketRepo_1 = __importDefault(require("../repo/ticketRepo"));
 const utilHelper_1 = __importDefault(require("../helper/utilHelper"));
 const S3BucketHelper_1 = __importDefault(require("../helper/S3BucketHelper"));
+const ProfileProvider_1 = __importDefault(require("../communication/ProfileProvider"));
+const dotenv_1 = require("dotenv");
 class TicketService {
     constructor() {
+        (0, dotenv_1.config)();
         this.ticketRepo = new ticketRepo_1.default();
+    }
+    closeTicketWarning() {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c;
+            let skip = 0;
+            const limit = 10;
+            const ticketNotification = new ProfileProvider_1.default(process.env.TICKET_WARNING_NOTIFICATION || "");
+            yield ticketNotification._init__(process.env.TICKET_WARNING_NOTIFICATION || "");
+            while (true) {
+                const findAllNonActive = yield this.ticketRepo.findInActive(UtilEnum_1.TicketExpireDays.WarningNotice, skip, limit);
+                if (findAllNonActive.length) {
+                    const ticketNotificationData = [];
+                    for (let tickets = 0; tickets < findAllNonActive.length; tickets++) {
+                        const ticket = findAllNonActive[tickets];
+                        const closeDate = new Date(ticket.updated_at.getDate() + UtilEnum_1.TicketExpireDays.CloseTicket);
+                        ticketNotificationData.push({
+                            email: (_a = ticket.profile) === null || _a === void 0 ? void 0 : _a.email,
+                            name: (_b = ticket.profile) === null || _b === void 0 ? void 0 : _b.first_name.concat((_c = ticket.profile) === null || _c === void 0 ? void 0 : _c.last_name),
+                            ticket_id: ticket.ticket_id,
+                            title: ticket.title,
+                            close_date: closeDate
+                        });
+                    }
+                    ticketNotification.transferData(ticketNotificationData);
+                }
+                else {
+                    break;
+                }
+                skip += limit;
+            }
+            console.log("Ticket warning email has sent");
+        });
+    }
+    closeTicket() {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c;
+            const limit = 10;
+            let skip = 0;
+            const updateStatusPromise = [];
+            const ticketNotification = new ProfileProvider_1.default(process.env.TICKET_CLOSE_NOTIFICATION || "");
+            yield ticketNotification._init__(process.env.TICKET_CLOSE_NOTIFICATION || "");
+            while (true) {
+                const findAllNonActive = yield this.ticketRepo.findInActive(UtilEnum_1.TicketExpireDays.CloseTicket, skip, limit);
+                if (findAllNonActive.length) {
+                    const ticketIds = [];
+                    const ticketNotificationData = [];
+                    for (let tickets = 0; tickets < findAllNonActive.length; tickets++) {
+                        const ticket = findAllNonActive[tickets];
+                        ticketIds.push(ticket.ticket_id);
+                        ticketNotificationData.push({
+                            email: (_a = ticket.profile) === null || _a === void 0 ? void 0 : _a.email,
+                            name: (_b = ticket.profile) === null || _b === void 0 ? void 0 : _b.first_name.concat((_c = ticket.profile) === null || _c === void 0 ? void 0 : _c.last_name),
+                            ticket_id: ticket.ticket_id,
+                            title: ticket.title
+                        });
+                    }
+                    updateStatusPromise.push(this.ticketRepo.bulkUpdateTicketStatus(ticketIds, UtilEnum_1.TicketStatus.Closed));
+                    ticketNotification.transferData(ticketNotificationData);
+                }
+                else {
+                    break;
+                }
+                skip += limit;
+            }
+            Promise.all(updateStatusPromise).then(() => {
+                console.log("All data has been closed");
+            }).catch((err) => {
+                console.log(err);
+                console.log("Failed");
+            });
+        });
     }
     // async generatePresignedUrl(): Promise<HelperFunctionResponse> {
     //     const s3Bucket = new S3BucketHelper(process.env.TICKET_ATTACHMENT_BUCKET || "");

@@ -1,6 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateChatVia = exports.IdPrefix = exports.TicketChatFrom = exports.TicketStatus = exports.TicketPriority = exports.TicketCategory = exports.AuthUpdateType = exports.StatusCode = exports.S3Folder = void 0;
+exports.TicketExpireDays = exports.CreateChatVia = exports.IdPrefix = exports.TicketChatFrom = exports.TicketStatus = exports.TicketPriority = exports.TicketCategory = exports.AuthUpdateType = exports.StatusCode = exports.S3Folder = void 0;
+var TicketExpireDays;
+(function (TicketExpireDays) {
+    TicketExpireDays[TicketExpireDays["WarningNotice"] = 5] = "WarningNotice";
+    TicketExpireDays[TicketExpireDays["CloseTicket"] = 7] = "CloseTicket";
+})(TicketExpireDays || (exports.TicketExpireDays = TicketExpireDays = {}));
 var CreateChatVia;
 (function (CreateChatVia) {
     CreateChatVia["DonorId"] = "donor-id";
