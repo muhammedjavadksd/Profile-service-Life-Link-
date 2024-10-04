@@ -175,9 +175,10 @@ class UserProfileService {
                     };
                 }
                 const profileProivider = new ProfileProvider_1.default(process.env.EMAIL_PROFILE_UPDATE_OTP || "");
+                yield profileProivider._init__(process.env.EMAIL_PROFILE_UPDATE_OTP || "");
                 yield this.userRepo.updateProfile({ contact_update: { email: { new_email_id: newEmailId, otp: otpNumber, otp_expire_time: otpTimer } } }, user_id);
                 profileProivider.transferData({
-                    email_id: findUser.email,
+                    email_id: newEmailId,
                     type: "EMAIL",
                     otp: otpNumber,
                     full_name: (findUser.first_name + "  " + findUser.last_name)

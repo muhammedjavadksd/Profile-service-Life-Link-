@@ -13,14 +13,6 @@ class ProfileDataProvider {
     }
 
     async _init__(queueName: string) {
-        // const config = {
-        //     protocol: "amqp",
-        //     hostname: "localhost",
-        //     port: 5672,
-        //     username: "guest",
-        //     password: "guest",
-        //     vhost:"/",
-        // }
         const connection = await amqplib.connect(process.env.RABBITMQ_URL || "");
         const channel = await connection.createChannel();
         await channel.assertQueue(queueName);

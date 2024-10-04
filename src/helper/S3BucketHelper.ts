@@ -66,7 +66,7 @@ class S3BucketHelper {
 
     getViewUrl(keyName: string): false | string {
         try {
-            const imageUrl = `http://${this.bucketName}.s3.amazonaws.com/${keyName}`
+            const imageUrl = `https://${this.bucketName}.s3.amazonaws.com/${keyName}`
             return imageUrl
         } catch (e) {
             console.log(e);

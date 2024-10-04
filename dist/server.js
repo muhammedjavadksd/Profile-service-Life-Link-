@@ -14,7 +14,7 @@ const app = (0, express_1.default)();
 const httpServer = http_1.default.createServer(app);
 const webServer = new socket_io_1.Server(httpServer, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: ["http://localhost:3000", "https://life-link.online", "https://www.life-link.online"],
         methods: ["GET", "POST"],
         credentials: true
     }

@@ -34,14 +34,14 @@ interface IProfileEdit {
 
 interface IUserProfile {
     user_id: ObjectId
-    email: String,
-    first_name: String,
-    last_name: String,
-    profile_picture: String,
+    email: string,
+    first_name: string,
+    last_name: string,
+    profile_picture: string,
     contact_update: IContactUpdate,
     phone_number: Number
-    profile_id: String
-    blood_donor_id: String
+    profile_id: string
+    blood_donor_id: string
 }
 
 interface ITicketChat {
@@ -55,6 +55,19 @@ interface ITicketChat {
 interface ITicketTemplate {
     ticket_id: string,
     profile_id: string,
+    title: string,
+    priority: TicketPriority,
+    category: TicketCategory,
+    status: TicketStatus,
+    created_at: Date,
+    updated_at: Date,
+    chats: ITicketChat[]
+}
+
+interface IPopulatedTicketTemplate {
+    ticket_id: string,
+    profile_id: string,
+    profile: IUserProfile
     title: string,
     priority: TicketPriority,
     category: TicketCategory,
@@ -100,4 +113,4 @@ interface ITicketCollection extends Document, ITicketTemplate { };
 interface IChatCollection extends Document, IChatTemplate { };
 interface IMessageCollection extends Document, IMessageSchema { };
 
-export { IChatCollection, IChatMessageDetails, IMessageCollection, IMessageSchema, IChatTemplate, IProfileEdit, IUserEditProfile, IUserCollection, IUserProfile, ITicketTemplate, ITicketCollection, ITicketChat }
+export { IChatCollection, IChatMessageDetails, IMessageCollection, IMessageSchema, IChatTemplate, IProfileEdit, IUserEditProfile, IUserCollection, IUserProfile, ITicketTemplate, ITicketCollection, ITicketChat, IPopulatedTicketTemplate }

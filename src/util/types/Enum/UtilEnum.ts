@@ -1,4 +1,10 @@
 
+
+enum TicketExpireDays {
+    WarningNotice = 5,
+    CloseTicket = 7
+}
+
 enum CreateChatVia {
     DonorId = "donor-id",
     ProfileId = "profile_id"
@@ -57,4 +63,4 @@ enum TicketChatFrom {
     Admin = "Admin",
     User = "User"
 }
-export { S3Folder, StatusCode, AuthUpdateType, TicketCategory, TicketPriority, TicketStatus, TicketChatFrom, IdPrefix, CreateChatVia }
+export { S3Folder, StatusCode, AuthUpdateType, TicketCategory, TicketPriority, TicketStatus, TicketChatFrom, IdPrefix, CreateChatVia, TicketExpireDays }

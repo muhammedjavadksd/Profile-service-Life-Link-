@@ -1,6 +1,6 @@
 import { ObjectId } from "mongoose";
 import TicketModel from "../database/models/Tickets";
-import { ITicketChat, ITicketCollection, ITicketTemplate } from "../util/types/Interface/CollectionInterface";
+import { IPopulatedTicketTemplate, ITicketChat, ITicketCollection, ITicketTemplate } from "../util/types/Interface/CollectionInterface";
 import { TicketCategory, TicketPriority, TicketStatus } from "../util/types/Enum/UtilEnum";
 import { IPaginatedResponse } from "../util/types/Interface/UtilInterface";
 
@@ -16,6 +16,43 @@ class TicketRepo {
         const ticketInstance = new this.ticketCollection(ticket);
         const savedTicket = await ticketInstance.save();
         return savedTicket?.id || null;
+    }
+
+    async findInActive(days: number, skip: number, limit: number): Promise<IPopulatedTicketTemplate[]> {
+        const today = new Date();
+        today.setDate(today.getDate() - days)
+
+        try {
+            const find = await this.ticketCollection.aggregate([
+                {
+                    $match: {
+                        updated_at: { $lt: today },
+                        status: { $ne: TicketStatus.Closed }
+                    }
+                },
+                {
+                    $skip: skip
+                },
+                {
+                    $limit: limit
+                },
+                {
+                    $lookup: {
+                        from: "user_profile",
+                        localField: "profile_id",
+                        foreignField: "profile_id",
+                        as: "profile"
+                    }
+                },
+                {
+                    $unwind: "$profile"
+                }
+            ])
+
+            return find;
+        } catch (e) {
+            return [];
+        }
     }
 
     async findPriority(date: Date): Promise<boolean> {
@@ -46,17 +83,6 @@ class TicketRepo {
                         ticket_id
                     }
                 },
-                // {
-                //     $lookup: {
-                //         from: "user_profile",
-                //         localField: "profile_id",
-                //         as: "profile",
-                //         foreignField: "profile_id"
-                //     }
-                // },
-                // {
-                //     $unwind: "$profile"
-                // }
             ]);
         return singleTicket[0];
     }
@@ -211,6 +237,11 @@ class TicketRepo {
 
     async updateTicketStatus(ticket_id: string, status: TicketStatus): Promise<boolean> {
         const updateTicket = await this.ticketCollection.updateOne({ ticket_id }, { $set: { status, updated_at: new Date() } });
+        return updateTicket.modifiedCount > 0;
+    }
+
+    async bulkUpdateTicketStatus(ticket_ids: string[], status: TicketStatus): Promise<boolean> {
+        const updateTicket = await this.ticketCollection.updateOne({ ticket_id: { $in: ticket_ids } }, { $set: { status, updated_at: new Date() } });
         return updateTicket.modifiedCount > 0;
     }
 

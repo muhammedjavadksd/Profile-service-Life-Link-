@@ -1,18 +1,98 @@
 import mongoose from "mongoose";
-import { IdPrefix, S3Folder, StatusCode, TicketCategory, TicketChatFrom, TicketPriority, TicketStatus } from "../util/types/Enum/UtilEnum";
-import { HelperFunctionResponse } from "../util/types/Interface/UtilInterface";
+import { IdPrefix, S3Folder, StatusCode, TicketCategory, TicketChatFrom, TicketExpireDays, TicketPriority, TicketStatus } from "../util/types/Enum/UtilEnum";
+import { HelperFunctionResponse, IPaginatedResponse, ITicketCloseNotification, ITicketWarningCloseNotification } from "../util/types/Interface/UtilInterface";
 import TicketRepo from "../repo/ticketRepo";
-import { ITicketChat, ITicketTemplate } from "../util/types/Interface/CollectionInterface";
+import { IPopulatedTicketTemplate, ITicketChat, ITicketTemplate } from "../util/types/Interface/CollectionInterface";
 import UtilHelper from "../helper/utilHelper";
 import S3BucketHelper from "../helper/S3BucketHelper";
+import ProfileDataProvider from "../communication/ProfileProvider";
+import { config } from "dotenv";
 
 class TicketService {
     ticketRepo;
 
     constructor() {
+        config()
         this.ticketRepo = new TicketRepo();
     }
 
+
+    async closeTicketWarning() {
+
+
+        let skip = 0
+        const limit = 10
+
+        const ticketNotification = new ProfileDataProvider(process.env.TICKET_WARNING_NOTIFICATION || "")
+        await ticketNotification._init__(process.env.TICKET_WARNING_NOTIFICATION || "")
+
+        while (true) {
+            const findAllNonActive: IPopulatedTicketTemplate[] = await this.ticketRepo.findInActive(TicketExpireDays.WarningNotice, skip, limit);
+
+            if (findAllNonActive.length) {
+                const ticketNotificationData: ITicketWarningCloseNotification[] = []
+                for (let tickets = 0; tickets < findAllNonActive.length; tickets++) {
+                    const ticket: IPopulatedTicketTemplate = findAllNonActive[tickets];
+                    const closeDate = new Date(ticket.updated_at.getDate() + TicketExpireDays.CloseTicket);
+                    ticketNotificationData.push({
+                        email: ticket.profile?.email,
+                        name: ticket.profile?.first_name.concat(ticket.profile?.last_name),
+                        ticket_id: ticket.ticket_id,
+                        title: ticket.title,
+                        close_date: closeDate
+                    })
+                }
+                ticketNotification.transferData(ticketNotificationData);
+            } else {
+                break;
+            }
+            skip += limit;
+        }
+
+        console.log("Ticket warning email has sent");
+    }
+
+    async closeTicket() {
+
+
+        const limit = 10
+        let skip = 0
+        const updateStatusPromise = []
+
+        const ticketNotification = new ProfileDataProvider(process.env.TICKET_CLOSE_NOTIFICATION || "")
+        await ticketNotification._init__(process.env.TICKET_CLOSE_NOTIFICATION || "")
+
+        while (true) {
+            const findAllNonActive: IPopulatedTicketTemplate[] = await this.ticketRepo.findInActive(TicketExpireDays.CloseTicket, skip, limit);
+
+            if (findAllNonActive.length) {
+                const ticketIds: string[] = []
+                const ticketNotificationData: ITicketCloseNotification[] = []
+                for (let tickets = 0; tickets < findAllNonActive.length; tickets++) {
+                    const ticket: IPopulatedTicketTemplate = findAllNonActive[tickets];
+                    ticketIds.push(ticket.ticket_id)
+                    ticketNotificationData.push({
+                        email: ticket.profile?.email,
+                        name: ticket.profile?.first_name.concat(ticket.profile?.last_name),
+                        ticket_id: ticket.ticket_id,
+                        title: ticket.title
+                    })
+                }
+                updateStatusPromise.push(this.ticketRepo.bulkUpdateTicketStatus(ticketIds, TicketStatus.Closed));
+                ticketNotification.transferData(ticketNotificationData);
+            } else {
+                break;
+            }
+            skip += limit;
+        }
+
+        Promise.all(updateStatusPromise).then(() => {
+            console.log("All data has been closed");
+        }).catch((err) => {
+            console.log(err);
+            console.log("Failed")
+        })
+    }
 
 
     // async generatePresignedUrl(): Promise<HelperFunctionResponse> {
