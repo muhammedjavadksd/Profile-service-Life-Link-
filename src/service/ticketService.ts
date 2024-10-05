@@ -28,18 +28,22 @@ class TicketService {
 
         while (true) {
             const findAllNonActive: IPopulatedTicketTemplate[] = await this.ticketRepo.findInActive(TicketExpireDays.WarningNotice, skip, limit);
+            console.log("Warning");
+            console.log(findAllNonActive);
+
 
             if (findAllNonActive.length) {
                 const ticketNotificationData: ITicketWarningCloseNotification[] = []
                 for (let tickets = 0; tickets < findAllNonActive.length; tickets++) {
                     const ticket: IPopulatedTicketTemplate = findAllNonActive[tickets];
-                    const closeDate = new Date(ticket.updated_at.getDate() + TicketExpireDays.CloseTicket);
+                    const closeDate = ticket.updated_at
+                    closeDate.setDate(closeDate.getDate() + TicketExpireDays.CloseTicket);
                     ticketNotificationData.push({
                         email: ticket.profile?.email,
                         name: ticket.profile?.first_name.concat(ticket.profile?.last_name),
                         ticket_id: ticket.ticket_id,
                         title: ticket.title,
-                        close_date: closeDate
+                        close_date: closeDate.toDateString()
                     })
                 }
                 ticketNotification.transferData(ticketNotificationData);
@@ -62,8 +66,12 @@ class TicketService {
         const ticketNotification = new ProfileDataProvider(process.env.TICKET_CLOSE_NOTIFICATION || "")
         await ticketNotification._init__(process.env.TICKET_CLOSE_NOTIFICATION || "")
 
+        console.log("Start looking");
+
+
         while (true) {
             const findAllNonActive: IPopulatedTicketTemplate[] = await this.ticketRepo.findInActive(TicketExpireDays.CloseTicket, skip, limit);
+            console.log(findAllNonActive);
 
             if (findAllNonActive.length) {
                 const ticketIds: string[] = []
@@ -85,6 +93,9 @@ class TicketService {
             }
             skip += limit;
         }
+
+        console.log(updateStatusPromise);
+
 
         Promise.all(updateStatusPromise).then(() => {
             console.log("All data has been closed");

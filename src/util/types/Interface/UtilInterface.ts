@@ -21,7 +21,7 @@ interface ITicketWarningCloseNotification {
     name: string,
     ticket_id: string,
     title: string
-    close_date: Date
+    close_date: string
 }
 
 interface IPaginatedResponse<T> {

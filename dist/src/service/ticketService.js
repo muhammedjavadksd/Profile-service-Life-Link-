@@ -32,17 +32,20 @@ class TicketService {
             yield ticketNotification._init__(process.env.TICKET_WARNING_NOTIFICATION || "");
             while (true) {
                 const findAllNonActive = yield this.ticketRepo.findInActive(UtilEnum_1.TicketExpireDays.WarningNotice, skip, limit);
+                console.log("Warning");
+                console.log(findAllNonActive);
                 if (findAllNonActive.length) {
                     const ticketNotificationData = [];
                     for (let tickets = 0; tickets < findAllNonActive.length; tickets++) {
                         const ticket = findAllNonActive[tickets];
-                        const closeDate = new Date(ticket.updated_at.getDate() + UtilEnum_1.TicketExpireDays.CloseTicket);
+                        const closeDate = ticket.updated_at;
+                        closeDate.setDate(closeDate.getDate() + UtilEnum_1.TicketExpireDays.CloseTicket);
                         ticketNotificationData.push({
                             email: (_a = ticket.profile) === null || _a === void 0 ? void 0 : _a.email,
                             name: (_b = ticket.profile) === null || _b === void 0 ? void 0 : _b.first_name.concat((_c = ticket.profile) === null || _c === void 0 ? void 0 : _c.last_name),
                             ticket_id: ticket.ticket_id,
                             title: ticket.title,
-                            close_date: closeDate
+                            close_date: closeDate.toDateString()
                         });
                     }
                     ticketNotification.transferData(ticketNotificationData);
@@ -63,8 +66,10 @@ class TicketService {
             const updateStatusPromise = [];
             const ticketNotification = new ProfileProvider_1.default(process.env.TICKET_CLOSE_NOTIFICATION || "");
             yield ticketNotification._init__(process.env.TICKET_CLOSE_NOTIFICATION || "");
+            console.log("Start looking");
             while (true) {
                 const findAllNonActive = yield this.ticketRepo.findInActive(UtilEnum_1.TicketExpireDays.CloseTicket, skip, limit);
+                console.log(findAllNonActive);
                 if (findAllNonActive.length) {
                     const ticketIds = [];
                     const ticketNotificationData = [];
@@ -86,6 +91,7 @@ class TicketService {
                 }
                 skip += limit;
             }
+            console.log(updateStatusPromise);
             Promise.all(updateStatusPromise).then(() => {
                 console.log("All data has been closed");
             }).catch((err) => {

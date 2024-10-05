@@ -20,13 +20,22 @@ class TicketRepo {
 
     async findInActive(days: number, skip: number, limit: number): Promise<IPopulatedTicketTemplate[]> {
         const today = new Date();
-        today.setDate(today.getDate() - days)
+
+        const startOfTargetDay = new Date(today.setDate(today.getDate() - days));
+        startOfTargetDay.setHours(0, 0, 0, 0);
+
+        const endOfTargetDay = new Date(startOfTargetDay);
+        endOfTargetDay.setHours(23, 59, 59, 999);  // End of the day (23:59:59)
+
 
         try {
             const find = await this.ticketCollection.aggregate([
                 {
                     $match: {
-                        updated_at: { $lt: today },
+                        updated_at: {
+                            $gte: startOfTargetDay,
+                            $lte: endOfTargetDay
+                        },
                         status: { $ne: TicketStatus.Closed }
                     }
                 },
@@ -51,6 +60,7 @@ class TicketRepo {
 
             return find;
         } catch (e) {
+            console.log(e);
             return [];
         }
     }
