@@ -63,8 +63,13 @@ function ChatHelper(io) {
                                     seen: false,
                                     timeline: chat.timeline
                                 };
-                                chatService.addMessage(chat.room_id, chat.msg, chat.profile_id);
+                                const addMessage = yield chatService.addMessage(chat.room_id, chat.msg, chat.profile_id);
+                                console.log(addMessage);
+                                console.log("Blocked status");
+                                console.log(findRoom.blocked.status);
                                 if (!findRoom.blocked.status) {
+                                    console.log("Trasnfer");
+                                    console.log(toId);
                                     socket.to(toId).emit("new_message", message);
                                 }
                             }

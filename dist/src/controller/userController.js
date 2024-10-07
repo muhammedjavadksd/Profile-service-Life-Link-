@@ -198,6 +198,7 @@ class UserProfileController {
             const msg = req.body.message;
             const room_id = req.params.room_id;
             const context = req.context;
+            console.log("New dfkbsdafhuisdjkbfhsdabjkh");
             if (context) {
                 const profile_id = context.profile_id;
                 if (profile_id) {

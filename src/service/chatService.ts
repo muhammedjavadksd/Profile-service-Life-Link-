@@ -83,7 +83,7 @@ class ChatService implements IChatService {
     async addMessage(room_id: string, msg: string, profile_id: string): Promise<HelperFunctionResponse> {
         const findRoom = await this.chatRepo.findChatById(room_id);
         if (findRoom) {
-            if (findRoom.blocked && findRoom.blocked.blocked_from == profile_id) {
+            if (findRoom.blocked?.status && findRoom.blocked.blocked_from == profile_id) {
                 return {
                     status: false,
                     msg: "Unblock them to send message",
@@ -271,6 +271,7 @@ class ChatService implements IChatService {
         const findChat = await this.chatRepo.findSingleChat(chat_id, profile_id);
         console.log("Single Chat");
 
+        console.log(chat_id, profile_id);
         console.log(findChat);
 
         if (findChat) {

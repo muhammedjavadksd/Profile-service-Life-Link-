@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const bulkConsumer_1 = __importDefault(require("./src/communication/bulkConsumer"));
+const morgan_1 = __importDefault(require("morgan"));
 const socket_io_1 = require("socket.io");
 const http_1 = __importDefault(require("http"));
 const cors_1 = __importDefault(require("cors"));
@@ -26,7 +27,7 @@ app.use((0, cors_1.default)({
 //middleware
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
-// app.use(logger("combined"))
+app.use((0, morgan_1.default)("combined"));
 dotenv_1.default.config({ path: "./.env" });
 (0, bulkConsumer_1.default)();
 const connection_1 = __importDefault(require("./src/database/connection"));

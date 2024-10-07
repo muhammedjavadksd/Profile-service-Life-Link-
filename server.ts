@@ -29,7 +29,7 @@ ChatHelper(webServer)
 //middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-// app.use(logger("combined"))
+app.use(logger("combined"))
 
 dotenv.config({ path: "./.env" });
 bulkConsumer()

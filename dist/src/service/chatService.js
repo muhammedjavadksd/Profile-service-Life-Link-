@@ -78,10 +78,10 @@ class ChatService {
     }
     addMessage(room_id, msg, profile_id) {
         return __awaiter(this, void 0, void 0, function* () {
-            var _a;
+            var _a, _b;
             const findRoom = yield this.chatRepo.findChatById(room_id);
             if (findRoom) {
-                if (findRoom.blocked && findRoom.blocked.blocked_from == profile_id) {
+                if (((_a = findRoom.blocked) === null || _a === void 0 ? void 0 : _a.status) && findRoom.blocked.blocked_from == profile_id) {
                     return {
                         status: false,
                         msg: "Unblock them to send message",
@@ -100,7 +100,7 @@ class ChatService {
                     seen: false,
                     timeline: new Date(),
                     is_block: {
-                        status: (_a = findRoom.blocked) === null || _a === void 0 ? void 0 : _a.status,
+                        status: (_b = findRoom.blocked) === null || _b === void 0 ? void 0 : _b.status,
                         blocked_from: findRoom.blocked.blocked_from || null
                     },
                     profile_id: profile_id,
@@ -266,6 +266,7 @@ class ChatService {
         return __awaiter(this, void 0, void 0, function* () {
             const findChat = yield this.chatRepo.findSingleChat(chat_id, profile_id);
             console.log("Single Chat");
+            console.log(chat_id, profile_id);
             console.log(findChat);
             if (findChat) {
                 return {
