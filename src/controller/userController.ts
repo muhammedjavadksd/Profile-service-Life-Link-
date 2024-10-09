@@ -18,7 +18,6 @@ class UserProfileController {
         this.updateProfile = this.updateProfile.bind(this)
         this.updatePhoneNumber = this.updatePhoneNumber.bind(this)
         this.updateEmailID = this.updateEmailID.bind(this)
-        this.profilePictureUpdation = this.profilePictureUpdation.bind(this)
         this.profileUpdateOTPSubmission = this.profileUpdateOTPSubmission.bind(this)
         this.createChat = this.createChat.bind(this)
         this.addMessageToChat = this.addMessageToChat.bind(this)
@@ -67,6 +66,7 @@ class UserProfileController {
     async updateProfile(req: CustomRequest, res: Response) {
 
         const userProfile = req.body.user_profile;
+        console.log(req.context)
         if (!req.context) {
             res.status(StatusCode.BAD_REQUEST).json({ status: false, msg: "Profile not found" })
             return;
@@ -117,32 +117,6 @@ class UserProfileController {
             })
         }
     }
-
-    async profilePictureUpdation(req: CustomRequest, res: Response) {
-
-        //     const user_id = req.context?.user_id;
-        //     const profilePicture = req.fil.profile_picture;
-
-        //     if (user_id && profilePicture) {
-        //         const updateProfilePicture = await profileHelper.updateProfilePicture(user_id, profilePicture);
-        //         res.status(updateProfilePicture.statusCode).json({
-        //             status: updateProfilePicture.statusCode,
-        //             msg: updateProfilePicture.msg
-        //         })
-        //     } else {
-        //         res.status(400).json({
-        //             status: false,
-        //             msg: "Please provide valid image"
-        //         })
-        //     }
-        // } catch(e) {
-        //     res.status(500).json({
-        //         status: 500,
-        //         msg: "Internal Server Error"
-        //     })
-        // }
-    }
-
 
     async profileUpdateOTPSubmission(req: CustomRequest, res: Response) {
 

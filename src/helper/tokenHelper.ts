@@ -4,7 +4,7 @@ class TokenHelper {
 
     async decodeJWTToken(token: string) {
         try {
-            const tokenValidity = await jwt.verify(token, process.env.JWT_SECRET || "");
+            const tokenValidity = jwt.verify(token, process.env.JWT_SECRET || "");
             return tokenValidity
         } catch (e) {
             return false
@@ -13,7 +13,7 @@ class TokenHelper {
 
     async checkTokenValidity(token: string) {
         try {
-            const checkValidity = await jwt.verify(token, process.env.JWT_SECRET || "");
+            const checkValidity = jwt.verify(token, process.env.JWT_SECRET || "");
             return checkValidity
         } catch (e) {
             return false

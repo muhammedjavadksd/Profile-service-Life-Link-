@@ -78,12 +78,11 @@ class UserProfileService {
             const edit_data = {
                 first_name: data.first_name,
                 last_name: data.last_name,
-                profile_picture: data.profile_picture,
-                blood_donor_id: data.blood_donor_id
             };
             const updateProfile = yield this.userRepo.updateProfile(edit_data, user_id);
             if (updateProfile) {
                 const profileCommunicationProvide = new ProfileProvider_1.default(process.env.AUTH_DATA_UPDATE_QUEUE || "");
+                yield profileCommunicationProvide._init__(process.env.AUTH_DATA_UPDATE_QUEUE || "");
                 profileCommunicationProvide.transferData({ edit_details: Object.assign({}, edit_data), profile_id: user_id });
                 // ProfileDataProvider.updateAuthData()
                 return {

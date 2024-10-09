@@ -1,16 +1,12 @@
-import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { fromEnv } from "@aws-sdk/credential-provider-env";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import AWS from 'aws-sdk'
-import axios from 'axios'
-import UtilHelper from "./utilHelper";
 
 interface IS3BucketHelper {
     generatePresignedUrl(key: string): Promise<string>
-    uploadFile(file: Buffer, presigned_url: string): Promise<boolean>
+    getViewUrl(keyName: string): false | string
+    findFile(fileName: string): Promise<boolean>
 }
 
-class S3BucketHelper {
+class S3BucketHelper implements IS3BucketHelper {
 
     private readonly bucketName;
     private readonly folderName;
@@ -46,23 +42,6 @@ class S3BucketHelper {
         return url;
     }
 
-
-    async uploadObject(key: string, docs: Buffer, ftype: string) {
-
-        const save = await this.s3.upload({
-            Bucket: this.bucketName,
-            Key: key,
-            Body: docs,
-            ACL: 'public-read',
-            ContentType: ftype
-        }
-
-        ).promise()
-        console.log(save);
-
-        console.log("Save");
-        console.log(save.Location);
-    }
 
     getViewUrl(keyName: string): false | string {
         try {

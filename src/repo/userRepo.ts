@@ -50,6 +50,8 @@ class UserRepo {
 
     async updateProfile(data: IProfileEdit, user_id: string): Promise<boolean> {
         const updateProfile = await this.profileCollection.updateOne({ user_id }, { $set: data });
+        console.log(data)
+        console.log(updateProfile)
         return updateProfile.modifiedCount > 0
     }
 }

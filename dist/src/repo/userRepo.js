@@ -63,6 +63,8 @@ class UserRepo {
     updateProfile(data, user_id) {
         return __awaiter(this, void 0, void 0, function* () {
             const updateProfile = yield this.profileCollection.updateOne({ user_id }, { $set: data });
+            console.log(data);
+            console.log(updateProfile);
             return updateProfile.modifiedCount > 0;
         });
     }

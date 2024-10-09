@@ -7,7 +7,6 @@ import ImageService from "../service/imageService";
 
 class AdminController {
 
-
     adminService;
     ticketServcie;
     imageService;
@@ -23,9 +22,6 @@ class AdminController {
         this.getSingleUserByProfileId = this.getSingleUserByProfileId.bind(this)
     }
 
-
-
-
     async addReplayToChat(req: Request, res: Response): Promise<void> {
         const ticket_id: string = req.params.ticket_id;
         const msg: string = req.body.msg;
@@ -37,11 +33,6 @@ class AdminController {
 
     async getSingleTicket(req: Request, res: Response): Promise<void> {
         const ticket_id: string = req.params.ticket_id
-
-        console.log("Single ticket");
-
-
-
         const findSingleTicket = await this.ticketServcie.getSingleTicketByTicketId(ticket_id, true);
         res.status(findSingleTicket.statusCode).json({ status: findSingleTicket.status, msg: findSingleTicket.msg, data: findSingleTicket.data })
     }
@@ -49,7 +40,6 @@ class AdminController {
     async createPresignedUrl(req: Request, res: Response): Promise<void> {
         const fileName = req.query.file;
 
-        console.log("This workded");
         if (fileName) {
             const signedUrl = await this.imageService.createPresignedUrl(fileName.toString(), process.env.TICKET_ATTACHMENT_BUCKET || "", S3Folder.TicktAttachment);
             res.status(signedUrl.statusCode).json({ status: signedUrl.status, msg: signedUrl.msg, data: signedUrl.data })

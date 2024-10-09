@@ -22,23 +22,11 @@ class AuthMiddleware {
         const context = req.context;
         const room_id = req.params.room_id;
 
-        console.log("The context");
-
-        console.log(req.params);
-
-        console.log(req.context);
-
         if (context) {
             const profile_id = context?.profile_id;
             if (profile_id) {
                 const chatRepo = new ChatRepository();
                 const findChat = await chatRepo.findChatById(room_id);
-                console.log("Auth profile");
-                console.log(findChat);
-                console.log(profile_id);
-
-
-
                 if (findChat?.profile_one == profile_id || findChat?.profile_two == profile_id) {
                     console.log("Next steps");
 
@@ -83,13 +71,13 @@ class AuthMiddleware {
                     }
                 }
             }
-            res.status(401).json({
+            res.status(StatusCode.UNAUTHORIZED).json({
                 status: false,
                 msg: "Authentication failed"
             })
         } catch (e) {
             console.log(e);
-            res.status(500).json({
+            res.status(StatusCode.SERVER_ERROR).json({
                 status: false,
                 msg: "Internal Server Error"
             })
@@ -118,20 +106,20 @@ class AuthMiddleware {
                     next()
                     return;
                 } else {
-                    res.status(401).json({
+                    res.status(StatusCode.UNAUTHORIZED).json({
                         status: false,
                         msg: "Authorization is failed"
                     })
                 }
             } else {
 
-                res.status(401).json({
+                res.status(StatusCode.BAD_REQUEST).json({
                     status: false,
                     msg: "Authorization is failed"
                 })
             }
         } else {
-            res.status(401).json({
+            res.status(StatusCode.UNAUTHORIZED).json({
                 status: false,
                 msg: "Invalid auth attempt"
             })

@@ -33,8 +33,8 @@ var AuthUpdateType;
 })(AuthUpdateType || (exports.AuthUpdateType = AuthUpdateType = {}));
 var TicketPriority;
 (function (TicketPriority) {
-    TicketPriority["Critical"] = "Critical";
     TicketPriority["High"] = "High";
+    TicketPriority["Critical"] = "Critical";
     TicketPriority["Medium"] = "Medium";
     TicketPriority["Low"] = "Low";
 })(TicketPriority || (exports.TicketPriority = TicketPriority = {}));

@@ -1,5 +1,5 @@
 
-import express, { Request, Response } from 'express';
+import express from 'express';
 import UserProfileController from '../controller/userController';
 import AuthMiddleware from '../middleware/authMiddleware';
 import TicketController from '../controller/ticketController';
@@ -9,10 +9,6 @@ const userRouter = express.Router();
 const userProfileController = new UserProfileController();
 const authMiddleware = new AuthMiddleware();
 const ticketController = new TicketController();
-
-userRouter.get("/", (req: Request, res: Response) => {
-    res.status(200).send("Welcome to profile service");
-})
 
 userRouter.get("/get_profile", authMiddleware.isValidUser, userProfileController.getProfile)
 userRouter.get("/get-tickets/:page/:limit", authMiddleware.isValidUser, ticketController.listTickets)
@@ -31,7 +27,6 @@ userRouter.patch("/update_profile", authMiddleware.isValidUser, userProfileContr
 userRouter.patch("/update_phone_number", authMiddleware.isValidUser, userProfileController.updatePhoneNumber)
 userRouter.patch("/update_email_id", authMiddleware.isValidUser, userProfileController.updateEmailID)
 userRouter.patch("/profile_update_otp_submission", authMiddleware.isValidUser, userProfileController.profileUpdateOTPSubmission)
-userRouter.patch("/update_profile_picture", authMiddleware.isValidUser, userProfileController.profilePictureUpdation)
 userRouter.patch("/seen-message/:room_id", authMiddleware.isValidUser, userProfileController.seenMessage)
 
 export default userRouter

@@ -68,24 +68,7 @@ class UtilHelper {
         return false
     }
 
-    // Method to move a file from one location to another
-    // moveFile(
-    //     file: UploadedFile,
-    //     destination: string,
-    //     successCB: () => void,
-    //     errorCB: (err: Error) => void
-    // ): void {
-    //     console.log("Dir name is:");
-    //     console.log(__dirname);
 
-    //     file.mv(destination, (err: Error) => {
-    //         if (err) {
-    //             return errorCB(err);
-    //         } else {
-    //             return successCB();
-    //         }
-    //     });
-    // }
 }
 
 export default UtilHelper;

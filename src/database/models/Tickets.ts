@@ -1,8 +1,7 @@
-import { model } from "mongoose";
+import { model, Schema } from "mongoose";
 import { TicketCategory, TicketChatFrom, TicketPriority, TicketStatus } from "../../util/types/Enum/UtilEnum";
 import { ITicketCollection, ITicketTemplate } from "../../util/types/Interface/CollectionInterface";
 
-const { Schema } = require("mongoose");
 
 const ticketChatSchema = new Schema({
     chat_id: {

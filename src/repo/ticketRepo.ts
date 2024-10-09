@@ -198,6 +198,27 @@ class TicketRepo {
                     $facet: {
                         paginated: [
                             {
+                                $addFields: {
+                                    statusPriority: {
+                                        $switch: {
+                                            branches: [
+                                                { case: { $eq: ["$priority", TicketPriority.High] }, then: 1 },
+                                                { case: { $eq: ["$priority", TicketPriority.Critical] }, then: 2 },
+                                                { case: { $eq: ["$priority", TicketPriority.Medium] }, then: 3 },
+                                                { case: { $eq: ["$priority", TicketPriority.Low] }, then: 4 }
+                                            ],
+                                            default: 5
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                $sort: {
+                                    statusPriority: 1,
+                                    updated_at: -1
+                                }
+                            },
+                            {
                                 $skip: skip
                             },
                             {

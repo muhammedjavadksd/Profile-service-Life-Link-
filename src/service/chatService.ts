@@ -187,7 +187,7 @@ class ChatService implements IChatService {
     async startChat(profile_one: string, profile_two: string, msg: string, via: CreateChatVia): Promise<HelperFunctionResponse> {
 
         if (via == CreateChatVia.DonorId) {
-            const findProfileByEmail = await this.userRepo.findProfileByDonorId(profile_two);
+            const findProfileByEmail = await this.userRepo.findProfileByEmailId(profile_two);
             console.log(findProfileByEmail);
             console.log(profile_two);
             console.log("The docs");
@@ -200,6 +200,14 @@ class ChatService implements IChatService {
                     status: false,
                     statusCode: StatusCode.NOT_FOUND
                 }
+            }
+        }
+
+        if (profile_one == profile_two) {
+            return {
+                msg: "Self messaging not allowed!",
+                status: false,
+                statusCode: StatusCode.BAD_REQUEST
             }
         }
 

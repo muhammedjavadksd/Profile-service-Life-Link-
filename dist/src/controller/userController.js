@@ -73,6 +73,7 @@ class UserProfileController {
     updateProfile(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const userProfile = req.body.user_profile;
+            console.log(req.context);
             if (!req.context) {
                 res.status(UtilEnum_1.StatusCode.BAD_REQUEST).json({ status: false, msg: "Profile not found" });
                 return;

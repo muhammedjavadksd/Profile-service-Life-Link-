@@ -186,7 +186,7 @@ class ChatService {
     startChat(profile_one, profile_two, msg, via) {
         return __awaiter(this, void 0, void 0, function* () {
             if (via == UtilEnum_1.CreateChatVia.DonorId) {
-                const findProfileByEmail = yield this.userRepo.findProfileByDonorId(profile_two);
+                const findProfileByEmail = yield this.userRepo.findProfileByEmailId(profile_two);
                 console.log(findProfileByEmail);
                 console.log(profile_two);
                 console.log("The docs");
@@ -200,6 +200,13 @@ class ChatService {
                         statusCode: UtilEnum_1.StatusCode.NOT_FOUND
                     };
                 }
+            }
+            if (profile_one == profile_two) {
+                return {
+                    msg: "Self messaging not allowed!",
+                    status: false,
+                    statusCode: UtilEnum_1.StatusCode.BAD_REQUEST
+                };
             }
             const checkRoom = yield this.chatRepo.isRoomExist(profile_one, profile_two);
             const chat_id = checkRoom || (yield this.createChatId());

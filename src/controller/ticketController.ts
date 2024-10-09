@@ -9,7 +9,6 @@ class TicketController {
     private ticketService: TicketService;
 
     constructor() {
-        // this.ticketAttachementUrl = this.ticketAttachementUrl.bind(this)
         this.createTicket = this.createTicket.bind(this)
         this.getSingleTicketById = this.getSingleTicketById.bind(this)
         this.replayToTicket = this.replayToTicket.bind(this)
@@ -17,10 +16,6 @@ class TicketController {
         this.ticketService = new TicketService();
     }
 
-    // async ticketAttachementUrl(req: Request, res: Response): Promise<void> {
-    //     const createUrl: HelperFunctionResponse = await this.ticketService.generatePresignedUrl();
-    //     res.status(createUrl.statusCode).json({ status: createUrl.status, msg: createUrl.msg, data: createUrl.data })
-    // }
 
     async createTicket(req: CustomRequest, res: Response): Promise<void> {
         const profile_id: string | undefined = req.context?.profile_id;

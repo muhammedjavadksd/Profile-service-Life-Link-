@@ -33,8 +33,8 @@ enum AuthUpdateType {
 
 
 enum TicketPriority {
-    Critical = 'Critical',
     High = 'High',
+    Critical = 'Critical',
     Medium = 'Medium',
     Low = 'Low'
 }
