@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const amqplib_1 = __importDefault(require("amqplib"));
-// const queueName = process.env.AUTH_DATA_UPDATE_QUEUE!;
 class ProfileDataProvider {
     constructor(queueName) {
         this.queue = queueName;

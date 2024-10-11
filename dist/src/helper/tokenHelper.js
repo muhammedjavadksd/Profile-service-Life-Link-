@@ -17,7 +17,7 @@ class TokenHelper {
     decodeJWTToken(token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const tokenValidity = yield jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET || "");
+                const tokenValidity = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET || "");
                 return tokenValidity;
             }
             catch (e) {
@@ -28,7 +28,7 @@ class TokenHelper {
     checkTokenValidity(token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const checkValidity = yield jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET || "");
+                const checkValidity = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET || "");
                 return checkValidity;
             }
             catch (e) {

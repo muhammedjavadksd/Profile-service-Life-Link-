@@ -15,11 +15,6 @@ adminRouter.get("/get_tickets/:limit/:page/:status?", authMiddleware.isValidAdmi
 adminRouter.get("/get_ticket/:ticket_id", authMiddleware.isValidAdmin, adminController.getSingleTicket);
 adminRouter.get("/presigned_url", authMiddleware.isValidAdmin, adminController.createPresignedUrl);
 adminRouter.get("/:profile_id", authMiddleware.isValidAdmin, adminController.getSingleUserByProfileId);
-//POST methods
-// adminRouter.post("/fund_raiser_profile/:profile_id", authMiddleware.isValidAdmin, profileController.getUserByIdsController)
-//POST methods
 adminRouter.post("/find_users_byids", authMiddleware.isValidAdmin, adminController.getUserByIdsController);
-// adminRouter.patch("/replay_ticket/:ticket_id", authMiddleware.isValidAdmin, adminController.addReplayToChat)
 adminRouter.put("/replay_ticket/:ticket_id", authMiddleware.isValidAdmin, adminController.addReplayToChat);
-// module.exports = adminRouter;
 exports.default = adminRouter;

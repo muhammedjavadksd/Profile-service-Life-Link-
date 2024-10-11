@@ -39,7 +39,6 @@ class AdminController {
     getSingleTicket(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const ticket_id = req.params.ticket_id;
-            console.log("Single ticket");
             const findSingleTicket = yield this.ticketServcie.getSingleTicketByTicketId(ticket_id, true);
             res.status(findSingleTicket.statusCode).json({ status: findSingleTicket.status, msg: findSingleTicket.msg, data: findSingleTicket.data });
         });
@@ -47,7 +46,6 @@ class AdminController {
     createPresignedUrl(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const fileName = req.query.file;
-            console.log("This workded");
             if (fileName) {
                 const signedUrl = yield this.imageService.createPresignedUrl(fileName.toString(), process.env.TICKET_ATTACHMENT_BUCKET || "", UtilEnum_1.S3Folder.TicktAttachment);
                 res.status(signedUrl.statusCode).json({ status: signedUrl.status, msg: signedUrl.msg, data: signedUrl.data });

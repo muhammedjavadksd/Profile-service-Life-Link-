@@ -16,17 +16,12 @@ const ticketService_1 = __importDefault(require("../service/ticketService"));
 const UtilEnum_1 = require("../util/types/Enum/UtilEnum");
 class TicketController {
     constructor() {
-        // this.ticketAttachementUrl = this.ticketAttachementUrl.bind(this)
         this.createTicket = this.createTicket.bind(this);
         this.getSingleTicketById = this.getSingleTicketById.bind(this);
         this.replayToTicket = this.replayToTicket.bind(this);
         this.listTickets = this.listTickets.bind(this);
         this.ticketService = new ticketService_1.default();
     }
-    // async ticketAttachementUrl(req: Request, res: Response): Promise<void> {
-    //     const createUrl: HelperFunctionResponse = await this.ticketService.generatePresignedUrl();
-    //     res.status(createUrl.statusCode).json({ status: createUrl.status, msg: createUrl.msg, data: createUrl.data })
-    // }
     createTicket(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;

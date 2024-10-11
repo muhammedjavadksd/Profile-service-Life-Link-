@@ -13,18 +13,18 @@ const cors_1 = __importDefault(require("cors"));
 const chatHelper_1 = __importDefault(require("./src/helper/chatHelper"));
 const app = (0, express_1.default)();
 const httpServer = http_1.default.createServer(app);
+const corsList = ["http://localhost:3000", "https://life-link.online", "https://www.life-link.online"];
 const webServer = new socket_io_1.Server(httpServer, {
     cors: {
-        origin: ["http://localhost:3000", "https://life-link.online", "https://www.life-link.online"],
+        origin: corsList,
         methods: ["GET", "POST"],
         credentials: true
     }
 });
 app.use((0, cors_1.default)({
-    origin: ["http://localhost:3000", "https://life-link.online", "https://www.life-link.online"]
+    origin: corsList
 }));
 (0, chatHelper_1.default)(webServer);
-//middleware
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, morgan_1.default)("combined"));

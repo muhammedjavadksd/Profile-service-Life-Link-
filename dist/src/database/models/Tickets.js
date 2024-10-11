@@ -2,8 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
 const UtilEnum_1 = require("../../util/types/Enum/UtilEnum");
-const { Schema } = require("mongoose");
-const ticketChatSchema = new Schema({
+const ticketChatSchema = new mongoose_1.Schema({
     chat_id: {
         type: String,
         required: true
@@ -25,7 +24,7 @@ const ticketChatSchema = new Schema({
         type: String,
     },
 });
-const ticketSchema = new Schema({
+const ticketSchema = new mongoose_1.Schema({
     ticket_id: {
         type: String,
         required: true

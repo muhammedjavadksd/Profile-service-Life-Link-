@@ -39,20 +39,6 @@ class S3BucketHelper {
             return url;
         });
     }
-    uploadObject(key, docs, ftype) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const save = yield this.s3.upload({
-                Bucket: this.bucketName,
-                Key: key,
-                Body: docs,
-                ACL: 'public-read',
-                ContentType: ftype
-            }).promise();
-            console.log(save);
-            console.log("Save");
-            console.log(save.Location);
-        });
-    }
     getViewUrl(keyName) {
         try {
             const imageUrl = `https://${this.bucketName}.s3.amazonaws.com/${keyName}`;

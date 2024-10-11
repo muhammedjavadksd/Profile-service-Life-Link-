@@ -25,17 +25,11 @@ class AuthMiddleware {
         return __awaiter(this, void 0, void 0, function* () {
             const context = req.context;
             const room_id = req.params.room_id;
-            console.log("The context");
-            console.log(req.params);
-            console.log(req.context);
             if (context) {
                 const profile_id = context === null || context === void 0 ? void 0 : context.profile_id;
                 if (profile_id) {
                     const chatRepo = new chatRepo_1.default();
                     const findChat = yield chatRepo.findChatById(room_id);
-                    console.log("Auth profile");
-                    console.log(findChat);
-                    console.log(profile_id);
                     if ((findChat === null || findChat === void 0 ? void 0 : findChat.profile_one) == profile_id || (findChat === null || findChat === void 0 ? void 0 : findChat.profile_two) == profile_id) {
                         console.log("Next steps");
                         next();
@@ -71,14 +65,14 @@ class AuthMiddleware {
                         }
                     }
                 }
-                res.status(401).json({
+                res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({
                     status: false,
                     msg: "Authentication failed"
                 });
             }
             catch (e) {
                 console.log(e);
-                res.status(500).json({
+                res.status(UtilEnum_1.StatusCode.SERVER_ERROR).json({
                     status: false,
                     msg: "Internal Server Error"
                 });
@@ -104,21 +98,21 @@ class AuthMiddleware {
                         return;
                     }
                     else {
-                        res.status(401).json({
+                        res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({
                             status: false,
                             msg: "Authorization is failed"
                         });
                     }
                 }
                 else {
-                    res.status(401).json({
+                    res.status(UtilEnum_1.StatusCode.BAD_REQUEST).json({
                         status: false,
                         msg: "Authorization is failed"
                     });
                 }
             }
             else {
-                res.status(401).json({
+                res.status(UtilEnum_1.StatusCode.UNAUTHORIZED).json({
                     status: false,
                     msg: "Invalid auth attempt"
                 });
