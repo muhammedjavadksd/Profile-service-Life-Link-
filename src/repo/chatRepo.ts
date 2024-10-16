@@ -122,6 +122,9 @@ class ChatRepository implements IChatRepo {
     }
 
     async findChatMyChat(profile_id: string): Promise<IChatCollection[]> {
+
+        console.log("The profile id is");
+        console.log(profile_id)
         const myChat = await this.chatCollection.aggregate([{
             $match: {
                 $or: [

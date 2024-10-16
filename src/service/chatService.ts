@@ -37,20 +37,28 @@ class ChatService implements IChatService {
     async seenMessage(room_id: string, profile_id: string): Promise<HelperFunctionResponse> {
         const findChat = await this.chatRepo.findRoomById(room_id);
         if (findChat?.profile_one == profile_id || findChat?.profile_two == profile_id) {
-            findChat.messages.unseen_message_count = 0
-            await this.chatRepo.updateRoomByModel(findChat);
-            const updateMessage = await this.messagesRepo.updateSeen(room_id);
-            console.log("Update message");
 
-            console.log(updateMessage);
-
-            if (updateMessage) {
+            if (findChat.messages.last_message_from != profile_id) {
+                findChat.messages.unseen_message_count = 0
+                await this.chatRepo.updateRoomByModel(findChat);
+                const updateMessage = await this.messagesRepo.updateSeen(room_id);
+                if (updateMessage) {
+                    return {
+                        msg: "Message seen status updated",
+                        status: true,
+                        statusCode: StatusCode.OK
+                    }
+                }
+            } else {
                 return {
-                    msg: "Message seen status updated",
+                    msg: "No unseen messages",
                     status: true,
                     statusCode: StatusCode.OK
                 }
             }
+
+
+
             return {
                 msg: "Message seen status failed",
                 status: false,

@@ -34,14 +34,21 @@ class ChatService {
         return __awaiter(this, void 0, void 0, function* () {
             const findChat = yield this.chatRepo.findRoomById(room_id);
             if ((findChat === null || findChat === void 0 ? void 0 : findChat.profile_one) == profile_id || (findChat === null || findChat === void 0 ? void 0 : findChat.profile_two) == profile_id) {
-                findChat.messages.unseen_message_count = 0;
-                yield this.chatRepo.updateRoomByModel(findChat);
-                const updateMessage = yield this.messagesRepo.updateSeen(room_id);
-                console.log("Update message");
-                console.log(updateMessage);
-                if (updateMessage) {
+                if (findChat.messages.last_message_from != profile_id) {
+                    findChat.messages.unseen_message_count = 0;
+                    yield this.chatRepo.updateRoomByModel(findChat);
+                    const updateMessage = yield this.messagesRepo.updateSeen(room_id);
+                    if (updateMessage) {
+                        return {
+                            msg: "Message seen status updated",
+                            status: true,
+                            statusCode: UtilEnum_1.StatusCode.OK
+                        };
+                    }
+                }
+                else {
                     return {
-                        msg: "Message seen status updated",
+                        msg: "No unseen messages",
                         status: true,
                         statusCode: UtilEnum_1.StatusCode.OK
                     };

@@ -120,6 +120,8 @@ class ChatRepository {
     }
     findChatMyChat(profile_id) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log("The profile id is");
+            console.log(profile_id);
             const myChat = yield this.chatCollection.aggregate([{
                     $match: {
                         $or: [
